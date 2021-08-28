@@ -14,7 +14,7 @@ import hashlib, uuid
 # Create your views here.
 
 def get_tasks_by_user(request, user):
-    u = Users(pk=user)
+    u = Users.objects.get(pk=user)
     # tasks = u.tasks_set.order_by('task_priority') 
     # tasks = Tasks.objects.filter(user=u).order_by('task_priority')
     # data = serializers.serialize('json',tasks)
@@ -28,6 +28,29 @@ def get_user(request, user):
 #     u = Users(user_login=login, user_password=password, user_first_name=first_name, user_email=email, user_registered=registered)
 #     u.save()
 #     return HttpResponse(reverse(f"{user_first_name} created successfully!"))
+@csrf_exempt 
+def add_task(request, user):
+    u = Users.objects.get(pk=user)
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        data = json_data['data']
+        # d = datetime.datetime.strptime('12. June 2017 10:17', '%d. %B %Y %H:%M')
+        d = datetime.datetime.strptime(data['date_time'], '%d. %B %Y %H:%M')
+        t = Tasks(user=u,task_name=data['name'],task_priority=data['priority'],task_description=data['description'],task_attendees=data['attendees'], task_date_time=d)
+        t.save()
+        return HttpResponse(f"{user} tasks saved")
+@csrf_exempt 
+def delete_task(request, user):
+    u = Users.objects.get(pk=user)
+    if request.method == 'DELETE':
+        json_data=json.loads(request.body)
+        data = json_data['data']
+        t = Tasks.objects.filter(user=u,pk=data['task_id'])
+        t.delete() 
+        
+        return HttpResponse(f"{user} tasks deleted")
+
+
 @csrf_exempt 
 def log_in(request):
     if request.method == "POST":

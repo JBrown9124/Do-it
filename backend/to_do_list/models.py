@@ -22,7 +22,7 @@ class Tasks(models.Model):
     task_attendees = models.IntegerField()
     task_date_time = models.DateTimeField()
     def __str__(self):
-        return f"{self.task_name}: {self.task_description}"
+        return f"{self.user.user_login}: {self.user.user_id}: {self.task_name}: {self.task_id}: {self.task_description}"
     def was_published_recently(self):
         return self.date_time >= timezone.now() - datetime.timedelta(days=1)
     
