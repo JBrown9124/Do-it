@@ -28,13 +28,22 @@ def get_user(request, user):
 #     u = Users(user_login=login, user_password=password, user_first_name=first_name, user_email=email, user_registered=registered)
 #     u.save()
 #     return HttpResponse(reverse(f"{user_first_name} created successfully!"))
-def log_in(request, username, password):
-    salt = uuid.uuid4().hex
-    hashed_password = hashlib.sha512(password + salt).hexdigest()
-    user_id = Users(user_login=username,user_password=hashed_password)
-    if user_id.user_registered:
-        return HttpResponse(user)
-    return HttpResponse("Log in name or password does not exist")
+@csrf_exempt 
+def log_in(request):
+    if request.method == "POST":
+        json_data=json.loads(request.body)
+        
+        data = json_data['data']
+        
+        
+        try:    
+            user_salt = Users.objects.get(user_login=data['login']).user_salt
+            hashed_password = hashlib.sha512(data['password'].encode('utf-8') + user_salt.encode('utf-8')).hexdigest()
+            user_id = Users.objects.get(user_login=data['login'],user_hash=hashed_password)
+            
+            return HttpResponse(user_id)
+        except:
+            return HttpResponse("Log in name or password does not exist")
 
 
 @csrf_exempt 
@@ -43,16 +52,19 @@ def register(request):
         json_data=json.loads(request.body)
         
         data = json_data['data']
-        salt = uuid.uuid4().hex
-        hashed_password = hashlib.sha512(data['password'] + salt).hexdigest()
-        if Users.objects.get(user_login=data['login']).user_registered:
-            return JsonResponse({"user_login_exists":True})
-        elif Users.objects.get(user_email=data['email']).user_registered:
-            return JsonResponse({"user_email_exists":True})
-        hashed_password = hashlib.sha512(data['password'] + salt).hexdigest()
-        u = Users(user_login=data['login'], user_password=hashed_password, user_first_name=data['first_name'], user_email=data['email'], user_registered=True)
-        u.save()
-        return HttpResponse(u.user_id)
+        try:
+            try:
+                if Users.objects.get(user_login=data['login']).user_registered:
+                    return JsonResponse({"user_login_exists":True})
+            except:    
+                if Users.objects.get(user_email=data['email']).user_registered:
+                    return JsonResponse({"user_email_exists":True})
+        except:
+            salt = uuid.uuid4().hex
+            hashed_password = hashlib.sha512(data['password'].encode('utf-8') + salt.encode('utf-8')).hexdigest()
+            u = Users(user_login=data['login'], user_hash=hashed_password, user_salt=salt, user_first_name=data['first_name'], user_email=data['email'], user_registered=True)
+            u.save()
+            return HttpResponse(u.user_id)
         
 
 

@@ -6,7 +6,8 @@ import datetime
 class Users(models.Model):
     user_id = models.AutoField(primary_key=True)
     user_login = models.CharField(max_length=1000)
-    user_password = models.CharField(max_length=1000)
+    user_hash = models.CharField(max_length=1000)
+    user_salt = models.CharField(max_length=1000, default=None)
     user_first_name = models.CharField(max_length=1000)
     user_email = models.EmailField(max_length=1000)
     user_registered = models.BooleanField(default=False)
@@ -14,7 +15,7 @@ class Users(models.Model):
         return f"{self.user_login}: {self.user_email}: {self.user_first_name}"
 class Tasks(models.Model):
     task_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    user= models.ForeignKey(Users, on_delete=models.CASCADE)
     task_name = models.CharField(max_length=1000)
     task_priority = models.IntegerField()
     task_description = models.TextField()
