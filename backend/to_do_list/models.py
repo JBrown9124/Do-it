@@ -14,7 +14,7 @@ class Users(models.Model):
         return f"{self.user_login}: {self.user_email}: {self.user_first_name}"
 class Tasks(models.Model):
     task_id = models.AutoField(primary_key=True)
-    user_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
     task_name = models.CharField(max_length=1000)
     task_priority = models.IntegerField()
     task_description = models.TextField()
