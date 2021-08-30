@@ -8,10 +8,11 @@ import Navigation from "./NavBar.js";
 import Tasks from "./Tasks";
 function HomeLogin() {
   const [modalShow, setModalShow] = React.useState(true);
-  const [user, setUser] = React.useState(0)
+  const [user, setUser] = React.useState(null)
+  
   return (
     <>
-      <Tasks user_id= {user}/>
+      <Tasks user_id= {user} show={modalShow}/>
       <Login
         show={modalShow}
         onHide={() => setModalShow(false)}

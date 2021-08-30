@@ -23,7 +23,7 @@ def get_tasks_by_user(request, user):
     
     data = list(Tasks.objects.filter(user=u).order_by('task_priority').values())
     
-    return JsonResponse({f'{user}': data})
+    return JsonResponse({'user': data})
 
 def get_user(request, user):
     return HttpResponse(user)
@@ -36,19 +36,20 @@ def add_task(request, user):
     u = Users.objects.get(pk=user)
     if request.method == 'POST':
         json_data = json.loads(request.body)
-        data = json_data['data']
+        
         # d = datetime.datetime.strptime('12. June 2017 10:17', '%d. %B %Y %H:%M')
-        d = datetime.datetime.strptime(data['date_time'], '%d. %B %Y %H:%M')
-        t = Tasks(user=u,task_name=data['name'],task_priority=data['priority'],task_description=data['description'],task_attendees=data['attendees'], task_date_time=d)
+        d = datetime.datetime.strptime(json_data["date_time"], '%d. %B %Y %H:%M')
+        # d = datetime.datetime.strptime(json_data['date_time'], '%Y-%B-%d %H:%M:%S')
+        t = Tasks(user=u,task_name=json_data['name'],task_priority=json_data['priority'],task_description=json_data['description'],task_attendees=json_data['attendees'], task_date_time=d)
         t.save()
         return HttpResponse(f"{user} tasks saved")
 @csrf_exempt 
 def delete_task(request, user):
     u = Users.objects.get(pk=user)
-    if request.method == 'DELETE':
+    if request.method == 'DELETE' or request.method == 'POST':
         json_data=json.loads(request.body)
-        data = json_data['data']
-        t = Tasks.objects.filter(user=u,pk=data['task_id'])
+        
+        t = Tasks.objects.filter(user=u,pk=json_data['task_id'])
         t.delete() 
         
         return HttpResponse(f"{user} tasks deleted")
