@@ -9,9 +9,7 @@ const Navigation = (props) => {
     <Navbar collapseOnSelect className="Navcontainer">
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav>
-          <Nav.Link className="Navbtn" href="/register">
-            Register
-          </Nav.Link>
+          
           <Nav.Link className="Navbtn" href="/home-login">
             Log Out
           </Nav.Link>

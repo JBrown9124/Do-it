@@ -2,7 +2,10 @@ import { Modal, Button, Form } from "react-bootstrap";
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import DateTimePicker from 'react-datetime-picker';
+import DateTimePicker from "react-datetime-picker";
+import "react-datetime/css/react-datetime.css";
+import Datetime from 'react-datetime';
+import moment from "moment";
 function CreateTaskModal(props) {
   const [name, setName] = useState("");
   const [priority, setPriority] = useState("");
@@ -16,16 +19,18 @@ function CreateTaskModal(props) {
   const [data, setData] = useState(null);
 
   const handleSubmit = () => {
+    // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
+    const dateTimeStr = moment(dateTime).format('DD. MMMM YYYY HH:mm')
     setLoading(true);
     setIsError(false);
     const data = {
-        name: name,
-        priority: priority,
-        description: description,
-        attendees: attendees,
-        date_time: dateTime,
+      name: name,
+      priority: priority,
+      description: description,
+      attendees: attendees,
+      date_time: dateTimeStr,
     };
-
+    
     axios
       .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/add-task`, data)
       .then((res) => {
@@ -55,7 +60,9 @@ function CreateTaskModal(props) {
       centered
     >
       <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter">Create your Task</Modal.Title>
+        <Modal.Title id="contained-modal-title-vcenter">
+          Create your Task
+        </Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <div className="container p-3">
@@ -75,7 +82,7 @@ function CreateTaskModal(props) {
             </div>
             <div classNames="form-group">
               <label htmlFor="Priority" className="mt-2">
-              Priority
+                Priority
               </label>
               <input
                 type="text"
@@ -88,7 +95,7 @@ function CreateTaskModal(props) {
             </div>
             <div classNames="form-group">
               <label htmlFor="Description" className="mt-2">
-              Description
+                Description
               </label>
               <input
                 type="text"
@@ -101,7 +108,7 @@ function CreateTaskModal(props) {
             </div>
             <div classNames="form-group">
               <label htmlFor="Attendees" className="mt-2">
-              Attendees
+                Attendees
               </label>
               <input
                 type="text"
@@ -114,7 +121,7 @@ function CreateTaskModal(props) {
             </div>
             <div classNames="form-group">
               <label htmlFor="dateTime" className="mt-2">
-              Data and Time
+                What day and time are you planning on completing this task?
               </label>
               {/* <input
                 type="text"
@@ -125,10 +132,13 @@ function CreateTaskModal(props) {
                 onChange={(e) => setdateTime(e.target.value)}
               /> */}
               <DateTimePicker
-        onChange={setdateTime}
-        value={dateTime}
-        format = "MM-y-dd h:mm:ss a"
-      />
+                onChange={setdateTime}
+                value={dateTime}
+
+                
+                
+                
+              />
             </div>
 
             {isError && (
@@ -152,7 +162,6 @@ function CreateTaskModal(props) {
                 <pre>{JSON.stringify(data, null, 2)}</pre>
               </div>
             )} */}
-            
           </div>
         </div>
       </Modal.Body>
