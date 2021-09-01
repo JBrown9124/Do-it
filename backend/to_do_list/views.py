@@ -15,42 +15,52 @@ import uuid
 # Create your views here.
 
 
-def get_tasks_by_user(request, user):
+def user_id(request, user):
+    return HttpResponse(user)
+
+@csrf_exempt
+def completed_tasks(request, user):
     u = Users.objects.get(pk=user)
-    # tasks = u.tasks_set.order_by('task_priority')
-    # tasks = Tasks.objects.filter(user=u).order_by('task_priority')
-    # data = serializers.serialize('json',tasks)
-    # return HttpResponse(data, content_type='application/json')
-    # return JsonResponse(tasks, safe=False)
+    if request.method == 'GET':
+        
+        data = list(Tasks.objects.filter(
+            user=u, task_completed=True).order_by('task_priority').values())
+        return JsonResponse({'user': data})
+    elif request.method =='PUT': 
+        json_data = json.loads(request.body)
+        t = Tasks.objects.get(pk=json_data['task_id'])
+        t.task_completed = True
+        t.save()
+        return HttpResponse("completed task saved")
+    elif request.method == 'DELETE':
+        t = Tasks.objects.filter(user=u,task_completed=True)
+        t.delete()
+        return HttpResponse("completed tasks deleted")
 
-    data = list(Tasks.objects.filter(
-        user=u).order_by('task_priority').values())
 
-    return JsonResponse({'user': data})
 def order_tasks_by_date(request, user):
     u = Users.objects.get(pk=user)
-    # tasks = u.tasks_set.order_by('task_priority')
-    # tasks = Tasks.objects.filter(user=u).order_by('task_priority')
-    # data = serializers.serialize('json',tasks)
-    # return HttpResponse(data, content_type='application/json')
-    # return JsonResponse(tasks, safe=False)
 
     data = list(Tasks.objects.filter(
-        user=u).order_by('task_date_time').values())
+        user=u, task_completed=False).order_by('task_date_time').values())
 
-    return JsonResponse({'user': data})  
+    return JsonResponse({'user': data})
+
+def get_tasks_by_user(request, user):
+    u = Users.objects.get(pk=user)
+
+    data = list(Tasks.objects.filter(
+        user=u,task_completed=False).order_by('task_priority').values())
+
+    return JsonResponse({'user': data})
+
 def order_tasks_by_name(request, user):
     u = Users.objects.get(pk=user)
-    # tasks = u.tasks_set.order_by('task_priority')
-    # tasks = Tasks.objects.filter(user=u).order_by('task_priority')
-    # data = serializers.serialize('json',tasks)
-    # return HttpResponse(data, content_type='application/json')
-    # return JsonResponse(tasks, safe=False)
 
     data = list(Tasks.objects.filter(
-        user=u).order_by('task_name').values())
+        user=u, task_completed=False).order_by('task_name').values())
 
-    return JsonResponse({'user': data})    
+    return JsonResponse({'user': data})
 
 
 @csrf_exempt
@@ -64,9 +74,10 @@ def get_task_by_task_id(request, user):
 
 
 @csrf_exempt
-def edit_task(request, user):
+def task(request, user):
+    
     u = Users.objects.get(pk=user)
-    if request.method == 'POST':
+    if request.method == 'PUT':
         json_data = json.loads(request.body)
         d = datetime.datetime.strptime(
             json_data["date_time"], '%d. %B %Y %H:%M')
@@ -74,14 +85,24 @@ def edit_task(request, user):
                   task_description=json_data['description'], task_attendees=json_data['attendees'], task_date_time=d)
         t.save()
         return HttpResponse("nice")
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
 
+        d = datetime.datetime.strptime(
+            json_data["date_time"], '%d. %B %Y %H:%M')
 
-def get_user(request, user):
-    return HttpResponse(user)
-# def register(request, login, password, first_name, email, registered=True):
-#     u = Users(user_login=login, user_password=password, user_first_name=first_name, user_email=email, user_registered=registered)
-#     u.save()
-#     return HttpResponse(reverse(f"{user_first_name} created successfully!"))
+        t = Tasks(user=u, task_name=json_data['name'], task_priority=json_data['priority'],
+                  task_description=json_data['description'], task_attendees=json_data['attendees'], task_date_time=d)
+        t.save()
+        return HttpResponse(f"{user} tasks saved")
+    if request.method == 'DELETE':
+        json_data= json.loads(request.body)
+        
+        t = Tasks.objects.filter(user=u, pk=json_data['task_id'])
+        t.delete()
+
+        return HttpResponse(f"{user} tasks deleted")
+
 
 
 @csrf_exempt
@@ -90,10 +111,9 @@ def add_task(request, user):
     if request.method == 'POST':
         json_data = json.loads(request.body)
 
-        # d = datetime.datetime.strptime('12. June 2017 10:17', '%d. %B %Y %H:%M')
         d = datetime.datetime.strptime(
             json_data["date_time"], '%d. %B %Y %H:%M')
-        # d = datetime.datetime.strptime(json_data['date_time'], '%Y-%B-%d %H:%M:%S')
+
         t = Tasks(user=u, task_name=json_data['name'], task_priority=json_data['priority'],
                   task_description=json_data['description'], task_attendees=json_data['attendees'], task_date_time=d)
         t.save()
@@ -103,7 +123,7 @@ def add_task(request, user):
 @csrf_exempt
 def delete_task(request, user):
     u = Users.objects.get(pk=user)
-    if request.method == 'DELETE' or request.method == 'POST':
+    if request.method == 'DELETE':
         json_data = json.loads(request.body)
 
         t = Tasks.objects.filter(user=u, pk=json_data['task_id'])
@@ -116,8 +136,6 @@ def delete_task(request, user):
 def log_in(request):
     if request.method == "POST":
         json_data = json.loads(request.body)
-
-        # data = json_data['data']
 
         try:
             user_salt = Users.objects.get(
@@ -137,7 +155,6 @@ def register(request):
     if request.method == "POST" or request.method == "OPTIONS":
         json_data = json.loads(request.body)
 
-        # data = json_data['data']
         try:
 
             if Users.objects.get(user_email=json_data['email']).user_registered:

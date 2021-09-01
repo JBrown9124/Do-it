@@ -1,11 +1,13 @@
-import React from "react";
+import {React, useState} from "react";
 
-import { Navbar, Nav} from "react-bootstrap";
+import { Navbar, Nav, NavDropdown, Form, FormControl, Button} from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 
 const Navigation = (props) => {
-  console.log(props);
+  
+  
   return (
+    
     <Navbar collapseOnSelect className="Navcontainer">
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav>
@@ -13,9 +15,14 @@ const Navigation = (props) => {
           <Nav.Link className="Navbtn" href="/home-login">
             Log Out
           </Nav.Link>
+          <Nav.Link className="Navbtn" onClick={()=>props.showComplete(true)} >
+            Completed Tasks
+            
+          </Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
+    
   );
 };
 

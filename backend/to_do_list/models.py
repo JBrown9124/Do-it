@@ -21,6 +21,7 @@ class Tasks(models.Model):
     task_description = models.TextField()
     task_attendees = models.IntegerField()
     task_date_time = models.DateTimeField()
+    task_completed = models.BooleanField(default=False)
     def __str__(self):
         return f"{self.user.user_id}: {self.user.user_email}: {self.task_name}: {self.task_id}: {self.task_description}"
     def was_published_recently(self):

@@ -32,7 +32,7 @@ function CreateTaskModal(props) {
     };
     
     axios
-      .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/add-task`, data)
+      .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
       .then((res) => {
         setData(res.data);
 
@@ -53,6 +53,7 @@ function CreateTaskModal(props) {
   };
 
   return (
+    <div>
     <Modal
       {...props}
       size="med"
@@ -65,7 +66,7 @@ function CreateTaskModal(props) {
         </Modal.Title>
       </Modal.Header>
       <Modal.Body>
-        <div className="container p-3">
+        
           <div style={{ maxWidth: 350 }}>
             <div classNames="form-group">
               <label htmlFor="name" className="mt-2">
@@ -163,12 +164,13 @@ function CreateTaskModal(props) {
               </div>
             )} */}
           </div>
-        </div>
+        
       </Modal.Body>
       <Modal.Footer>
         <Button onClick={props.onHide}>Close</Button>
       </Modal.Footer>
     </Modal>
+    </div>
   );
 }
 export default CreateTaskModal;

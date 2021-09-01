@@ -1,10 +1,10 @@
 import React, { Component } from "react";
 import History from "../services/History";
 import { Router, Route, Switch, Redirect, Link } from "react-router-dom";
-import Register from "../components/Register";
-import Login from "../components/Login";
-import HomeRegister from "../components/HomeRegister";
-import HomeLogin from "../components/HomeLogin";
+import Register from "../components/Home/RegisterModal";
+import Login from "../components/Home/LoginModal";
+import HomeRegister from "../components/Home/HomeRegister";
+import HomeLogin from "../components/Home/HomeLogin";
 import { withRouter } from "react-router-dom";
 
 export default class Routes extends Component {
@@ -16,13 +16,13 @@ export default class Routes extends Component {
             exact
             path="/"
             render={() => {
-              return <Redirect to="/home-register" />;
+              return <Redirect to="/register" />;
             }}
-          />
+          /> 
           
-          <Route path="/home-register" component={HomeRegister} exact />
-          <Route path="/home-login" component={HomeLogin} exact />
-        
+         <Route path="/register" component={Register} exact />
+          <Route path="/home-login" component={Login} exact />
+         
         </Switch>
       </Router>
     );

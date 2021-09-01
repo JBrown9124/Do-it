@@ -3,9 +3,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Button from 'react-bootstrap/Button';
 import React from 'react'
-import Register from './Register'
-import Routes from "../services/Routes";
-import Navigation from "./NavBar.js";
+import Register from './RegisterModal'
+import Routes from "../../services/Routes";
+import Navigation from "../NavBar.js";
 function HomeRegister() {
   const [modalShow, setModalShow] = React.useState(true);
 

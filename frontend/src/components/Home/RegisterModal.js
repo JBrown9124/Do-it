@@ -1,9 +1,10 @@
 import { Modal, Button, Form } from "react-bootstrap";
 import React, { useState } from "react";
 import axios from "axios";
-import History from "../services/History"
-import Routes from "../services/Routes"
+import History from "../../services/History"
+import Routes from "../../services/Routes"
 import {Link} from 'react-router-dom';
+
 function Register(props) {
   const [name, setName] = useState("");
 
@@ -33,6 +34,8 @@ function Register(props) {
           setPassword("");
 
           setLoading(false);
+          props.onHide();
+        
         })
         .catch((err) => {
           setLoading(false);
@@ -126,9 +129,9 @@ function Register(props) {
             >
               {loading ? "Loading..." : "Register"}
             </button>
-            <Link to="/home-login" variant = "body2">
+            <Button onClick={()=>props.onHide()} variant ='link'>
   Already registered? Sign in here.
-</Link>
+</Button>
             {/* {data && <div className="mt-3">
           <strong>Output:</strong><br />
           <pre>{JSON.stringify(data, null, 2)}</pre>

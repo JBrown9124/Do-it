@@ -98,9 +98,9 @@ function Login(props) {
                 <pre>{JSON.stringify(data, null, 2)}</pre>
               </div>
             )}
-            <Link to="/home-register" variant="body2">
+            <Button onClick={()=>props.showRegister(true)} variant='link'>
               Not have an account? Sign up here
-            </Link>
+            </Button>
           </div>
         </div>
       </Modal.Body>
