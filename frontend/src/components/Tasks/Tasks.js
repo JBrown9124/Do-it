@@ -25,15 +25,15 @@ import useWindowSize from "react-use/lib/useWindowSize";
 import Confetti from "react-confetti";
 import CompletedTasks from "./CompletedTasks";
 function Tasks(props) {
-  const [userID, setUserID] = useState(null);
+  // const [userID, setUserID] = useState(null);
   const [tasks, setTasks] = useState(null);
   const [load, isLoaded] = useState(false);
 
   const [createmodalShow, setcreateModalShow] = useState(false);
-  const [edittaskID, seteditTaskID] = useState(null);
+  // const [edittaskID, seteditTaskID] = useState(null);
   const [editModalShow, seteditModalShow] = useState(false);
-  const [confetti, showConfetti] = useState(false);
-  const [completedTasks, showCompletedTasks] = useState(false);
+  // const [confetti, showConfetti] = useState(false);
+  // const [completedTasks, showCompletedTasks] = useState(false);
 
   const handleTasks = (order = "tasks") => {
     axios
@@ -78,14 +78,16 @@ function Tasks(props) {
       )
       .then((resp) => {
         handleTasks();
-        // showCompletedTasks(true);
+        
         
       });
   };
   // if (props.show === false && load === false && props.user_id !== null) {
   //   handleTasks();
   // }
-
+  if (props.completedhandleTasks === true){
+    handleTasks(); props.handledcompletedTasks()
+  }
   if (tasks !== null)
     return (
       <div className="taskCard">
@@ -128,7 +130,7 @@ function Tasks(props) {
         {tasks.user.map((task) => (
           <li key={task.task_id} className="ulremovebullets">
             
-            <Card  style={{ width: "20rem" }}>
+            <Card className="taskCard" style={{ width: "20rem" }}>
               {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
               <Card.Body>
                 <Card.Title className="text-center">{task.task_name}</Card.Title>

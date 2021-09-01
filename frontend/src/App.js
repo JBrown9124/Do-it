@@ -20,6 +20,7 @@ function App() {
   const [loginmodalShow, setloginmodalShow] = React.useState(true);
   const [registermodalShow, setregistermodalShow] = React.useState(false);
   const [tasks, settasksShow] = React.useState(false);
+  const [handleTasks, sethandleTasks] = React.useState(false);
   
   const [user, setUser] = React.useState(null);
   const [completedTasks, showcompletedTasks] = React.useState(null);
@@ -45,12 +46,15 @@ function App() {
             <Tasks
               user_id={user}
               show={tasks}
+              completedhandleTasks={handleTasks}
+              handledcompletedTasks ={ () => sethandleTasks(false)}
               
             />
             <CompletedTasks
               user_id={user}
               show={completedTasks}
               handleCompletedTasks={(props) => showcompletedTasks(props)}
+              handleTasks={(props) => sethandleTasks(true)}
             />
           
           <Register show={registermodalShow}

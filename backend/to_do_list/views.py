@@ -36,7 +36,20 @@ def completed_tasks(request, user):
         t = Tasks.objects.filter(user=u,task_completed=True)
         t.delete()
         return HttpResponse("completed tasks deleted")
-
+@csrf_exempt
+def completed_task(request, user):
+    u = Users.objects.get(pk=user)
+    if request.method == 'DELETE':
+        json_data = json.loads(request.body)
+        t = Tasks.objects.filter(pk=json_data['task_id'])
+        t.delete()
+        return HttpResponse("completed task deleted")
+    if request.method == "PUT":
+        json_data = json.loads(request.body)
+        t = Tasks.objects.get(pk=json_data['task_id'])
+        t.task_completed = False
+        t.save()
+        return HttpResponse("undo complete successful")
 
 def order_tasks_by_date(request, user):
     u = Users.objects.get(pk=user)
@@ -46,7 +59,7 @@ def order_tasks_by_date(request, user):
 
     return JsonResponse({'user': data})
 
-def get_tasks_by_user(request, user):
+def tasks_by_user(request, user):
     u = Users.objects.get(pk=user)
 
     data = list(Tasks.objects.filter(
@@ -64,7 +77,7 @@ def order_tasks_by_name(request, user):
 
 
 @csrf_exempt
-def get_task_by_task_id(request, user):
+def task_by_task_id(request, user):
     u = Users.objects.get(pk=user)
     if request.method == 'GET':
         json_data = json.loads(request.body)
