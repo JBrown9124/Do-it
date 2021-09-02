@@ -10,8 +10,15 @@ function Login(props) {
   const [isError, setIsError] = useState(false);
 
   const [data, setData] = useState(null);
+  const [passwordShown, setPasswordShown] = useState(false);
 
-  const handleSubmit = () => {
+  const togglePassword = () => {
+    // When the handler is invoked
+    // inverse the boolean state of passwordShown
+    setPasswordShown(!passwordShown);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
     setLoading(true);
     setIsError(false);
     const data = {
@@ -63,42 +70,58 @@ function Login(props) {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div classNames="form-group">
-              <label htmlFor="password" className="mt-2">
-                Password
-              </label>
+
+            <label htmlFor="password" className="mt-2">
+              Password
+            </label>
+
+            <form onSubmit={handleSubmit}>
               <input
-                type="text"
+                name="password"
+                autocomplete="off"
+                type={passwordShown ? "text" : "password"}
                 className="form-control"
                 id="password"
                 placeholder="Enter password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
-            </div>
 
-            {isError && (
-              <small className="mt-3 d-inline-block text-danger">
-                You have entered an invalid email or password.
-              </small>
-            )}
+              <Form>
+                <div key={`default-checkbox`} className="mb-3">
+                  <Form.Check
+                    onClick={togglePassword}
+                    type="checkbox"
+                    id={`default-checkbox`}
+                    label="Show password"
+                  />
+                </div>
+              </Form>
 
-            <button
-              type="submit"
-              className="btn btn-primary mt-3"
-              onClick={handleSubmit}
-              disabled={loading}
-            >
-              {loading ? "Loading..." : "Log In"}
-            </button>
-            {data && (
+              {isError && (
+                <small className="mt-3 d-inline-block text-danger">
+                  You have entered an invalid email or password.
+                </small>
+              )}
+
+              <button
+                type="submit"
+                className="btn btn-primary mt-3"
+                onClick={handleSubmit}
+                disabled={loading}
+              >
+                {loading ? "Loading..." : "Log In"}
+              </button>
+            </form>
+
+            {/* {data && (
               <div className="mt-3">
                 <strong>Output:</strong>
                 <br />
                 <pre>{JSON.stringify(data, null, 2)}</pre>
               </div>
-            )}
-            <Button onClick={()=>props.showRegister(true)} variant='link'>
+            )} */}
+            <Button onClick={() => props.showRegister(true)} variant="link">
               Not have an account? Sign up here
             </Button>
           </div>

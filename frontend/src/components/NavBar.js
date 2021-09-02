@@ -12,7 +12,7 @@ const Navigation = (props) => {
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav>
           
-          <Nav.Link className="Navbtn" href="/home-login">
+          <Nav.Link onClick={()=> props.showloginhideTasks()}className="Navbtn">
             Log Out
           </Nav.Link>
           <Nav.Link className="Navbtn" onClick={()=>props.showComplete(true)} >

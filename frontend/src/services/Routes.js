@@ -7,24 +7,24 @@ import HomeRegister from "../components/Home/HomeRegister";
 import HomeLogin from "../components/Home/HomeLogin";
 import { withRouter } from "react-router-dom";
 
-export default class Routes extends Component {
-  render() {
-    return (
-      <Router history={History}>
-        <Switch>
-          <Route
-            exact
-            path="/"
-            render={() => {
-              return <Redirect to="/register" />;
-            }}
-          /> 
+// export default class Routes extends Component {
+//   render() {
+//     return (
+//       <Router history={History}>
+//         <Switch>
+//           <Route
+//             exact
+//             path="/"
+//             render={() => {
+//               return <Redirect to="/register" />;
+//             }}
+//           /> 
           
-         <Route path="/register" component={Register} exact />
-          <Route path="/home-login" component={Login} exact />
+//          <Route path="/register" component={Register} exact />
+//           <Route path="/home-login" component={Login} exact />
          
-        </Switch>
-      </Router>
-    );
-  }
-}
+//         </Switch>
+//       </Router>
+//     );
+//   }
+// }

@@ -9,6 +9,10 @@ from django.shortcuts import get_object_or_404, render
 from django.http import HttpResponseServerError
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
+from django.core.validators import validate_email
+from django.core.exceptions import ValidationError
+
+from django.core.exceptions import ValidationError
 import hashlib
 import uuid
 
@@ -51,23 +55,27 @@ def completed_task(request, user):
         t.save()
         return HttpResponse("undo complete successful")
 
-def order_tasks_by_date(request, user):
+def tasks_by_date(request, user):
     u = Users.objects.get(pk=user)
 
     data = list(Tasks.objects.filter(
         user=u, task_completed=False).order_by('task_date_time').values())
 
     return JsonResponse({'user': data})
-
-def tasks_by_user(request, user):
+@csrf_exempt
+def tasks(request, user):
     u = Users.objects.get(pk=user)
+    if request.method == 'GET':
+        data = list(Tasks.objects.filter(
+            user=u,task_completed=False).order_by('task_priority').values())
 
-    data = list(Tasks.objects.filter(
-        user=u,task_completed=False).order_by('task_priority').values())
+        return JsonResponse({'user': data})
+    if request.method == "DELETE":
+        t = Tasks.objects.filter(user_id=u)
+        t.delete()
+        return HttpResponse("tasks deleted")
 
-    return JsonResponse({'user': data})
-
-def order_tasks_by_name(request, user):
+def tasks_by_name(request, user):
     u = Users.objects.get(pk=user)
 
     data = list(Tasks.objects.filter(
@@ -118,31 +126,31 @@ def task(request, user):
 
 
 
-@csrf_exempt
-def add_task(request, user):
-    u = Users.objects.get(pk=user)
-    if request.method == 'POST':
-        json_data = json.loads(request.body)
+# @csrf_exempt
+# def add_task(request, user):
+#     u = Users.objects.get(pk=user)
+#     if request.method == 'POST':
+#         json_data = json.loads(request.body)
 
-        d = datetime.datetime.strptime(
-            json_data["date_time"], '%d. %B %Y %H:%M')
+#         d = datetime.datetime.strptime(
+#             json_data["date_time"], '%d. %B %Y %H:%M')
 
-        t = Tasks(user=u, task_name=json_data['name'], task_priority=json_data['priority'],
-                  task_description=json_data['description'], task_attendees=json_data['attendees'], task_date_time=d)
-        t.save()
-        return HttpResponse(f"{user} tasks saved")
+#         t = Tasks(user=u, task_name=json_data['name'], task_priority=json_data['priority'],
+#                   task_description=json_data['description'], task_attendees=json_data['attendees'], task_date_time=d)
+#         t.save()
+#         return HttpResponse(f"{user} tasks saved")
 
 
-@csrf_exempt
-def delete_task(request, user):
-    u = Users.objects.get(pk=user)
-    if request.method == 'DELETE':
-        json_data = json.loads(request.body)
+# @csrf_exempt
+# def delete_task(request, user):
+#     u = Users.objects.get(pk=user)
+#     if request.method == 'DELETE':
+#         json_data = json.loads(request.body)
 
-        t = Tasks.objects.filter(user=u, pk=json_data['task_id'])
-        t.delete()
+#         t = Tasks.objects.filter(user=u, pk=json_data['task_id'])
+#         t.delete()
 
-        return HttpResponse(f"{user} tasks deleted")
+#         return HttpResponse(f"{user} tasks deleted")
 
 
 @csrf_exempt
@@ -165,13 +173,21 @@ def log_in(request):
 
 @csrf_exempt
 def register(request):
+    
     if request.method == "POST" or request.method == "OPTIONS":
         json_data = json.loads(request.body)
+        
+        try: 
+            validate_email(json_data['email'])
+        except:
+            return HttpResponseServerError("Invalid email format")
 
         try:
-
+            
+            
+            
             if Users.objects.get(user_email=json_data['email']).user_registered:
-                return HttpResponseServerError
+                return HttpResponseServerError("Email already registered")
         except:
             salt = uuid.uuid4().hex
             hashed_password = hashlib.sha512(json_data['password'].encode(

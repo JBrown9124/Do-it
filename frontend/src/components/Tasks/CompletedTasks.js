@@ -102,14 +102,9 @@ function CompletedTasks(props) {
                   </div>
                 </Card.Text>
                 <div className="d-grid gap-2"></div>
+               <div className="text-center">
                 <ButtonGroup aria-label="Basic example">
-                  <Button
-                    variant="warning"
-                    // onClick={(e) => seteditModalShow(true)}
-                    size="lg"
-                  >
-                    Edit
-                  </Button>
+                 
                   
                   <Button
                     variant="primary"
@@ -123,11 +118,12 @@ function CompletedTasks(props) {
                     value={task.task_id}
                     onClick={(e) => handledeletecompletedTask(parseInt(e.target.value))}
                     variant="danger"
-                    size="med"
+                    size="lg"
                   >
                     Delete
                   </Button>
                 </ButtonGroup>
+                </div>
               </Card.Body>
             </Card>
           </li>

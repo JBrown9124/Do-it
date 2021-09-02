@@ -67,7 +67,13 @@ function Tasks(props) {
         handleTasks();
       });
   };
-
+  const handledeleteAll = () =>{
+    axios
+      .delete(`http://127.0.0.1:8000/to_do_list/${props.user_id}/tasks`)
+      .then((resp) => {
+        handleTasks();
+      });
+  };
   const handleComplete = (e) => {
     const data = { task_id: e };
 
@@ -88,16 +94,16 @@ function Tasks(props) {
   if (props.completedhandleTasks === true){
     handleTasks(); props.handledcompletedTasks()
   }
-  if (tasks !== null)
+  if (tasks !== null && props.show===true)
     return (
       <div className="taskCard">
         <h1 className="text-center">To-Do List</h1>
-        <ButtonGroup>
-        <Button variant="success" onClick={(e) => setcreateModalShow(true)}>
+        <ButtonGroup className="text-center">
+        <Button variant="success" size="med" onClick={(e) => setcreateModalShow(true)}>
           Create Task
         </Button>
 
-        <DropdownButton variant='secondary' id="dropdown-basic-button" title="Sort by">
+        <DropdownButton size ="med"variant='secondary' id="dropdown-basic-button" title="Sort by">
           <Dropdown.Item href="#/action-1" onClick={() => handleTasks()}>
             Priority
           </Dropdown.Item>
@@ -114,6 +120,14 @@ function Tasks(props) {
             Task Name
           </Dropdown.Item>
         </DropdownButton>
+        {/* <Button
+                    
+                    onClick={() => handledeleteAll()}
+                    variant="danger"
+                    size="lg"
+                  >
+                    Delete All
+                  </Button> */}
         </ButtonGroup>
         {/* <CompletedTasks
               user_id={props.user_id}
@@ -178,7 +192,7 @@ function Tasks(props) {
                     value={task.task_id}
                     onClick={(e) => handleDelete(parseInt(e.target.value))}
                     variant="danger"
-                    size="med"
+                    size="lg"
                   >
                     Delete
                   </Button>

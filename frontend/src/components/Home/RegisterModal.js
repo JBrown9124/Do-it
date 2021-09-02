@@ -13,7 +13,9 @@ function Register(props) {
   const [password2, setPassword2] = useState("");
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const [isError2, setIsError2] = useState(false);
+  const [ispassError, setispasssError] = useState(false);
+  const [isemailvalidError, setisemailvalidError] = useState(false)
+  const [errorMessage, seterrorMessage] = useState("")
   const [data, setData] = useState(null);
 
   const handleSubmit = () => {
@@ -32,6 +34,7 @@ function Register(props) {
           setName("");
           setEmail("");
           setPassword("");
+          setPassword2("")
 
           setLoading(false);
           props.onHide();
@@ -39,11 +42,12 @@ function Register(props) {
         })
         .catch((err) => {
           setLoading(false);
+          seterrorMessage(err.response.data);
           setIsError(true);
-          setIsError2(false);
+          setispasssError(false);
         });
     } else {
-      setIsError2(true);
+      setispasssError(true);
       setLoading(false);
     }
   };
@@ -90,6 +94,7 @@ function Register(props) {
                 Password
               </label>
               <input
+              name="password" autocomplete="off"
                 type="text"
                 className="form-control"
                 id="password"
@@ -103,6 +108,7 @@ function Register(props) {
                 Type password again
               </label>
               <input
+              name="password" autocomplete="off"
                 type="text"
                 className="form-control"
                 id="password2"
@@ -113,10 +119,10 @@ function Register(props) {
             </div>
             {isError && (
               <small className="mt-3 d-inline-block text-danger">
-                Email address already exists. Please try logging in.
+                {errorMessage}
               </small>
             )}
-            {isError2 && (
+            {ispassError && (
               <small className="mt-3 d-inline-block text-danger">
                 Passwords do not match.
               </small>

@@ -4,7 +4,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Row, Container, Col } from "react-bootstrap";
 import React, {useEffect} from "react";
 import Register from "./components/Home/RegisterModal";
-import Routes from "./services/Routes";
+// import Routes from "./services/Routes";
 import Navigation from "./components/NavBar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 
@@ -25,14 +25,18 @@ function App() {
   const [user, setUser] = React.useState(null);
   const [completedTasks, showcompletedTasks] = React.useState(null);
   if (loginmodalShow===false && registermodalShow===false && tasks===false){
-    settasksShow(true)
+    settasksShow(true);
   }
+  
   // if (loginmodalShow===true && registermodalShow===true){
   //   setregistermodalShow(false)
   // }
   // if (loginmodalShow===false && registermodalShow===true){
   //   setloginmodalShow(false)
   // }
+  const handleshowloginhideTasks = () =>{
+    setloginmodalShow(true); settasksShow(false);
+  }
   useEffect(()=>setloginmodalShow(true),
   [registermodalShow]
 
@@ -40,7 +44,7 @@ function App() {
   
   return (
     <div className="container">
-      <Navigation showComplete={(props) => showcompletedTasks(props)} />
+      <Navigation showloginhideTasks={()=>handleshowloginhideTasks()}showComplete={(props) => showcompletedTasks(props)} />
       <div className="App">
       
             <Tasks
@@ -78,7 +82,7 @@ function App() {
             </div>
       
 
-      <Routes />
+      {/* <Routes /> */}
     </div>
   );
 }

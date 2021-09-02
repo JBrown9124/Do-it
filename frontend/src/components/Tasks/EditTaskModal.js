@@ -108,23 +108,35 @@ function EditTaskModal(props) {
                 <label htmlFor="Priority" className="mt-2">
                   Priority
                 </label>
-                <input
+                <select
                   type="text"
                   className="form-control"
                   id="Priority"
                   placeholder="Enter priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                />
+                  
+                >
+                  <option selected>Select level</option>
+                  <option value="A">A</option>
+                  <option value="B">B</option>
+                  <option value="C">C</option>
+                  <option value="D">D</option>
+                  <option value="F">F</option>
+                  
+
+                </select>
               </div>
               <div classNames="form-group">
                 <label htmlFor="Description" className="mt-2">
                   Description
                 </label>
-                <input
+                <textarea
                   type="text"
                   className="form-control"
+                  rows="3"
                   id="Description"
+                  height = "23rem"
                   placeholder="Enter description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
