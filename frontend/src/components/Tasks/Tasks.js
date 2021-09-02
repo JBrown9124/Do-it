@@ -10,6 +10,8 @@ import {
   Row,
   Col,
   DropdownButton,
+  Popover,
+  OverlayTrigger
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -28,13 +30,15 @@ function Tasks(props) {
   // const [userID, setUserID] = useState(null);
   const [tasks, setTasks] = useState(null);
   const [load, isLoaded] = useState(false);
+  const [deletepopOver, showdeletepopOver] = useState(false);
+  const [taskID, settaskID] = useState(null)
 
   const [createmodalShow, setcreateModalShow] = useState(false);
   // const [edittaskID, seteditTaskID] = useState(null);
   const [editModalShow, seteditModalShow] = useState(false);
   // const [confetti, showConfetti] = useState(false);
   // const [completedTasks, showCompletedTasks] = useState(false);
-
+  const[overlayShow,setoverlayShow] = useState(false);
   const handleTasks = (order = "tasks") => {
     axios
       .get(`http://127.0.0.1:8000/to_do_list/${props.user_id}/${order}`)
@@ -64,7 +68,7 @@ function Tasks(props) {
         data: data,
       })
       .then((resp) => {
-        handleTasks();
+        handleTasks(); settaskID(null)
       });
   };
   const handledeleteAll = () =>{
@@ -88,6 +92,26 @@ function Tasks(props) {
         
       });
   };
+  const modifiers = {
+    preventOverflow: {
+      enabled: false,
+    },
+    flip: {
+      enabled: false,
+    },
+  };
+  const popover = (
+    <Popover modifiers={modifiers} id="popover-basic">
+      <Popover.Header as="h3">Are you sure you want to delete?</Popover.Header>
+      <Popover.Body>Note: This will be permanent!</Popover.Body>
+      <ButtonGroup aria-label="Basic example">
+        <Button onClick={(e) => handleDelete(taskID)} variant="secondary">Yes</Button>
+  
+        <Button variant="secondary" onClick={()=>settaskID(null)}>No</Button>
+      </ButtonGroup>
+    </Popover>
+  );
+  
   // if (props.show === false && load === false && props.user_id !== null) {
   //   handleTasks();
   // }
@@ -96,6 +120,7 @@ function Tasks(props) {
   }
   if (tasks !== null && props.show===true)
     return (
+      
       <div className="taskCard">
         <h1 className="text-center">To-Do List</h1>
         <ButtonGroup className="text-center">
@@ -184,18 +209,23 @@ function Tasks(props) {
                     variant="primary"
                     size="lg"
                     value={task.task_id}
-                    onClick={(e) => handleComplete(parseInt(e.target.value))}
+                    onClick={(e) => handleComplete(e.target.value)}
                   >
                     Complete
                   </Button>
+                  
+                  <OverlayTrigger show={taskID===null ? false: true} trigger="click" placement="right" overlay={popover}>
                   <Button
+                    onClick={(e)=>settaskID(taskID===null? e.currentTarget.value: null)}
                     value={task.task_id}
-                    onClick={(e) => handleDelete(parseInt(e.target.value))}
+                    
                     variant="danger"
                     size="lg"
                   >
                     Delete
                   </Button>
+                  </OverlayTrigger>
+                  
                 </ButtonGroup>
               </Card.Body>
             </Card>

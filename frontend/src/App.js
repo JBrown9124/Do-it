@@ -43,7 +43,7 @@ function App() {
   )
   
   return (
-    <div className="container">
+    <div>
       <Navigation showloginhideTasks={()=>handleshowloginhideTasks()}showComplete={(props) => showcompletedTasks(props)} />
       <div className="App">
       

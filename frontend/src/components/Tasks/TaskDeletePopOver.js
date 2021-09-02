@@ -23,11 +23,7 @@ const popover = (
 
 const Example = () => (
   <OverlayTrigger trigger="click" placement="right" overlay={popover}>
-    <Button
-      
-    >
-      Delete Task
-    </Button>
+    
   </OverlayTrigger>
 );
 
