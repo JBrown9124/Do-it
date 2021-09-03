@@ -11,7 +11,9 @@ import {
   Col,
   DropdownButton,
   Popover,
-  OverlayTrigger
+  OverlayTrigger,
+  FormControl,
+  CardColumns
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -25,13 +27,16 @@ import CreateTaskModal from "./CreateTaskModal";
 import EditTaskModal from "./EditTaskModal";
 import useWindowSize from "react-use/lib/useWindowSize";
 import Confetti from "react-confetti";
-import CompletedTasks from "./CompletedTasks";
+import CompletedTasks from "./CompletedTasks/CompletedTasks";
+
 function Tasks(props) {
   // const [userID, setUserID] = useState(null);
   const [tasks, setTasks] = useState(null);
   const [load, isLoaded] = useState(false);
   const [deletepopOver, showdeletepopOver] = useState(false);
   const [taskID, settaskID] = useState(null)
+  const [editData, seteditData] = useState("")
+
 
   const [createmodalShow, setcreateModalShow] = useState(false);
   // const [edittaskID, seteditTaskID] = useState(null);
@@ -92,16 +97,12 @@ function Tasks(props) {
         
       });
   };
-  const modifiers = {
-    preventOverflow: {
-      enabled: false,
-    },
-    flip: {
-      enabled: false,
-    },
-  };
+  const handleEdit = (e) =>{
+    const data = e.split(",")
+    seteditData(data); seteditModalShow(true)
+  }
   const popover = (
-    <Popover modifiers={modifiers} id="popover-basic">
+    <Popover  id="popover-basic">
       <Popover.Header as="h3">Are you sure you want to delete?</Popover.Header>
       <Popover.Body>Note: This will be permanent!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
@@ -111,7 +112,13 @@ function Tasks(props) {
       </ButtonGroup>
     </Popover>
   );
-  
+  const cardBorder = {
+    A:"danger",
+    B:"warning",
+    C:"primary",
+    D:"info",
+    F:"success"
+  }
   // if (props.show === false && load === false && props.user_id !== null) {
   //   handleTasks();
   // }
@@ -121,25 +128,25 @@ function Tasks(props) {
   if (tasks !== null && props.show===true)
     return (
       
-      <div className="taskCard">
-        <h1 className="text-center">To-Do List</h1>
-        <ButtonGroup className="text-center">
+      <div className="tasks-container">
+        <h1 >To-Do List</h1>
+        <ButtonGroup >
         <Button variant="success" size="med" onClick={(e) => setcreateModalShow(true)}>
           Create Task
         </Button>
-
+        
         <DropdownButton size ="med"variant='secondary' id="dropdown-basic-button" title="Sort by">
-          <Dropdown.Item href="#/action-1" onClick={() => handleTasks()}>
+          <Dropdown.Item  onClick={() => handleTasks()}>
             Priority
           </Dropdown.Item>
           <Dropdown.Item
-            href="#/action-2"
+            
             onClick={() => handleTasks("task-by-date")}
           >
             Date and Time
           </Dropdown.Item>
           <Dropdown.Item
-            href="#/action-3"
+            
             onClick={() => handleTasks("task-by-name")}
           >
             Task Name
@@ -168,43 +175,34 @@ function Tasks(props) {
         />
         {tasks.user.map((task) => (
           <li key={task.task_id} className="ulremovebullets">
-            
-            <Card className="taskCard" style={{ width: "20rem" }}>
+            <div className="task-card-seperator">
+            <Card className="mx-auto" border={cardBorder[task.task_priority]} style={{ width: "20rem" }}>
               {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
+              <Card.Header>{task.task_name}</Card.Header>
               <Card.Body>
-                <Card.Title className="text-center">{task.task_name}</Card.Title>
+                {/* <Card.Title ></Card.Title> */}
                 <Card.Text>
-                  <div className="text-center">{task.task_priority} </div>
-                  <div className="text-center">{task.task_description}</div>
-                  <div className="text-center">
+                  {/* <div >{task.task_priority} </div> */}
+                  <div >{task.task_description}</div>
+                  {/* <div>
                   {task.task_attendees}
-                  </div>
+                  </div> */}
 
-                  <div className="text-center">
+                  {/* <div >
                     {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
-                  </div>
+                  </div> */}
                 </Card.Text>
-                <div className="d-grid gap-2"></div>
+                
                 <ButtonGroup aria-label="Basic example">
                   <Button
                     variant="warning"
-                    onClick={(e) => seteditModalShow(true)}
+                    onClick={(e) => handleEdit(e.target.value)}
                     size="lg"
+                    value={[props.user_id, task.task_priority,task.task_name, task.task_id, task.task_description, task.task_date_time]}
                   >
                     Edit
                   </Button>
-                  <EditTaskModal
-                    show={editModalShow}
-                    onHide={() => seteditModalShow(false)}
-                    user_id={props.user_id}
-                    priority={task.task_priority}
-                    name={task.task_name}
-                    id={task.task_id}
-                    description={task.task_description}
-                    attendees={task.task_attendees}
-                    date_time={task.task_date_time}
-                    user={(props) => handleTasks()}
-                  />
+                  
                   <Button
                     variant="primary"
                     size="lg"
@@ -214,9 +212,9 @@ function Tasks(props) {
                     Complete
                   </Button>
                   
-                  <OverlayTrigger show={taskID===null ? false: true} trigger="click" placement="right" overlay={popover}>
+                  <OverlayTrigger   trigger="focus" placement="right" overlay={popover}>
                   <Button
-                    onClick={(e)=>settaskID(taskID===null? e.currentTarget.value: null)}
+                    onClick={(e)=>settaskID(taskID===null? e.target.value: null)}
                     value={task.task_id}
                     
                     variant="danger"
@@ -228,9 +226,24 @@ function Tasks(props) {
                   
                 </ButtonGroup>
               </Card.Body>
+              <Card.Footer>{moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}</Card.Footer>
             </Card>
+            </div>
           </li>
         ))}
+        <EditTaskModal
+                    show={editModalShow}
+                    onHide={() => seteditModalShow(false)}
+                    targeteditData = {editData}
+                    user_id={editData[0]}
+                    // priority={task.task_priority}
+                    // name={task.task_name}
+                    // id={task.task_id}
+                    // description={task.task_description}
+                    // attendees={task.task_attendees}
+                    // date_time={task.task_date_time}
+                    user={(props) => handleTasks()}
+                  />
       </div>
     );
   else return null;

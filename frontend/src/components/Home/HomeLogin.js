@@ -6,7 +6,7 @@ import Login from "./LoginModal";
 import Routes from "../../services/Routes";
 import Navigation from "../NavBar.js";
 import Tasks from "../Tasks/Tasks";
-import CompletedTasks from "../Tasks/CompletedTasks";
+import CompletedTasks from "../Tasks/CompletedTasks/CompletedTasks";
 function HomeLogin() {
   const [modalShow, setModalShow] = React.useState(true);
   const [user, setUser] = React.useState(null);

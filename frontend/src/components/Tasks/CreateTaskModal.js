@@ -27,7 +27,7 @@ function CreateTaskModal(props) {
       name: name,
       priority: priority,
       description: description,
-      attendees: attendees,
+      // attendees: attendees,
       date_time: dateTimeStr,
     };
     
@@ -119,7 +119,7 @@ function CreateTaskModal(props) {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-            <div classNames="form-group">
+            {/* <div classNames="form-group">
               <label htmlFor="Attendees" className="mt-2">
                 Attendees
               </label>
@@ -131,7 +131,7 @@ function CreateTaskModal(props) {
                 value={attendees}
                 onChange={(e) => setAttendees(e.target.value)}
               />
-            </div>
+            </div> */}
             <div classNames="form-group">
               <label htmlFor="dateTime" className="mt-2">
                 What day and time are you planning on completing this task?

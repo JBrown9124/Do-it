@@ -66,6 +66,7 @@ def tasks_by_date(request, user):
 def tasks(request, user):
     u = Users.objects.get(pk=user)
     if request.method == 'GET':
+        
         data = list(Tasks.objects.filter(
             user=u,task_completed=False).order_by('task_priority').values())
 
@@ -103,19 +104,22 @@ def task(request, user):
         d = datetime.datetime.strptime(
             json_data["date_time"], '%d. %B %Y %H:%M')
         t = Tasks(pk=json_data['id'], user=u, task_name=json_data['name'], task_priority=json_data['priority'],
-                  task_description=json_data['description'], task_attendees=json_data['attendees'], task_date_time=d)
+                  task_description=json_data['description'], task_date_time=d)
         t.save()
         return HttpResponse("nice")
     if request.method == 'POST':
         json_data = json.loads(request.body)
+        try:
+            d = datetime.datetime.strptime(
+                json_data["date_time"], '%d. %B %Y %H:%M')
 
-        d = datetime.datetime.strptime(
-            json_data["date_time"], '%d. %B %Y %H:%M')
-
-        t = Tasks(user=u, task_name=json_data['name'], task_priority=json_data['priority'],
-                  task_description=json_data['description'], task_attendees=json_data['attendees'], task_date_time=d)
-        t.save()
-        return HttpResponse(f"{user} tasks saved")
+            t = Tasks(user=u, task_name=json_data['name'], task_priority=json_data['priority'],
+                  task_description=json_data['description'], task_date_time=d)
+            t.save()
+            return HttpResponse(f"{user} tasks saved")
+        except:
+            return HttpResponseError("Invalid input format")
+        
     if request.method == 'DELETE':
         json_data= json.loads(request.body)
         

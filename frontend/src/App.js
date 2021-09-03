@@ -15,7 +15,7 @@ import Login from "./components/Home/LoginModal";
 
 
 import Tasks from "./components/Tasks/Tasks";
-import CompletedTasks from "./components/Tasks/CompletedTasks";
+import CompletedTasks from "./components/Tasks/CompletedTasks/CompletedTasks";
 function App() {
   const [loginmodalShow, setloginmodalShow] = React.useState(true);
   const [registermodalShow, setregistermodalShow] = React.useState(false);
@@ -45,7 +45,7 @@ function App() {
   return (
     <div>
       <Navigation showloginhideTasks={()=>handleshowloginhideTasks()}showComplete={(props) => showcompletedTasks(props)} />
-      <div className="App">
+      <div>
       
             <Tasks
               user_id={user}
@@ -55,6 +55,7 @@ function App() {
               
             />
             <CompletedTasks
+            
               user_id={user}
               show={completedTasks}
               handleCompletedTasks={(props) => showcompletedTasks(props)}

@@ -21,7 +21,7 @@ class Tasks(models.Model):
     task_name = models.CharField(max_length=1000)
     task_priority=models.CharField(max_length=1, default=None)
     task_description = models.TextField()
-    task_attendees = models.IntegerField()
+    
     task_date_time = models.DateTimeField()
     task_completed = models.BooleanField(default=False)
     def __str__(self):

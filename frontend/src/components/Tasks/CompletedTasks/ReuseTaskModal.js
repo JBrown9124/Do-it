@@ -6,7 +6,7 @@ import DateTimePicker from "react-datetime-picker";
 import "react-datetime/css/react-datetime.css";
 import Datetime from "react-datetime";
 import moment from "moment";
-function EditTaskModal(props) {
+function ReuseTaskModal(props) {
   
   const [taskData, settaskData]=useState(null)
   const [name, setName] = useState("");
@@ -19,12 +19,12 @@ function EditTaskModal(props) {
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const handleseteditData=()=>{settaskID(props.targeteditData[3]);setName(props.targeteditData[2]); setPriority(props.targeteditData[1]); setDescription(props.targeteditData[4]); setdateTime(props.targeteditData[5])}
-  useEffect(() => handleseteditData(), [props.show])
+  const handlesetreuseData=()=>{settaskID(props.targetreuseData[3]);setName(props.targetreuseData[2]); setPriority(props.targetreuseData[1]); setDescription(props.targetreuseData[4]); setdateTime(props.targetreuseData[5])}
+  useEffect(() => handlesetreuseData(), [props.show])
 
   const handleSubmit = () => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
-    const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
+    const dateTimeStr = moment(dateTime).format('DD. MMMM YYYY HH:mm')
     setLoading(true);
     setIsError(false);
     const data = {
@@ -33,11 +33,10 @@ function EditTaskModal(props) {
       description: description,
       // attendees: attendees,
       date_time: dateTimeStr,
-      id: taskID,
     };
-
+    
     axios
-      .put(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
+      .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
       .then((res) => {
         // setData(res.data);
 
@@ -48,14 +47,17 @@ function EditTaskModal(props) {
         setdateTime("");
 
         setLoading(false);
+        props.reuseSuccess()
         props.onHide();
         return props.user();
       })
       .catch((err) => {
         setLoading(false);
         setIsError(true);
+        setIsError(false);
       });
   };
+
   
   if (props.show === true) {
     return (
@@ -68,7 +70,7 @@ function EditTaskModal(props) {
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            Edit your Task
+            Reuse Your Completed Task
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -165,7 +167,7 @@ function EditTaskModal(props) {
                 onClick={handleSubmit}
                 disabled={loading}
               >
-                {loading ? "Loading..." : "Change"}
+                {loading ? "Loading..." : "Reuse"}
               </button>
               {/* {data && (
               <div className="mt-3">
@@ -185,4 +187,4 @@ function EditTaskModal(props) {
     );
   } else return null;
 }
-export default EditTaskModal;
+export default ReuseTaskModal;
