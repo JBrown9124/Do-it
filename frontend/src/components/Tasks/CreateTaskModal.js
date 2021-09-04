@@ -17,40 +17,53 @@ function CreateTaskModal(props) {
   const [isError, setIsError] = useState(false);
 
   const [data, setData] = useState(null);
-
+  const makeID=()=>{
+    const ID = Math.random().toString(36).substring(2,7);
+    return ID
+  }
   const handleSubmit = () => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
     const dateTimeStr = moment(dateTime).format('DD. MMMM YYYY HH:mm')
     setLoading(true);
     setIsError(false);
     const data = {
-      name: name,
-      priority: priority,
-      description: description,
+      task_name: name,
+      task_priority: priority,
+      task_description: description,
       // attendees: attendees,
-      date_time: dateTimeStr,
+      task_date_time: dateTimeStr,
+      task_completed: false,
+      task_id:makeID()
     };
-    
-    axios
-      .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
-      .then((res) => {
-        setData(res.data);
-
-        setName("");
+    props.createData(data);
+    setLoading(false);
+            setName("");
         setPriority("");
         setDescription("");
         setAttendees("");
         setdateTime("");
+    props.onHide();}
+    
+  //   axios
+  //     .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
+  //     .then((res) => {
+  //       setData(res.data);
 
-        setLoading(false);
-        props.onHide();
-        return props.user();
-      })
-      .catch((err) => {
-        setLoading(false);
-        setIsError(true);
-      });
-  };
+  //       setName("");
+  //       setPriority("");
+  //       setDescription("");
+  //       setAttendees("");
+  //       setdateTime("");
+
+  //       setLoading(false);
+  //       props.onHide();
+  //       return props.user();
+  //     })
+  //     .catch((err) => {
+  //       setLoading(false);
+  //       setIsError(true);
+  //     });
+  // };
 
   return (
     <div>

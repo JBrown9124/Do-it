@@ -12,7 +12,7 @@ function EditTaskModal(props) {
   const [name, setName] = useState("");
   const [priority, setPriority] = useState("");
   const [description, setDescription] = useState("");
-  const [taskID, settaskID] = useState("")
+  const [taskID, settaskID] = useState(null)
   // const [attendees, setAttendees] = useState(taskData.task_attendees);
   const [dateTime, setdateTime] = useState("");
 
@@ -28,34 +28,44 @@ function EditTaskModal(props) {
     setLoading(true);
     setIsError(false);
     const data = {
-      name: name,
-      priority: priority,
-      description: description,
+      task_name: name,
+      task_priority: priority,
+      task_description: description,
       // attendees: attendees,
-      date_time: dateTimeStr,
-      id: taskID,
+      task_date_time: dateTimeStr,
+      task_id: props.targeteditData[3],
     };
-
-    axios
-      .put(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
-      .then((res) => {
-        // setData(res.data);
-
-        setName("");
+    props.retrieveEditData(data)
+    setLoading(false);
+           setName("");
         setPriority("");
         setDescription("");
         // setAttendees("");
         setdateTime("");
+        settaskID(null)
+    props.onHide();
+  }
 
-        setLoading(false);
-        props.onHide();
-        return props.user();
-      })
-      .catch((err) => {
-        setLoading(false);
-        setIsError(true);
-      });
-  };
+  //   axios
+  //     .put(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
+  //     .then((res) => {
+  //       // setData(res.data);
+
+  //       setName("");
+  //       setPriority("");
+  //       setDescription("");
+  //       // setAttendees("");
+  //       setdateTime("");
+
+  //       setLoading(false);
+  //       props.onHide();
+  //       return props.user();
+  //     })
+  //     .catch((err) => {
+  //       setLoading(false);
+  //       setIsError(true);
+  //     });
+  // };
   
   if (props.show === true) {
     return (

@@ -11,6 +11,7 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from .ResponseModels.tasks import TasksResponseModel
 
 from django.core.exceptions import ValidationError
 import hashlib
@@ -62,15 +63,46 @@ def tasks_by_date(request, user):
         user=u, task_completed=False).order_by('task_date_time').values())
 
     return JsonResponse({'user': data})
+# @csrf_exempt
+# def tasks(request, user):
+#     u = Users.objects.get(pk=user)
+#     if request.method == 'GET':
+#         data = dict()
+#         task_data = list(Tasks.objects.filter(
+#             user=u,task_completed=False).order_by('task_priority').values())
+        
+#         for d in task_data:
+            
+#             d_task_id = d["task_id"]
+#             d_tasks = d
+#             data[d_task_id]=d_tasks
+#         return JsonResponse([data], safe=False)
+    # if request.method == 'GET':
+    #     data = {}
+    #     task_data = Tasks.objects.filter(
+    #         user=u,task_completed=False).order_by('task_priority')
+        
+    #     for d in task_data:
+    #         t = TasksResponseModel()
+    #         t.task_id=d.task_id
+    #         t.tasks=d
+    #         data[d.task_id] = d
+    #     return JsonResponse({'user': data})
+    # if request.method == "DELETE":
+    #     t = Tasks.objects.filter(user_id=u)
+    #     t.delete()
+    #     return HttpResponse("tasks deleted")
 @csrf_exempt
 def tasks(request, user):
     u = Users.objects.get(pk=user)
     if request.method == 'GET':
         
-        data = list(Tasks.objects.filter(
+        Incompleted = list(Tasks.objects.filter(
             user=u,task_completed=False).order_by('task_priority').values())
-
-        return JsonResponse({'user': data})
+        Completed =list(Tasks.objects.filter(
+            user=u,task_completed=True).order_by('task_priority').values())
+        data={"incomplete": Incompleted, "completed": Completed}
+        return JsonResponse(data, safe=False)
     if request.method == "DELETE":
         t = Tasks.objects.filter(user_id=u)
         t.delete()
