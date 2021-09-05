@@ -12,51 +12,65 @@ function ReuseTaskModal(props) {
   const [name, setName] = useState("");
   const [priority, setPriority] = useState("");
   const [description, setDescription] = useState("");
-  const [taskID, settaskID] = useState("")
+  const [taskID, settaskID] = useState(null)
   // const [attendees, setAttendees] = useState(taskData.task_attendees);
   const [dateTime, setdateTime] = useState("");
 
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const makeID = () => {
+    const ID = Math.random().toString(36).substring(2, 7);
+    return ID;
+  };
 
-  const handlesetreuseData=()=>{settaskID(props.targetreuseData[3]);setName(props.targetreuseData[2]); setPriority(props.targetreuseData[1]); setDescription(props.targetreuseData[4]); setdateTime(props.targetreuseData[5])}
-  useEffect(() => handlesetreuseData(), [props.show])
+  const handleseteditData=()=>{settaskID(props.targetReuseData[3]);setName(props.targetReuseData[2]); setPriority(props.targetReuseData[1]); setDescription(props.targetReuseData[4]); setdateTime(props.targetReuseData[5])}
+  useEffect(() => handleseteditData(), [props.show])
 
   const handleSubmit = () => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
-    const dateTimeStr = moment(dateTime).format('DD. MMMM YYYY HH:mm')
+    // const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
     setLoading(true);
     setIsError(false);
     const data = {
-      name: name,
-      priority: priority,
-      description: description,
+      task_name: name,
+      task_priority: priority,
+      task_description: description,
       // attendees: attendees,
-      date_time: dateTimeStr,
+      task_date_time: dateTime,
+      task_id: makeID(),
     };
-    
-    axios
-      .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
-      .then((res) => {
-        // setData(res.data);
-
-        setName("");
+    props.retrieveReuseData(data)
+    setLoading(false);
+           setName("");
         setPriority("");
         setDescription("");
         // setAttendees("");
         setdateTime("");
+        settaskID(null)
+    props.onHide();
+  }
+  //   axios
+  //     .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
+  //     .then((res) => {
+  //       // setData(res.data);
 
-        setLoading(false);
-        props.reuseSuccess()
-        props.onHide();
-        return props.user();
-      })
-      .catch((err) => {
-        setLoading(false);
-        setIsError(true);
-        setIsError(false);
-      });
-  };
+  //       setName("");
+  //       setPriority("");
+  //       setDescription("");
+  //       // setAttendees("");
+  //       setdateTime("");
+
+  //       setLoading(false);
+  //       props.reuseSuccess()
+  //       props.onHide();
+  //       return props.user();
+  //     })
+  //     .catch((err) => {
+  //       setLoading(false);
+  //       setIsError(true);
+  //       setIsError(false);
+  //     });
+  // };
 
   
   if (props.show === true) {
@@ -103,11 +117,11 @@ function ReuseTaskModal(props) {
                   
                 >
                   <option selected>Select level</option>
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="C">C</option>
-                  <option value="D">D</option>
-                  <option value="F">F</option>
+                  <option value="A">High</option>
+                <option value="B">Above Normal</option>
+                <option value="C">Normal</option>
+                <option value="D">Below Normal</option>
+                <option value="F">Low</option>
                   
 
                 </select>

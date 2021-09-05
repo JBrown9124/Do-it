@@ -2,7 +2,7 @@ import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Button, Row, Container, Col } from "react-bootstrap";
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import Register from "./components/Home/RegisterModal";
 // import Routes from "./services/Routes";
 import Navigation from "./components/NavBar.js";
@@ -17,15 +17,21 @@ import Login from "./components/Home/LoginModal";
 import Tasks from "./components/Tasks/Tasks";
 import CompletedTasks from "./components/Tasks/CompletedTasks/CompletedTasks";
 function App() {
-  const [loginmodalShow, setloginmodalShow] = React.useState(true);
-  const [registermodalShow, setregistermodalShow] = React.useState(false);
-  const [tasksShow, settasksShow] = React.useState(false);
-  const [handleTasks, sethandleTasks] = React.useState(false);
-  const [allData, setallData] = React.useState(null)
-  const [completeData, setcompleteData] = React.useState(null)
-  const [incompleteData, setincompleteData] = React.useState(null)
-  const [userID, setUserID] = React.useState(null);
-  const [completedTasks, showcompletedTasks] = React.useState(null);
+  const [loginmodalShow, setloginmodalShow] = useState(true);
+  const [registermodalShow, setregistermodalShow] = useState(false);
+  const [tasksShow, settasksShow] = useState(false);
+  const [handleTasks, sethandleTasks] = useState(false);
+  const [allData, setallData] = useState(null)
+  
+  const [userID, setUserID] = useState(null);
+  const [ShowCompletedTasks, setShowCompletedTasks] = useState(null);
+
+  const [completedData, setCompletedData] = useState([])
+  const [incompletedData, setIncompletedData] = useState([])
+
+  
+
+  // const [completedTask, setCompletedTask] = React.useState(null)
   
   
   // if (loginmodalShow===true && registermodalShow===true){
@@ -34,6 +40,7 @@ function App() {
   // if (loginmodalShow===false && registermodalShow===true){
   //   setloginmodalShow(false)
   // }
+  
   const handleshowloginhideTasks = () =>{
     setloginmodalShow(true); settasksShow(false);
   }
@@ -45,10 +52,10 @@ function App() {
     axios
       .get(`http://127.0.0.1:8000/to_do_list/${userID}/${order}`)
       .then((response) => {
-        setcompleteData(response.data.complete);
-        setincompleteData(response.data.incomplete)
+        setCompletedData(response.data.complete);
+        setIncompletedData(response.data.incomplete)
         // isLoaded(true);
-       console.log(response.data.incomplete);
+       
         
         
       });
@@ -61,11 +68,13 @@ function App() {
   }
   return (
     <div>
-      <Navigation showloginhideTasks={()=>handleshowloginhideTasks()}showComplete={(props) => showcompletedTasks(props)} />
+      <Navigation showloginhideTasks={()=>handleshowloginhideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
       <div>
       
             <Tasks
-              tasksData = {incompleteData}
+              updateTasks ={(props)=> setIncompletedData(props)}
+              incompletedTasksData = {incompletedData}
+              completedTasksData = {completedData}
               user_id={userID}
               show={tasksShow}
               completedhandleTasks={handleTasks}
@@ -73,11 +82,15 @@ function App() {
               
             />
             <CompletedTasks
-              tasksData = {completeData}
+              updateTasks ={(props)=> setCompletedData(props)}
+              incompletedTasksData = {incompletedData}
+              completedTasksData = {completedData}
               user_id={userID}
-              show={completedTasks}
-              handleCompletedTasks={(props) => showcompletedTasks(props)}
+              show={ShowCompletedTasks}
+              handleCompletedTasks={(props) => setShowCompletedTasks(props)}
               handleTasks={(props) => sethandleTasks(true)}
+              
+              
             />
           
           <Register show={registermodalShow}

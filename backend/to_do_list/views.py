@@ -101,7 +101,7 @@ def tasks(request, user):
             user=u,task_completed=False).order_by('task_priority').values())
         Completed =list(Tasks.objects.filter(
             user=u,task_completed=True).order_by('task_priority').values())
-        data={"incomplete": Incompleted, "completed": Completed}
+        data={"incomplete": Incompleted, "complete": Completed}
         return JsonResponse(data, safe=False)
     if request.method == "DELETE":
         t = Tasks.objects.filter(user_id=u)

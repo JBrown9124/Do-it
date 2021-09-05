@@ -22,6 +22,8 @@ import CreateTaskModal from "../CreateTaskModal";
 import EditTaskModal from "../EditTaskModal";
 import useWindowSize from "react-use/lib/useWindowSize";
 import ReuseTaskModal from "./ReuseTaskModal";
+import FlipMove from "react-flip-move";
+import vuid from 'vuid'
 
 
 function CompletedTasks(props) {
@@ -32,55 +34,62 @@ function CompletedTasks(props) {
   const [reusemodalShow, setreusemodalShow] = useState(false);
   const [reuseSuccess, setreuseSuccess] = useState(false);
   const [reuseData, setreuseData]=useState("")
+  
+  
+  
+  
+  
   const handleClose = () => props.handleCompletedTasks(false);
   const handleShow = () => setShow(true);
   
 
-  const handlecompletedTasks = () => {
-    axios
-      .get(`http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`)
-      .then((response) => {
-        setTasks(response.data);
-      });
-  };
-  // const handleclearcompletedTasks = () => {
-  //   axios
-  //     .delete(
-  //       `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`
-  //     )
-  //     .then((response) => {
-  //       handlecompletedTasks();
-  //     });
-  // };
-  // const handledeletecompletedTask = (e) => {
-  //   const data = { task_id: e };
-  //   axios
-  //     .delete(
-  //       `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-task`, {data:data}
-  //     )
-  //     .then((response) => {
-  //       handlecompletedTasks();
-  //     });
-  // };
-  const handlereuseSuccess = () =>{
-    props.handleTasks();
+  const handleUndo = (e) => {
+console.log(e)
+    // const findTaskByID = (task) =>{
+    //   return e === String(task.task_id);
+    // };
+    // findTaskByID(props.completedTasksData)
+    // const foundTask = props.completedTasksData.filter(findTaskByID)
+    const findTaskByID = props.completedTasksData.find(({task_id}) => String(task_id) === e);
+    console.log(findTaskByID);
+    
+    props.incompletedTasksData.unshift(findTaskByID);
+    handleDelete(e);
+    
+
   }
-  
+  const handleDelete = (e) => {
+    
+    const findTasksByID = (task) => {
+      return e !== String(task.task_id);
+    };
+    findTasksByID(props.completedTasksData);
+    const remainingTasks = props.completedTasksData.filter(findTasksByID);
+    
+    props.updateTasks(remainingTasks);
+  };
+ 
   const handleReuse = (e) =>{
+    const makeID =vuid()
+      
+    
+    const findTaskByID = props.completedTasksData.find(({task_id}) => String(task_id) === e);
+    console.log(findTaskByID);
+    const task ={...findTaskByID};
+    task.task_id =makeID;
+    if (findTaskByID === undefined){return null}
+    
+    props.incompletedTasksData.unshift(task);
+  }
+  const handleSendReuseData = (e) =>{
     const data = e.split(",")
     setreuseData(data); setreusemodalShow(true)
   }
-  const handleundocompletedTask = (e) => {
-    const data = { task_id: e };
-    axios
-      .put(
-        `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-task`, data
-      )
-      .then((response) => {
-        handlecompletedTasks();props.handleTasks()
-
-      });
+  const handleRetrieveReuseData = (data) => {
+    console.log(data)
+    props.incompletedTasksData.unshift(data)
   };
+  
   const cardBorder = {
     A:"danger",
     B:"warning",
@@ -88,9 +97,13 @@ function CompletedTasks(props) {
     D:"info",
     F:"success"
   }
-  useEffect(() => handlecompletedTasks(), [props.show]);
-  useEffect(()=>props.handleTasks(), [reuseSuccess]);
-  if (tasks !== null) {
+  
+  
+  
+    
+  
+  // if (props.show === true && props.completedTasksData !== null) {
+    
     return (
       
         <Offcanvas show={props.show} onHide={handleClose}>
@@ -98,33 +111,21 @@ function CompletedTasks(props) {
             <Offcanvas.Title>Completed Tasks</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            {/* <Button
-              onClick={(e) => handleclearcompletedTasks()}
-              variant="danger"
-              size="med"
-            >
-              Clear completed tasks
-            </Button> */}
+          {/* <FlipMove duration={250} easing="ease-out"> */}
 
-            {tasks.user.map((task) => (
+            {props.completedTasksData.map((task) => (
           <li key={task.task_id} className="ulremovebullets">
-            
             <div className="task-card-seperator">
+            
             <Card  border={cardBorder[task.task_priority]} style={{ width: "20rem" }}>
-              {/* <Card.Img variant="top" src="holder.js/100px180" /> */}
+              
               <Card.Header className="text-center">{task.task_name}</Card.Header>
               <Card.Body>
-                {/* <Card.Title ></Card.Title> */}
+                
                 <Card.Text>
-                  {/* <div >{task.task_priority} </div> */}
+                  
                   <div className="text-center">{task.task_description}</div>
-                  {/* <div className="text-center">
-                  Attending: {task.task_attendees} people
-                  </div> */}
-
-                  {/* <div >
-                    {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
-                  </div> */}
+                  
                 </Card.Text>
                 <div className="d-grid gap-2"></div>
                <div className="text-center">
@@ -135,19 +136,21 @@ function CompletedTasks(props) {
                   <Button
                     variant="primary"
                     size="lg"
-                    value={[props.user_id, task.task_priority,task.task_name, task.task_id, task.task_description, task.task_date_time]}
+                    // value={[props.user_id, task.task_priority,task.task_name, task.task_id, task.task_description, task.task_date_time]}
+                    value = {task.task_id}
                     onClick={(e) => handleReuse(e.target.value)}
 
                     
                   >
                     Reuse
-                  </Button><Button
+                  </Button>
+                  <Button
                     variant="warning"
                     size="lg"
                     value={task.task_id}
-                    onClick={(e) => handleundocompletedTask(parseInt(e.target.value))}
+                    onClick={(e) => handleUndo(e.target.value)}
                   >
-                    Undo 
+                    Undo
                   </Button>
                   {/* <Button
                     value={task.task_id}
@@ -166,27 +169,28 @@ function CompletedTasks(props) {
             
           </li>
         ))}
+        {/* </FlipMove> */}
           </Offcanvas.Body>
           <ReuseTaskModal
                     
                     show={reusemodalShow}
                     onHide={() => setreusemodalShow(false)}
                     user_id={reuseData[0]}
-                    targetreuseData={reuseData}
+                    targetReuseData={reuseData}
                     // priority={task.task_priority}
                     // name={task.task_name}
                     // id={task.task_id}
                     // description={task.task_description}
                     // attendees={task.task_attendees}
                     // date_time={task.task_date_time}
-                    reuseSuccess={() => setreuseSuccess(!reuseSuccess)}
+                    retrieveReuseData={(data) => handleRetrieveReuseData(data)}
                   />
         </Offcanvas>
       
     );
-  } else {
-    return null;
-  }
+  // } else {
+  //   return null;
+  // }
 }
 
 export default CompletedTasks;

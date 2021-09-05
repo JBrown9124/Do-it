@@ -24,7 +24,7 @@ function EditTaskModal(props) {
 
   const handleSubmit = () => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
-    const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
+    // const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
     setLoading(true);
     setIsError(false);
     const data = {
@@ -32,7 +32,7 @@ function EditTaskModal(props) {
       task_priority: priority,
       task_description: description,
       // attendees: attendees,
-      task_date_time: dateTimeStr,
+      task_date_time: dateTime,
       task_id: props.targeteditData[3],
     };
     props.retrieveEditData(data)
@@ -111,11 +111,11 @@ function EditTaskModal(props) {
                   
                 >
                   <option selected>Select level</option>
-                  <option value="A">A</option>
-                  <option value="B">B</option>
-                  <option value="C">C</option>
-                  <option value="D">D</option>
-                  <option value="F">F</option>
+                <option value="A">High</option>
+                <option value="B">Above Normal</option>
+                <option value="C">Normal</option>
+                <option value="D">Below Normal</option>
+                <option value="F">Low</option>
                   
 
                 </select>
