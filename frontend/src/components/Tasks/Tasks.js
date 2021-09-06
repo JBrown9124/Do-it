@@ -48,6 +48,7 @@ function Tasks(props) {
   
   useEffect(()=>setSearchResults(props.incompletedTasksData),[props.incompletedTasksData, props.completedTasksData])
   useEffect(() => {
+    setAnimationType("sort");
     const results = props.incompletedTasksData.filter(task_name =>
       task_name.task_name.toLowerCase().includes(searchItem)
     );
@@ -132,35 +133,61 @@ function Tasks(props) {
   
 
   const sortByHighestPriority = () => {
+    setAnimationType("sort");
     const sorted = [...props.incompletedTasksData].sort((a, b) =>
       a.task_priority.localeCompare(b.task_priority)
     );
+    const sortedSearch = [...props.incompletedTasksData].sort((a, b) =>
+      a.task_priority.localeCompare(b.task_priority)
+    );
+    setSearchResults(sortedSearch);
     props.updateTasks(sorted);
   };
   const sortByLowestPriority = () => {
+    setAnimationType("sort");
     const sorted = [...props.incompletedTasksData].sort((a, b) =>
       b.task_priority.localeCompare(a.task_priority)
     );
-
+    const sortedSearch = [...props.incompletedTasksData].sort((a, b) =>
+      b.task_priority.localeCompare(a.task_priority)
+    );
+    setSearchResults(sortedSearch);
     props.updateTasks(sorted);
   };
   const sortByFarthestDate = () => {
+    setAnimationType("sort");
     const sorted = [...props.incompletedTasksData].sort(
       (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
     );
-
+    const sortedSearch = [...props.incompletedTasksData].sort(
+      (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
+    );
+    setSearchResults(sortedSearch);
     props.updateTasks(sorted);
   };
   const sortByClosestDate = () => {
+    setAnimationType("sort");
+    if (searchItem === ""){
     const sorted = [...props.incompletedTasksData].sort(
       (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
     );
-    props.updateTasks(sorted);
+    props.updateTasks(sorted);}
+    else{
+    const sortedSearch = [...searchResults].sort(
+      (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
+    );
+    setSearchResults(sortedSearch);}
+    
   };
   const sortByTaskName = () => {
+    setAnimationType("sort");
     const sorted = [...props.incompletedTasksData].sort((a, b) =>
       a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
     );
+    const sortedSearch = [...props.incompletedTasksData].sort((a, b) =>
+      a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
+    );
+    setSearchResults(sortedSearch);
     props.updateTasks(sorted);
   };
   // const popover = (
@@ -188,6 +215,7 @@ function Tasks(props) {
   const cardAnimation = {
     complete: "accordionHorizontal",
     delete: "elevator",
+    sort: "accordionVertical"
   };
 
   if (props.show === true && props.incompletedTasksData !== null)
@@ -271,10 +299,10 @@ function Tasks(props) {
               Highest Priority
             </Dropdown.Item>
             <Dropdown.Item onClick={() => sortByClosestDate()}>
-              Closest Date
+              Earliest Date/Time
             </Dropdown.Item>
             <Dropdown.Item onClick={() => sortByFarthestDate()}>
-              Farthest Date
+              Latest Date/Time
             </Dropdown.Item>
 
             <Dropdown.Item onClick={() => sortByTaskName()}>
