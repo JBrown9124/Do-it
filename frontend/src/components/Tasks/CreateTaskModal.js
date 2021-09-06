@@ -6,7 +6,8 @@ import DateTimePicker from "react-datetime-picker";
 import "react-datetime/css/react-datetime.css";
 import Datetime from "react-datetime";
 import moment from "moment";
-import vuid from 'vuid'
+import { v4 as uuidv4 } from 'uuid';
+import randomWords from "random-words"
 function CreateTaskModal(props) {
   const [name, setName] = useState("");
   const [priority, setPriority] = useState("");
@@ -21,28 +22,34 @@ function CreateTaskModal(props) {
   
   const handleSubmit = () => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
-    // const dateTimeStr = moment(dateTime).format('DD. MMMM YYYY HH:mm')
+    const dateTimeStr = moment(dateTime).format('DD. MMMM YYYY HH:mm')
+    
     setLoading(true);
-    setIsError(false);
-    const makeID = vuid()
+    
+    const makeID = uuidv4()
     
     const data = {
-      task_name: name,
-      task_priority: priority,
-      task_description: description,
+      task_name: name===""?randomWords():name,
+      task_priority: priority===""?"A":priority,
+      task_description: description===""?randomWords({exactly: 5, join: ' '  }):description,
       // attendees: attendees,
-      task_date_time: dateTime,
+      task_date_time: dateTimeStr,
       task_completed: false,
       task_id: makeID,
     };
+   
     props.createData(data);
-    setLoading(false);
+    
     setName("");
     setPriority("");
     setDescription("");
     setAttendees("");
     setdateTime(new Date());
+    
     props.onHide();
+    
+    
+    
   };
 
   //   axios
@@ -65,7 +72,7 @@ function CreateTaskModal(props) {
   //       setIsError(true);
   //     });
   // };
-
+  
   return (
     <div>
       <Modal
@@ -81,7 +88,7 @@ function CreateTaskModal(props) {
         </Modal.Header>
         <Modal.Body>
           <div style={{ maxWidth: 350 }}>
-            <div classNames="form-group">
+            <div className="form-group">
               <label htmlFor="name" className="mt-2">
                 Name
               </label>
@@ -94,7 +101,7 @@ function CreateTaskModal(props) {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <div classNames="form-group">
+            <div className="form-group">
               <label htmlFor="Priority" className="mt-2">
                 Priority
               </label>
@@ -106,7 +113,7 @@ function CreateTaskModal(props) {
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
               >
-                <option selected>Select level</option>
+                <option >Select type </option>
                 <option value="A">High</option>
                 <option value="B">Above Normal</option>
                 <option value="C">Normal</option>
@@ -114,7 +121,7 @@ function CreateTaskModal(props) {
                 <option value="F">Low</option>
               </select>
             </div>
-            <div classNames="form-group">
+            <div className="form-group">
               <label htmlFor="Description" className="mt-2">
                 Description
               </label>
@@ -142,7 +149,7 @@ function CreateTaskModal(props) {
                 onChange={(e) => setAttendees(e.target.value)}
               />
             </div> */}
-            <div classNames="form-group">
+            <div className="form-group">
               <label htmlFor="dateTime" className="mt-2">
                 What day and time are you planning on completing this task?
               </label>

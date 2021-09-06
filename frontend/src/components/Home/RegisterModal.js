@@ -65,7 +65,7 @@ function Register(props) {
       <Modal.Body>
         <div className="container p-3">
           <div style={{ maxWidth: 350 }}>
-            <div classNames="form-group">
+            <div className="form-group">
               <label htmlFor="name">Name</label>
               <input
                 type="text"
@@ -76,7 +76,7 @@ function Register(props) {
                 onChange={(e) => setName(e.target.value)}
               />
             </div>
-            <div classNames="form-group">
+            <div className="form-group">
               <label htmlFor="email" className="mt-2">
                 Email
               </label>
@@ -89,12 +89,12 @@ function Register(props) {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div classNames="form-group">
+            <div className="form-group">
               <label htmlFor="password" className="mt-2">
                 Password
               </label>
               <input
-              name="password" autocomplete="off"
+              name="password" autoComplete="off"
                 type="text"
                 className="form-control"
                 id="password"
@@ -103,12 +103,12 @@ function Register(props) {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <div classNames="form-group">
+            <div className="form-group">
               <label htmlFor="password" className="mt-2">
                 Type password again
               </label>
               <input
-              name="password" autocomplete="off"
+              name="password" autoComplete="off"
                 type="text"
                 className="form-control"
                 id="password2"

@@ -31,67 +31,36 @@ def completed_tasks(request, user):
         data = list(Tasks.objects.filter(
             user=u, task_completed=True).order_by('task_priority').values())
         return JsonResponse({'user': data})
-    elif request.method =='PUT': 
+    elif request.method == "PUT":
+        
         json_data = json.loads(request.body)
-        t = Tasks.objects.get(pk=json_data['task_id'])
-        t.task_completed = True
-        t.save()
-        return HttpResponse("completed task saved")
+        json_key = {}
+        for key,value in json_data.items():
+            json_key=key
+        if json_key == 'undo_completed_task_id':
+            t = Tasks.objects.get(pk=json_data['undo_completed_task_id'])
+            t.task_completed = False
+            t.save()
+            return HttpResponse("undo complete successful")
+        elif json_key == 'completed_task_id':
+            t = Tasks.objects.get(pk=json_data['completed_task_id'])
+            t.task_completed = True
+            t.save()
+            return HttpResponse("marked complete successful")
     elif request.method == 'DELETE':
-        t = Tasks.objects.filter(user=u,task_completed=True)
-        t.delete()
-        return HttpResponse("completed tasks deleted")
-@csrf_exempt
-def completed_task(request, user):
-    u = Users.objects.get(pk=user)
-    if request.method == 'DELETE':
         json_data = json.loads(request.body)
-        t = Tasks.objects.filter(pk=json_data['task_id'])
-        t.delete()
-        return HttpResponse("completed task deleted")
-    if request.method == "PUT":
-        json_data = json.loads(request.body)
-        t = Tasks.objects.get(pk=json_data['task_id'])
-        t.task_completed = False
-        t.save()
-        return HttpResponse("undo complete successful")
+        if json_data['task_id'] == "all":
+            t = Tasks.objects.filter(user=u,task_completed=True)
+            t.delete()
+            return HttpResponse("completed tasks deleted")
+        else:
+            t = Tasks.objects.filter(pk=json_data['task_id'])
+            t.delete()
+            return HttpResponse("completed task deleted")
 
-def tasks_by_date(request, user):
-    u = Users.objects.get(pk=user)
 
-    data = list(Tasks.objects.filter(
-        user=u, task_completed=False).order_by('task_date_time').values())
 
-    return JsonResponse({'user': data})
-# @csrf_exempt
-# def tasks(request, user):
-#     u = Users.objects.get(pk=user)
-#     if request.method == 'GET':
-#         data = dict()
-#         task_data = list(Tasks.objects.filter(
-#             user=u,task_completed=False).order_by('task_priority').values())
-        
-#         for d in task_data:
-            
-#             d_task_id = d["task_id"]
-#             d_tasks = d
-#             data[d_task_id]=d_tasks
-#         return JsonResponse([data], safe=False)
-    # if request.method == 'GET':
-    #     data = {}
-    #     task_data = Tasks.objects.filter(
-    #         user=u,task_completed=False).order_by('task_priority')
-        
-    #     for d in task_data:
-    #         t = TasksResponseModel()
-    #         t.task_id=d.task_id
-    #         t.tasks=d
-    #         data[d.task_id] = d
-    #     return JsonResponse({'user': data})
-    # if request.method == "DELETE":
-    #     t = Tasks.objects.filter(user_id=u)
-    #     t.delete()
-    #     return HttpResponse("tasks deleted")
+
 @csrf_exempt
 def tasks(request, user):
     u = Users.objects.get(pk=user)
@@ -103,55 +72,6 @@ def tasks(request, user):
             user=u,task_completed=True).order_by('task_priority').values())
         data={"incomplete": Incompleted, "complete": Completed}
         return JsonResponse(data, safe=False)
-    if request.method == "DELETE":
-        t = Tasks.objects.filter(user_id=u)
-        t.delete()
-        return HttpResponse("tasks deleted")
-
-def tasks_by_name(request, user):
-    u = Users.objects.get(pk=user)
-
-    data = list(Tasks.objects.filter(
-        user=u, task_completed=False).order_by('task_name').values())
-
-    return JsonResponse({'user': data})
-
-
-@csrf_exempt
-def task_by_task_id(request, user):
-    u = Users.objects.get(pk=user)
-    if request.method == 'GET':
-        json_data = json.loads(request.body)
-        t = Tasks.objects.filter(user=u, pk=json_data['task_id'])
-        data = list(t.values())
-        return JsonResponse({'task': data})
-
-
-@csrf_exempt
-def task(request, user):
-    
-    u = Users.objects.get(pk=user)
-    if request.method == 'PUT':
-        json_data = json.loads(request.body)
-        d = datetime.datetime.strptime(
-            json_data["date_time"], '%d. %B %Y %H:%M')
-        t = Tasks(pk=json_data['id'], user=u, task_name=json_data['name'], task_priority=json_data['priority'],
-                  task_description=json_data['description'], task_date_time=d)
-        t.save()
-        return HttpResponse("nice")
-    if request.method == 'POST':
-        json_data = json.loads(request.body)
-        try:
-            d = datetime.datetime.strptime(
-                json_data["date_time"], '%d. %B %Y %H:%M')
-
-            t = Tasks(user=u, task_name=json_data['name'], task_priority=json_data['priority'],
-                  task_description=json_data['description'], task_date_time=d)
-            t.save()
-            return HttpResponse(f"{user} tasks saved")
-        except:
-            return HttpResponseError("Invalid input format")
-        
     if request.method == 'DELETE':
         json_data= json.loads(request.body)
         
@@ -159,34 +79,34 @@ def task(request, user):
         t.delete()
 
         return HttpResponse(f"{user} tasks deleted")
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        try:
+            d = datetime.datetime.strptime(
+                json_data["task_date_time"], '%d. %B %Y %H:%M')
+
+            t = Tasks(user=u, task_id=json_data['task_id'], task_name=json_data['task_name'], task_priority=json_data['task_priority'],
+                  task_description=json_data['task_description'], task_date_time=d)
+            t.save()
+            return HttpResponse(f"{user} tasks saved")
+        except:
+            return HttpResponseError("Invalid input format")
+    if request.method == 'PUT':
+        json_data = json.loads(request.body)
+        d = datetime.datetime.strptime(
+            json_data["task_date_time"], '%d. %B %Y %H:%M')
+        t = Tasks(pk=json_data['task_id'], user=u, task_name=json_data['task_name'], task_priority=json_data['task_priority'],
+                  task_description=json_data['task_description'], task_date_time=d)
+        t.save()
+        return HttpResponse("nice")
 
 
 
-# @csrf_exempt
-# def add_task(request, user):
-#     u = Users.objects.get(pk=user)
-#     if request.method == 'POST':
-#         json_data = json.loads(request.body)
-
-#         d = datetime.datetime.strptime(
-#             json_data["date_time"], '%d. %B %Y %H:%M')
-
-#         t = Tasks(user=u, task_name=json_data['name'], task_priority=json_data['priority'],
-#                   task_description=json_data['description'], task_attendees=json_data['attendees'], task_date_time=d)
-#         t.save()
-#         return HttpResponse(f"{user} tasks saved")
 
 
-# @csrf_exempt
-# def delete_task(request, user):
-#     u = Users.objects.get(pk=user)
-#     if request.method == 'DELETE':
-#         json_data = json.loads(request.body)
 
-#         t = Tasks.objects.filter(user=u, pk=json_data['task_id'])
-#         t.delete()
 
-#         return HttpResponse(f"{user} tasks deleted")
+
 
 
 @csrf_exempt

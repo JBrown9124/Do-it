@@ -16,7 +16,7 @@ class Users(models.Model):
     def __str__(self):
         return f"{self.user_email}: {self.user_first_name}"
 class Tasks(models.Model):
-    task_id = models.AutoField(primary_key=True)
+    task_id = models.CharField(primary_key=True, max_length=60)
     user= models.ForeignKey(Users, on_delete=models.CASCADE)
     task_name = models.CharField(max_length=1000)
     task_priority=models.CharField(max_length=1, default=None)

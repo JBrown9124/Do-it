@@ -57,7 +57,7 @@ function Login(props) {
       <Modal.Body>
         <div className="container p-3">
           <div style={{ maxWidth: 350 }}>
-            <div classNames="form-group">
+            <div className="form-group">
               <label htmlFor="email" className="mt-2">
                 Email
               </label>
@@ -78,7 +78,7 @@ function Login(props) {
             <form onSubmit={handleSubmit}>
               <input
                 name="password"
-                autocomplete="off"
+                autoComplete="off"
                 type={passwordShown ? "text" : "password"}
                 className="form-control"
                 id="password"
@@ -87,7 +87,7 @@ function Login(props) {
                 onChange={(e) => setPassword(e.target.value)}
               />
 
-              <Form>
+              
                 <div key={`default-checkbox`} className="mb-3">
                   <Form.Check
                     onClick={togglePassword}
@@ -96,7 +96,7 @@ function Login(props) {
                     label="Show password"
                   />
                 </div>
-              </Form>
+              
 
               {isError && (
                 <small className="mt-3 d-inline-block text-danger">

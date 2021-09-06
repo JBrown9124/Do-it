@@ -7,6 +7,7 @@ import Register from "./components/Home/RegisterModal";
 // import Routes from "./services/Routes";
 import Navigation from "./components/NavBar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "./components/Tasks/Tasks.css";
 
 import axios from "axios";
 
@@ -69,7 +70,7 @@ function App() {
   return (
     <div>
       <Navigation showloginhideTasks={()=>handleshowloginhideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
-      <div>
+      
       
             <Tasks
               updateTasks ={(props)=> setIncompletedData(props)}
@@ -111,7 +112,7 @@ function App() {
           />
           
             
-            </div>
+            
       
 
       {/* <Routes /> */}

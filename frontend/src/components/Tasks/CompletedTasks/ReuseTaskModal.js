@@ -6,6 +6,7 @@ import DateTimePicker from "react-datetime-picker";
 import "react-datetime/css/react-datetime.css";
 import Datetime from "react-datetime";
 import moment from "moment";
+import { v4 as uuidv4 } from 'uuid';
 function ReuseTaskModal(props) {
   
   const [taskData, settaskData]=useState(null)
@@ -18,10 +19,7 @@ function ReuseTaskModal(props) {
 
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
-  const makeID = () => {
-    const ID = Math.random().toString(36).substring(2, 7);
-    return ID;
-  };
+  
 
   const handleseteditData=()=>{settaskID(props.targetReuseData[3]);setName(props.targetReuseData[2]); setPriority(props.targetReuseData[1]); setDescription(props.targetReuseData[4]); setdateTime(props.targetReuseData[5])}
   useEffect(() => handleseteditData(), [props.show])
@@ -37,7 +35,7 @@ function ReuseTaskModal(props) {
       task_description: description,
       // attendees: attendees,
       task_date_time: dateTime,
-      task_id: makeID(),
+      task_id: uuidv4()
     };
     props.retrieveReuseData(data)
     setLoading(false);
@@ -90,7 +88,7 @@ function ReuseTaskModal(props) {
         <Modal.Body>
           
             <div style={{ maxWidth: 350 }}>
-              <div classNames="form-group">
+              <div className="form-group">
                 <label htmlFor="name" className="mt-2">
                   Name
                 </label>
@@ -103,7 +101,7 @@ function ReuseTaskModal(props) {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div classNames="form-group">
+              <div className="form-group">
                 <label htmlFor="Priority" className="mt-2">
                   Priority
                 </label>
@@ -126,7 +124,7 @@ function ReuseTaskModal(props) {
 
                 </select>
               </div>
-              <div classNames="form-group">
+              <div className="form-group">
                 <label htmlFor="Description" className="mt-2">
                   Description
                 </label>
@@ -154,7 +152,7 @@ function ReuseTaskModal(props) {
                   onChange={(e) => setAttendees(e.target.value)}
                 />
               </div> */}
-              <div classNames="form-group">
+              <div className="form-group">
                 <label htmlFor="dateTime" className="mt-2">
                   What day and time are you planning on completing this task?
                 </label>

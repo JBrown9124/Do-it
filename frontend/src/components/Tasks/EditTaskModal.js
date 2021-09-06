@@ -24,7 +24,7 @@ function EditTaskModal(props) {
 
   const handleSubmit = () => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
-    // const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
+    const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
     setLoading(true);
     setIsError(false);
     const data = {
@@ -32,7 +32,7 @@ function EditTaskModal(props) {
       task_priority: priority,
       task_description: description,
       // attendees: attendees,
-      task_date_time: dateTime,
+      task_date_time: dateTimeStr,
       task_id: props.targeteditData[3],
     };
     props.retrieveEditData(data)
@@ -84,7 +84,7 @@ function EditTaskModal(props) {
         <Modal.Body>
           
             <div style={{ maxWidth: 350 }}>
-              <div classNames="form-group">
+              <div className="form-group">
                 <label htmlFor="name" className="mt-2">
                   Name
                 </label>
@@ -97,7 +97,7 @@ function EditTaskModal(props) {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div classNames="form-group">
+              <div className="form-group">
                 <label htmlFor="Priority" className="mt-2">
                   Priority
                 </label>
@@ -120,7 +120,7 @@ function EditTaskModal(props) {
 
                 </select>
               </div>
-              <div classNames="form-group">
+              <div className="form-group">
                 <label htmlFor="Description" className="mt-2">
                   Description
                 </label>
@@ -148,7 +148,7 @@ function EditTaskModal(props) {
                   onChange={(e) => setAttendees(e.target.value)}
                 />
               </div> */}
-              <div classNames="form-group">
+              <div className="form-group">
                 <label htmlFor="dateTime" className="mt-2">
                   What day and time are you planning on completing this task?
                 </label>
