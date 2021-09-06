@@ -45,7 +45,8 @@ function Tasks(props) {
   const [showOffCanvas, setShowOffCanvas] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [searchResults, setSearchResults] = useState([])
-  useEffect(()=>setSearchResults(props.incompletedTasksData),[props.incompletedTasksData])
+  
+  useEffect(()=>setSearchResults(props.incompletedTasksData),[props.incompletedTasksData, props.completedTasksData])
   useEffect(() => {
     const results = props.incompletedTasksData.filter(task_name =>
       task_name.task_name.toLowerCase().includes(searchItem)
@@ -84,6 +85,7 @@ function Tasks(props) {
     };
     filterTasksHelper(props.incompletedTasksData);
     const remainingTasks = props.incompletedTasksData.filter(filterTasksHelper);
+    setSearchResults(remainingTasks);
     props.updateTasks(remainingTasks);
   };
 
@@ -94,7 +96,7 @@ function Tasks(props) {
     };
     findTasksByID(props.incompletedTasksData);
     const remainingTasks = props.incompletedTasksData.filter(findTasksByID);
-
+    setSearchResults(remainingTasks);
     props.updateTasks(remainingTasks);
     setShowOffCanvas(false);
     const data = { task_id: e };

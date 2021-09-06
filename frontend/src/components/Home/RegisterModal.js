@@ -37,7 +37,8 @@ function Register(props) {
           setPassword2("")
 
           setLoading(false);
-          props.onHide();
+          props.user(res.data);
+          props.hideModal()
         
         })
         .catch((err) => {
@@ -53,17 +54,18 @@ function Register(props) {
   };
 
   return (
-    <Modal
-      {...props}
-      size="med"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter">Register</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
+    // <Modal
+    //   {...props}
+    //   size="med"
+    //   aria-labelledby="contained-modal-title-vcenter"
+    //   centered
+    // >
+    //   <Modal.Header>
+    //     <Modal.Title id="contained-modal-title-vcenter">Register</Modal.Title>
+    //   </Modal.Header>
+    //   <Modal.Body>
         <div className="container p-3">
+          <h2>Create account</h2>
           <div style={{ maxWidth: 350 }}>
             <div className="form-group">
               <label htmlFor="name">Name</label>
@@ -127,29 +129,24 @@ function Register(props) {
                 Passwords do not match.
               </small>
             )}
+            </div>
             <button
               type="submit"
               className="btn btn-primary mt-3"
               onClick={handleSubmit}
               disabled={loading}
             >
-              {loading ? "Loading..." : "Register"}
+              {loading ? "Loading..." : "Create"}
             </button>
-            <Button onClick={()=>props.onHide()} variant ='link'>
-  Already registered? Sign in here.
+            <Button onClick={()=>props.showLogin()} variant ='link'>
+  Sign in instead
 </Button>
-            {/* {data && <div className="mt-3">
-          <strong>Output:</strong><br />
-          <pre>{JSON.stringify(data, null, 2)}</pre>
+            
+          
         </div>
-        } */}
-          </div>
-        </div>
-      </Modal.Body>
-      {/* <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
-      </Modal.Footer> */}
-    </Modal>
+       // </Modal.Body> 
+      
+     // </Modal>    
   );
 }
 export default Register;

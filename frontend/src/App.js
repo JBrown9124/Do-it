@@ -1,7 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Row, Container, Col } from "react-bootstrap";
+import { Button, Row, Container, Col, Modal, Carousel } from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import Register from "./components/Home/RegisterModal";
 // import Routes from "./services/Routes";
@@ -12,14 +12,14 @@ import "./components/Tasks/Tasks.css";
 import axios from "axios";
 
 import Login from "./components/Home/LoginModal";
-
+import "./components/Home/Home.css"
 
 
 import Tasks from "./components/Tasks/Tasks";
 import CompletedTasks from "./components/Tasks/CompletedTasks/CompletedTasks";
 function App() {
   const [loginmodalShow, setloginmodalShow] = useState(true);
-  const [registermodalShow, setregistermodalShow] = useState(false);
+  const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [tasksShow, settasksShow] = useState(false);
   const [handleTasks, sethandleTasks] = useState(false);
   const [allData, setallData] = useState(null)
@@ -29,8 +29,9 @@ function App() {
 
   const [completedData, setCompletedData] = useState([])
   const [incompletedData, setIncompletedData] = useState([])
-
-  
+  const [carouselIndex, setCarouselIndex] = useState(0)
+  const [modalShow, setModalShow] = useState(true)
+  const [logOutSuccessful, setLogOutSuccessful] = useState(false)
 
   // const [completedTask, setCompletedTask] = React.useState(null)
   
@@ -42,13 +43,10 @@ function App() {
   //   setloginmodalShow(false)
   // }
   
-  const handleshowloginhideTasks = () =>{
-    setloginmodalShow(true); settasksShow(false);
+  const handleShowLoginHideTasks = () =>{
+    setModalShow(true); settasksShow(false); 
   }
-  useEffect(()=>setloginmodalShow(true),
-  [registermodalShow]
-
-  )
+  
   const handleData= (order = "tasks") => {
     axios
       .get(`http://127.0.0.1:8000/to_do_list/${userID}/${order}`)
@@ -61,15 +59,16 @@ function App() {
         
       });
   };
+  
   useEffect(()=>handleData(), [userID])
-  if (loginmodalShow===false && registermodalShow===false && tasksShow===false){
+  if (modalShow===false && tasksShow===false){
     
     settasksShow(true);
     
   }
   return (
     <div>
-      <Navigation showloginhideTasks={()=>handleshowloginhideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
+      <Navigation showLoginHideTasks={()=>handleShowLoginHideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
       
       
             <Tasks
@@ -93,25 +92,38 @@ function App() {
               
               
             />
+          <Modal show={modalShow} size="sm" keyboard={false} backdrop="static"
+      aria-labelledby="contained-modal-title-vcenter"  centered>
+       
           
-          <Register show={registermodalShow}
-            onHide={() => setregistermodalShow(false)}
-            backdrop="static"
-            keyboard={false}
-            user={(props) => setUserID(props)}
-            showLogin={(props)=>setloginmodalShow(props)}
-            />
-            
+        
+          <Carousel touch={false} keyboard={false} interval={null} indicators={false} controls={false} activeIndex={carouselIndex}>
+          <Carousel.Item>
           <Login
-            show={loginmodalShow}
-            onHide={() => setloginmodalShow(false)}
-            backdrop="static"
-            keyboard={false}
+            // show={loginmodalShow}
+            // onHide={() => setloginmodalShow(false)}
+            // backdrop="static"
+            // keyboard={false}
+            hideModal={()=>setModalShow(false)}
             user={(props) => setUserID(props)}
-            showRegister={(props)=>setregistermodalShow(props)}
+            showRegister={(props)=>setCarouselIndex(1)}
           />
-          
+          </Carousel.Item>
+  <Carousel.Item>
+          <Register
+          //  show={showRegisterModal}
+            // onHide={() => setregistermodalShow(false)}
+            // backdrop="static"
+            // keyboard={false}
+            hideModal={()=>setModalShow(false)}
+            user={(props) => setUserID(props)}
+            showLogin={(props)=>setCarouselIndex(0)}
+            />
+            </Carousel.Item>
             
+          </Carousel>
+          
+      </Modal>
             
       
 

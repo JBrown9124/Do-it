@@ -1,4 +1,4 @@
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, ButtonGroup } from "react-bootstrap";
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -35,7 +35,7 @@ function Login(props) {
         setPassword("");
 
         setLoading(false);
-        props.onHide();
+        props.hideModal()
         return props.user(res.data);
       })
       .catch((err) => {
@@ -45,18 +45,21 @@ function Login(props) {
   };
 
   return (
-    <Modal
-      {...props}
-      size="med"
-      aria-labelledby="contained-modal-title-vcenter"
-      centered
-    >
-      <Modal.Header>
-        <Modal.Title id="contained-modal-title-vcenter">Log In</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
+    // <Modal
+    //   {...props}
+    //   size="med"
+    //   aria-labelledby="contained-modal-title-vcenter"
+    //   centered
+    // >
+    //   <Modal.Header>
+    //     <Modal.Title id="contained-modal-title-vcenter">Log In</Modal.Title>
+    //   </Modal.Header>
+    //   <Modal.Body>
+        
         <div className="container p-3">
+          <h2>Sign in</h2>
           <div style={{ maxWidth: 350 }}>
+            
             <div className="form-group">
               <label htmlFor="email" className="mt-2">
                 Email
@@ -75,7 +78,7 @@ function Login(props) {
               Password
             </label>
 
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} >
               <input
                 name="password"
                 autoComplete="off"
@@ -88,8 +91,9 @@ function Login(props) {
               />
 
               
-                <div key={`default-checkbox`} className="mb-3">
+                <div key={`default-checkbox`}  >
                   <Form.Check
+                  
                     onClick={togglePassword}
                     type="checkbox"
                     id={`default-checkbox`}
@@ -97,40 +101,31 @@ function Login(props) {
                   />
                 </div>
               
-
+                </form>
               {isError && (
                 <small className="mt-3 d-inline-block text-danger">
-                  You have entered an invalid email or password.
+                Invalid email or password.
                 </small>
               )}
-
+              </div>
               <button
                 type="submit"
                 className="btn btn-primary mt-3"
                 onClick={handleSubmit}
                 disabled={loading}
               >
-                {loading ? "Loading..." : "Log In"}
+                {loading ? "Loading..." : "Next"}
               </button>
-            </form>
+            
 
-            {/* {data && (
-              <div className="mt-3">
-                <strong>Output:</strong>
-                <br />
-                <pre>{JSON.stringify(data, null, 2)}</pre>
-              </div>
-            )} */}
-            <Button onClick={() => props.showRegister(true)} variant="link">
-              Not have an account? Sign up here
+           
+            <Button onClick={() => props.showRegister()} variant="link">
+              Create account
             </Button>
-          </div>
+           
+          
         </div>
-      </Modal.Body>
-      {/* <Modal.Footer>
-        <Button onClick={props.onHide}>Close</Button>
-      </Modal.Footer> */}
-    </Modal>
+      
   );
 }
 export default Login;

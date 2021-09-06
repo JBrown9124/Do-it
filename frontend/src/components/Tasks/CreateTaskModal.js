@@ -47,6 +47,7 @@ function CreateTaskModal(props) {
     setdateTime(new Date());
     
     props.onHide();
+    setLoading(false);
     
     
     

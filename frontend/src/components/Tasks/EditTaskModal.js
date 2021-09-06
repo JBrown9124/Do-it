@@ -69,8 +69,9 @@ function EditTaskModal(props) {
   
   if (props.show === true) {
     return (
-      <div>
+      <div >
       <Modal
+      
         {...props}
         size="med"
         aria-labelledby="contained-modal-title-vcenter"
