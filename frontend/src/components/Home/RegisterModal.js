@@ -17,20 +17,25 @@ function Register(props) {
   const [isemailvalidError, setisemailvalidError] = useState(false)
   const [errorMessage, seterrorMessage] = useState("")
   const [data, setData] = useState(null);
-
+  const [passwordShown, setPasswordShown] = useState(false);
+  const togglePassword = () => {
+    // When the handler is invoked
+    // inverse the boolean state of passwordShown
+    setPasswordShown(!passwordShown);
+  };
   const handleSubmit = () => {
     setLoading(true);
     setIsError(false);
     const data = {
-      name: name,
-      email: email,
+      name: name.toLowerCase(),
+      email: email.toLowerCase(),
       password: password,
     };
     if (password === password2) {
       axios
         .post("http://127.0.0.1:8000/to_do_list/register/", data)
         .then((res) => {
-          setData(res.data);
+          // setData(res.data);
           setName("");
           setEmail("");
           setPassword("");
@@ -65,15 +70,15 @@ function Register(props) {
     //   </Modal.Header>
     //   <Modal.Body>
         <div className="container p-3">
-          <h2>Create account</h2>
+          
           <div style={{ maxWidth: 350 }}>
             <div className="form-group">
-              <label htmlFor="name">Name</label>
+              <label htmlFor="name">Display name</label>
               <input
                 type="text"
                 className="form-control"
                 id="name"
-                placeholder="Enter name"
+                placeholder="Enter display name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -91,27 +96,29 @@ function Register(props) {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            <div className="form-group">
+            
               <label htmlFor="password" className="mt-2">
                 Password
               </label>
+              <form onSubmit={handleSubmit} >
               <input
-              name="password" autoComplete="off"
-                type="text"
-                className="form-control"
-                id="password"
-                placeholder="Enter password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+             name="password"
+             autoComplete="off"
+             type={passwordShown ? "text" : "password"}
+             className="form-control"
+             id="password"
+             placeholder="Enter password"
+             value={password}
+             onChange={(e) => setPassword(e.target.value)}
               />
-            </div>
+            
             <div className="form-group">
               <label htmlFor="password" className="mt-2">
-                Type password again
+                Confirm password
               </label>
               <input
               name="password" autoComplete="off"
-                type="text"
+                type={passwordShown ? "text" : "password"}
                 className="form-control"
                 id="password2"
                 placeholder="Enter password"
@@ -119,6 +126,17 @@ function Register(props) {
                 onChange={(e) => setPassword2(e.target.value)}
               />
             </div>
+
+            <div key={`default-checkbox`}  >
+                  <Form.Check
+                    className="reg-modal-pw"
+                    onClick={togglePassword}
+                    type="checkbox"
+                    id={`default-checkbox`}
+                    label="Show password"
+                  />
+                </div>
+                </form>
             {isError && (
               <small className="mt-3 d-inline-block text-danger">
                 {errorMessage}

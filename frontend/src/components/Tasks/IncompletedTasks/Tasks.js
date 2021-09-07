@@ -16,11 +16,12 @@ import {
   CardColumns,
   Fade,
   Offcanvas,
+  ButtonToolbar,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import History from "../../services/History";
-import Routes from "../../services/Routes";
+import History from "../../../services/History";
+import Routes from "../../../services/Routes";
 import { Link } from "react-router-dom";
 
 import Example from "./TaskDeletePopOver";
@@ -29,13 +30,14 @@ import CreateTaskModal from "./CreateTaskModal";
 import EditTaskModal from "./EditTaskModal";
 import useWindowSize from "react-use/lib/useWindowSize";
 import Confetti from "react-confetti";
-import CompletedTasks from "./CompletedTasks/CompletedTasks";
+import CompletedTasks from "../CompletedTasks/CompletedTasks";
 import ReactTransitionGroup from "react-transition-group";
 import FlipMove from "react-flip-move";
 import { Transition } from "react-transition-group";
 import { motion } from "framer-motion";
 function Tasks(props) {
   const [deleteTaskID, setDeleteTaskID] = useState(null);
+  const [deleteTaskName, setDeleteTaskName]=useState(null);
   const [sendEditData, setSendEditData] = useState("");
 
   const [createmodalShow, setcreateModalShow] = useState(false);
@@ -50,16 +52,16 @@ function Tasks(props) {
   useEffect(() => {
     setAnimationType("sort");
     const results = props.incompletedTasksData.filter(task_name =>
-      task_name.task_name.toLowerCase().includes(searchItem)
+      task_name.task_name.toLowerCase().includes(searchItem) || moment(task_name.task_date_time).format("MMMM DD YYYY hh:mm A").toLowerCase().includes(searchItem)
     );
     setSearchResults(results);
   }, [searchItem]);
 
   // const handleClose = () => setShowOffCanvas(false);
-  const handleOffCanvasShow = (e) => {
-    setShowOffCanvas(true);
-    setDeleteTaskID(e);
-  };
+  // const handleOffCanvasShow = (e) => {
+  //   setShowOffCanvas(true);
+  //   setDeleteTaskID(e);
+  // };
   const handleCreate = (data) => {
     props.incompletedTasksData.unshift(data);
     
@@ -109,7 +111,15 @@ function Tasks(props) {
          
       });
   };
-  
+  const handleDeleteOffCanvas =(e) =>{
+    setDeleteTaskID(e);
+    const findTaskByID = props.incompletedTasksData.find(
+      ({ task_id }) => task_id === e
+    );
+    setDeleteTaskName(findTaskByID.task_name);
+    setShowOffCanvas(true);
+
+  }
   const handleRetrieveEditData = (data) => {
     const taskByID = props.incompletedTasksData.find(
       ({ task_id }) => task_id === data.task_id
@@ -134,36 +144,42 @@ function Tasks(props) {
 
   const sortByHighestPriority = () => {
     setAnimationType("sort");
+    if (searchItem === ""){
     const sorted = [...props.incompletedTasksData].sort((a, b) =>
       a.task_priority.localeCompare(b.task_priority)
-    );
-    const sortedSearch = [...props.incompletedTasksData].sort((a, b) =>
+    );props.updateTasks(sorted);
+  }
+    else{const sortedSearch = [...searchResults].sort((a, b) =>
       a.task_priority.localeCompare(b.task_priority)
     );
-    setSearchResults(sortedSearch);
-    props.updateTasks(sorted);
+    setSearchResults(sortedSearch);}
+    
   };
   const sortByLowestPriority = () => {
     setAnimationType("sort");
+    if (searchItem ===""){
     const sorted = [...props.incompletedTasksData].sort((a, b) =>
       b.task_priority.localeCompare(a.task_priority)
-    );
-    const sortedSearch = [...props.incompletedTasksData].sort((a, b) =>
+    );props.updateTasks(sorted);
+  }
+    else{const sortedSearch = [...searchResults].sort((a, b) =>
       b.task_priority.localeCompare(a.task_priority)
     );
-    setSearchResults(sortedSearch);
-    props.updateTasks(sorted);
+    setSearchResults(sortedSearch);}
+    
   };
   const sortByFarthestDate = () => {
     setAnimationType("sort");
+    if (searchItem === ""){
     const sorted = [...props.incompletedTasksData].sort(
       (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
-    );
-    const sortedSearch = [...props.incompletedTasksData].sort(
+    );props.updateTasks(sorted);
+  }
+    else{const sortedSearch = [...searchResults].sort(
       (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
     );
-    setSearchResults(sortedSearch);
-    props.updateTasks(sorted);
+    setSearchResults(sortedSearch);}
+    
   };
   const sortByClosestDate = () => {
     setAnimationType("sort");
@@ -181,14 +197,17 @@ function Tasks(props) {
   };
   const sortByTaskName = () => {
     setAnimationType("sort");
+    if (searchItem === ""){
     const sorted = [...props.incompletedTasksData].sort((a, b) =>
       a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
-    );
-    const sortedSearch = [...props.incompletedTasksData].sort((a, b) =>
+    );props.updateTasks(sorted);
+    }
+    else{
+    const sortedSearch = [...searchResults].sort((a, b) =>
       a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
     );
-    setSearchResults(sortedSearch);
-    props.updateTasks(sorted);
+    setSearchResults(sortedSearch);}
+    
   };
   // const popover = (
   //   <Popover id="popover-basic">
@@ -221,7 +240,7 @@ function Tasks(props) {
   if (props.show === true && props.incompletedTasksData !== null)
     return (
       
-      <div className="tasks-container">
+      <div style={{ position: 'relative' }}>
         <CreateTaskModal
           show={createmodalShow}
           onHide={() => setcreateModalShow(false)}
@@ -242,9 +261,11 @@ function Tasks(props) {
           
         >
           <Offcanvas.Header className="tasks-container">
-            <Offcanvas.Title >Are you sure you want to delete? </Offcanvas.Title>
+            <Offcanvas.Title >Are you sure you want to delete "{deleteTaskName}"? </Offcanvas.Title>
           </Offcanvas.Header>
+          <div className="text-center">This will be permanent!</div>
           <Offcanvas.Body className="tasks-container">
+            
             <ButtonGroup aria-label="Basic example">
               <Button
                 onClick={(e) => handleDelete(deleteTaskID)}
@@ -264,20 +285,23 @@ function Tasks(props) {
             </ButtonGroup>
           </Offcanvas.Body>
         </Offcanvas>
-        <h1 className="top-tasks-buttons">Do or Do Not</h1>
-        <ButtonGroup className="top-tasks-buttons">
+        <h1 className="title">Do or Do not</h1>
+        <ButtonToolbar className="top-tasks-buttons" aria-label="Toolbar with button groups">
+        <ButtonGroup className="me-2" aria-label="First group">
           <Button
             variant="success"
             size="med"
             onClick={(e) => setcreateModalShow(true)}
           >
-            Create Task
+            Create
           </Button>
+          </ButtonGroup>
+          <ButtonGroup className="me-2" aria-label="Second group">
           <Form className="d-flex">
       <FormControl
         onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
         type="search"
-        placeholder="Search name"
+        placeholder="Search"
         className="mr-2"
         aria-label="Search"
         variant = "primary"
@@ -286,6 +310,8 @@ function Tasks(props) {
       />
       {/* <Button variant="outline-primary">Search</Button> */}
     </Form>
+    </ButtonGroup>
+    <ButtonGroup aria-label="Third group">
           <DropdownButton
             size="med"
             variant="secondary"
@@ -293,20 +319,20 @@ function Tasks(props) {
             title="Sort by"
           >
             <Dropdown.Item onClick={() => sortByLowestPriority()}>
-              Lowest Priority
+              Lowest priority
             </Dropdown.Item>
             <Dropdown.Item onClick={() => sortByHighestPriority()}>
-              Highest Priority
+              Highest priority
             </Dropdown.Item>
             <Dropdown.Item onClick={() => sortByClosestDate()}>
-              Earliest Date/Time
+              Earliest date/time
             </Dropdown.Item>
             <Dropdown.Item onClick={() => sortByFarthestDate()}>
-              Latest Date/Time
+              Latest date/time
             </Dropdown.Item>
 
             <Dropdown.Item onClick={() => sortByTaskName()}>
-              Task Name
+              Name
             </Dropdown.Item>
           </DropdownButton>
           {/* <Button
@@ -318,15 +344,19 @@ function Tasks(props) {
                     Delete All
                   </Button> */}
         </ButtonGroup>
+        </ButtonToolbar>
+        <div style={{ position: 'relative' }}>
         <FlipMove
         typeName={null}
           staggerDelayBy={150}
           leaveAnimation={cardAnimation[animationType]}
         >
+          
           {searchResults.map((task) => (
             // <li  className="ulremovebullets">
-            <ul key={task.task_id} className="task-card-seperator">
+            <div className="task-card-seperator"  key={task.task_id} >
               <Card
+             
                 className="mx-auto"
                 border={cardBorder[task.task_priority]}
                 style={{ width: "22rem" }}
@@ -335,7 +365,7 @@ function Tasks(props) {
                 <Card.Body>
                   <Card.Text>{task.task_description}</Card.Text>
 
-                  <ButtonGroup aria-label="Basic example">
+                  <ButtonGroup >
                     <Button
                       variant="warning"
                       onClick={(e) => handleSendEditData(e.target.value)}
@@ -363,7 +393,7 @@ function Tasks(props) {
                     <Button
                       value={task.task_id}
                       variant="danger"
-                      onClick={(e) => handleOffCanvasShow(e.target.value)}
+                      onClick={(e) => handleDeleteOffCanvas(e.target.value)}
                       size="med"
                     >
                       Delete
@@ -389,10 +419,12 @@ function Tasks(props) {
                   {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
                 </Card.Footer>
               </Card>
-            </ul>
-            // {/* </li> */}
+              </div>
+            
           ))}
+          
         </FlipMove>
+        </div>
       </div>
       
     );

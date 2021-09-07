@@ -10,14 +10,14 @@ class Users(models.Model):
     
     user_hash = models.CharField(max_length=1000)
     user_salt = models.CharField(max_length=1000, default=None)
-    user_first_name = models.CharField(max_length=1000)
+    user_display_name = models.CharField(max_length=1000)
     user_email = models.EmailField(max_length=254)
     user_registered = models.BooleanField(default=False)
     def __str__(self):
-        return f"{self.user_email}: {self.user_first_name}"
+        return f"{self.user_email}: {self.user_display_name}"
 class Tasks(models.Model):
     task_id = models.CharField(primary_key=True, max_length=60)
-    user= models.ForeignKey(Users, on_delete=models.CASCADE)
+    user = models.ForeignKey(Users, on_delete=models.CASCADE)
     task_name = models.CharField(max_length=1000)
     task_priority=models.CharField(max_length=1, default=None)
     task_description = models.TextField()

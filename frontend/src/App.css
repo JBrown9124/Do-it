@@ -1,4 +1,4 @@
- .App {
+ /* .App {
   display: flex;
 align-items: center;
 justify-content: center;
@@ -7,8 +7,26 @@ height: 100%
   
   
   
+} */
+@import url("https://fonts.googleapis.com/css?family=Galano Grotesque");
+.app-modal{padding: 10px;
+  display: center;
+  align-items: center;
+  justify-content: center;
+  
+  
+    
+    text-align:center;
+    position:center;
 }
-
+.log-modal-pw{
+  padding: 5px;
+  
+}
+.reg-modal-pw{
+  padding: 5px;
+  
+}
 /* .App-logo {
   height: 40vmin;
   pointer-events: none;

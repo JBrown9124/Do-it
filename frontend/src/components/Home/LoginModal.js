@@ -57,7 +57,7 @@ function Login(props) {
     //   <Modal.Body>
         
         <div className="container p-3">
-          <h2>Sign in</h2>
+          
           <div style={{ maxWidth: 350 }}>
             
             <div className="form-group">
@@ -79,7 +79,7 @@ function Login(props) {
             </label>
 
             <form onSubmit={handleSubmit} >
-              <input
+              <input 
                 name="password"
                 autoComplete="off"
                 type={passwordShown ? "text" : "password"}
@@ -93,7 +93,7 @@ function Login(props) {
               
                 <div key={`default-checkbox`}  >
                   <Form.Check
-                  
+                  className="log-modal-pw"
                     onClick={togglePassword}
                     type="checkbox"
                     id={`default-checkbox`}
@@ -114,7 +114,7 @@ function Login(props) {
                 onClick={handleSubmit}
                 disabled={loading}
               >
-                {loading ? "Loading..." : "Next"}
+                {loading ? "Loading..." : "There is no try"}
               </button>
             
 

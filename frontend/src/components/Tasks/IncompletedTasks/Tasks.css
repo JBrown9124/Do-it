@@ -3,31 +3,27 @@
   }
 
 .tasks-container{
-  display: center;
-align-items: center;
+  
 justify-content: center;
 
 
   
   text-align:center;
-  position:relative;
-  
+ 
+  position:relative
   
   
 }
-.top-tasks-buttons{padding: 15px;
-  display: center;
-  align-items: center;
+.top-tasks-buttons{
+  
   justify-content: center;
   
-  
     
-    text-align:center;
-    position:center;
+    
 }
 
 .task-card-seperator{
-  padding: 1px;
+  margin:5px;
   display: center;
 align-items: center;
 justify-content: center;
@@ -36,6 +32,11 @@ justify-content: center;
   
   text-align:center;
   position:center;
+}
+
+.title{
+  font-family: "Galano Grotesque", sans-serif;
+  text-align:center;
 }
 
 

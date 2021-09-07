@@ -17,10 +17,10 @@ import History from "../../../services/History";
 import Routes from "../../../services/Routes";
 import { Link } from "react-router-dom";
 // import "./Tasks.css";
-import Example from "../TaskDeletePopOver";
+
 import moment from "moment";
-import CreateTaskModal from "../CreateTaskModal";
-import EditTaskModal from "../EditTaskModal";
+import CreateTaskModal from "../IncompletedTasks/CreateTaskModal";
+import EditTaskModal from "../IncompletedTasks/EditTaskModal";
 import useWindowSize from "react-use/lib/useWindowSize";
 import ReuseTaskModal from "./ReuseTaskModal";
 import FlipMove from "react-flip-move";
@@ -35,16 +35,14 @@ function CompletedTasks(props) {
   const [animationType, setAnimationType] = useState("")
   const handleClose = () => props.handleCompletedTasks(false);
   const handleShow = () => setShow(true);
-  const [deletePopOver, showDeletePopOver] = useState(false)
+  const [showDeleteAllPopOver, setShowDeleteAllPopOver] = useState(false)
+  const [showDeletePopOver, setShowDeletePopOver] = useState(false)
+  const [deleteTaskID, setDeleteTaskID] = useState(false)
 
   const handleUndo = (e) => {
     setAnimationType("undo")
     console.log(e);
-    // const findTaskByID = (task) =>{
-    //   return e === String(task.task_id);
-    // };
-    // findTaskByID(props.completedTasksData)
-    // const foundTask = props.completedTasksData.filter(findTaskByID)
+    
     const findTaskByID = props.completedTasksData.find(
       ({ task_id }) => task_id === e
     );
@@ -68,6 +66,10 @@ function CompletedTasks(props) {
 
       });
   };
+  const handleDeletePopOver =(e)=>{
+    setShowDeletePopOver(true);
+    setDeleteTaskID(e);
+  }
   const handleDelete = (e) => {
     setAnimationType("delete")
     const findTasksByID = (task) => {
@@ -75,7 +77,7 @@ function CompletedTasks(props) {
     };
     findTasksByID(props.completedTasksData);
     const remainingTasks = props.completedTasksData.filter(findTasksByID);
-
+    
     props.updateTasks(remainingTasks);
     const data = { task_id: e };
      axios
@@ -88,7 +90,7 @@ function CompletedTasks(props) {
   };
   const handleDeleteAll = () =>{
     setAnimationType("deleteAll");
-    showDeletePopOver(false);
+    setShowDeleteAllPopOver(false);
     props.updateTasks([]);
     const data = { task_id: "all" };
     axios
@@ -131,21 +133,7 @@ function CompletedTasks(props) {
     );
     props.updateTasks(sorted);
   };
-  // const handleReuse = (e) => {
-  //   const makeID = vuid();
-
-  //   const findTaskByID = props.completedTasksData.find(
-  //     ({ task_id }) => String(task_id) === e
-  //   );
-  //   console.log(findTaskByID);
-  //   const task = { ...findTaskByID };
-  //   task.task_id = makeID;
-  //   if (findTaskByID === undefined) {
-  //     return null;
-  //   }
-
-  //   props.incompletedTasksData.unshift(task);
-  // };
+  
  
 
   const cardBorder = {
@@ -160,7 +148,7 @@ function CompletedTasks(props) {
     delete: "elevator",
     deleteAll: "elevator"
   };
-  const popover = (
+  const deleteAllPopover = (
     <Popover className="tasks-container"id="popover-basic">
       <Popover.Header as="h3">Are you sure?</Popover.Header>
       <Popover.Body>This will be permanent!</Popover.Body>
@@ -169,7 +157,22 @@ function CompletedTasks(props) {
           Yes
         </Button>
 
-        <Button variant="primary" onClick={() => showDeletePopOver(false)}>
+        <Button variant="primary" onClick={() => setShowDeleteAllPopOver(false)}>
+          No
+        </Button>
+      </ButtonGroup>
+    </Popover>
+  );
+  const deletePopOver = (
+    <Popover className="tasks-container"id="popover-basic">
+      <Popover.Header as="h3">Are you sure?</Popover.Header>
+      <Popover.Body> This will be permanent!</Popover.Body>
+      <ButtonGroup aria-label="Basic example">
+        <Button onClick={() => handleDelete(deleteTaskID)} variant="danger">
+          Yes
+        </Button>
+
+        <Button variant="primary" onClick={() => setShowDeletePopOver(false)}>
           No
         </Button>
       </ButtonGroup>
@@ -178,25 +181,27 @@ function CompletedTasks(props) {
   // if (props.show === true && props.completedTasksData !== null) {
   
   return (
-    <div >
+    <div  >
+      
     
     <Offcanvas  show={props.show} onHide={handleClose}>
       <Offcanvas.Header closeButton onClick={() => handleClose()}>
-        <Offcanvas.Title>Completed Tasks</Offcanvas.Title>
+        <Offcanvas.Title>Completed</Offcanvas.Title>
       </Offcanvas.Header>
       <Offcanvas.Body>
+        
       <ButtonGroup>
       <OverlayTrigger
                       trigger="focus"
                       placement="right"
-                      overlay={popover}
+                      overlay={deleteAllPopover}
                     >
       <Button
             variant="danger"
             size="sm"
-            onClick={() => showDeletePopOver(true)}
+            onClick={() => setShowDeleteAllPopOver(true)}
           >
-            Clear Completed Tasks
+            Clear Completed
           </Button>
           </OverlayTrigger>
           <DropdownButton
@@ -206,20 +211,20 @@ function CompletedTasks(props) {
             title="Sort by"
           >
             <Dropdown.Item onClick={() => sortByLowestPriority()}>
-              Lowest Priority
+              Lowest priority
             </Dropdown.Item>
             <Dropdown.Item onClick={() => sortByHighestPriority()}>
-              Highest Priority
+              Highest priority
             </Dropdown.Item>
             <Dropdown.Item onClick={() => sortByClosestDate()}>
-              Closest Date
+              Earliest date/time
             </Dropdown.Item>
             <Dropdown.Item onClick={() => sortByFarthestDate()}>
-              Farthest Date
+              Latest date/time
             </Dropdown.Item>
 
             <Dropdown.Item onClick={() => sortByTaskName()}>
-              Task Name
+              Name
             </Dropdown.Item>
           </DropdownButton>
           {/* <Button
@@ -231,17 +236,20 @@ function CompletedTasks(props) {
                     Delete All
                   </Button> */}
         </ButtonGroup>
-        {/* <FlipMove duration={250} easing="ease-out"> */}
-        <div className="tasks-container">
+        <div style={{ position: 'relative' }}>
         <FlipMove typeName={null}
           staggerDelayBy={150}
    
    leaveAnimation={cardAnimation[animationType]}
         >
+        
         {props.completedTasksData.map((task) => (
-          // <li key={task.task_id} className="ulremovebullets">
-            <ul className="task-card-seperator"key={task.task_id}>
+         
+       
+            <div className="task-card-seperator" key={task.task_id}>
               <Card
+              
+              key={task.task_id}
                 border={cardBorder[task.task_priority]}
                 style={{ width: "20rem" }}
               >
@@ -272,14 +280,21 @@ function CompletedTasks(props) {
                       >
                         Undo
                       </Button>
+                      <OverlayTrigger
+                      trigger="focus"
+                      placement="left"
+                      overlay={deletePopOver}
+                    >
                       <Button
                     value={task.task_id}
-                    onClick={(e) => handleDelete(e.target.value)}
+                    // onClick={(e) => handleDelete(e.target.value)}
+                    onClick={(e) => handleDeletePopOver(e.target.value)}
                     variant="danger"
                     size="med"
                   >
                     Delete
                   </Button>
+                  </OverlayTrigger>
                     </ButtonGroup>
                   
                 </Card.Body>
@@ -287,9 +302,10 @@ function CompletedTasks(props) {
                   {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
                 </Card.Footer>
               </Card>
-            </ul>
-          // </li>
+              </div>
+            
         ))}
+        
         </FlipMove>
         </div>
         {/* </FlipMove> */}

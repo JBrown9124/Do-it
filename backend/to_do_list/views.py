@@ -138,18 +138,22 @@ def register(request):
         except:
             return HttpResponseServerError("Invalid email format")
 
+        
+            
         try:
-            
-            
-            
-            if Users.objects.get(user_email=json_data['email']).user_registered:
-                return HttpResponseServerError("Email already registered")
+            try:    
+                if Users.objects.get(user_email=json_data['email']).user_registered:
+                    return HttpResponseServerError("Email already registered")  
+           
+            except:
+                if Users.objects.get(user_display_name=json_data['name']).user_registered:
+                    return HttpResponseServerError("Display name taken")
         except:
             salt = uuid.uuid4().hex
             hashed_password = hashlib.sha512(json_data['password'].encode(
                 'utf-8') + salt.encode('utf-8')).hexdigest()
             u = Users(user_hash=hashed_password, user_salt=salt,
-                      user_first_name=json_data['name'], user_email=json_data['email'], user_registered=True)
+                      user_display_name=json_data['name'], user_email=json_data['email'], user_registered=True)
             u.save()
             return HttpResponse(u.user_id)
 

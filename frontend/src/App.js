@@ -7,7 +7,7 @@ import Register from "./components/Home/RegisterModal";
 // import Routes from "./services/Routes";
 import Navigation from "./components/NavBar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./components/Tasks/Tasks.css";
+import "./components/Tasks/IncompletedTasks/Tasks.css";
 
 import axios from "axios";
 
@@ -15,7 +15,7 @@ import Login from "./components/Home/LoginModal";
 import "./components/Home/Home.css"
 
 
-import Tasks from "./components/Tasks/Tasks";
+import Tasks from "./components/Tasks/IncompletedTasks/Tasks.js";
 import CompletedTasks from "./components/Tasks/CompletedTasks/CompletedTasks";
 function App() {
   const [loginmodalShow, setloginmodalShow] = useState(true);
@@ -67,7 +67,7 @@ function App() {
     
   }
   return (
-    <div>
+    <div style={{ position: 'relative' }}>
       <Navigation showLoginHideTasks={()=>handleShowLoginHideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
       
       
@@ -94,8 +94,9 @@ function App() {
             />
           <Modal show={modalShow} size="sm" keyboard={false} backdrop="static"
       aria-labelledby="contained-modal-title-vcenter"  centered>
-       
-          
+      
+    <Modal.Title className="app-modal" id="contained-modal-title-vcenter">{carouselIndex===1?"Create an account":"Sign in"}</Modal.Title>
+     <p className="text-center"> to continue to Do or Do not</p>
         
           <Carousel touch={false} keyboard={false} interval={null} indicators={false} controls={false} activeIndex={carouselIndex}>
           <Carousel.Item>
