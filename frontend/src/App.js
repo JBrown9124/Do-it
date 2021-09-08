@@ -1,7 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Row, Container, Col, Modal, Carousel } from "react-bootstrap";
+import { Button, Row, Container, Col, Modal, Carousel,} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import Register from "./components/Home/RegisterModal";
 // import Routes from "./services/Routes";
@@ -13,7 +13,7 @@ import axios from "axios";
 
 import Login from "./components/Home/LoginModal";
 import "./components/Home/Home.css"
-
+import "./components/NavBar.css"
 
 import Tasks from "./components/Tasks/IncompletedTasks/Tasks.js";
 import CompletedTasks from "./components/Tasks/CompletedTasks/CompletedTasks";

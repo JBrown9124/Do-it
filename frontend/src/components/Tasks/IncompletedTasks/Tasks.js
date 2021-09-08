@@ -17,6 +17,8 @@ import {
   Fade,
   Offcanvas,
   ButtonToolbar,
+  Navbar,
+  Nav
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -53,7 +55,7 @@ function Tasks(props) {
 
   useEffect(
     () => setSearchResults(props.incompletedTasksData),
-    [props.incompletedTasksData, props.completedTasksData]
+    [props.incompletedTasksData.length, props.completedTasksData.length]
   );
  
   useEffect(() => {
@@ -102,7 +104,7 @@ function Tasks(props) {
     };
     filterTasksHelper(props.incompletedTasksData);
     const remainingTasks = props.incompletedTasksData.filter(filterTasksHelper);
-    setSearchResults(remainingTasks);
+    // setSearchResults(remainingTasks);
     props.updateTasks(remainingTasks);
   };
 
@@ -113,7 +115,7 @@ function Tasks(props) {
     };
     findTasksByID(props.incompletedTasksData);
     const remainingTasks = props.incompletedTasksData.filter(findTasksByID);
-    setSearchResults(remainingTasks);
+    // setSearchResults(remainingTasks);
     props.updateTasks(remainingTasks);
     setShowOffCanvas(false);
     const data = { task_id: e };
@@ -154,73 +156,73 @@ function Tasks(props) {
 
   const sortByHighestPriority = () => {
     setAnimationType("sort");
-    if (searchItem === "") {
-      const sorted = [...props.incompletedTasksData].sort((a, b) =>
-        a.task_priority.localeCompare(b.task_priority)
-      );
-      props.updateTasks(sorted);
-    } else {
+    // if (searchItem === "") { 
+    //   const sorted = [...props.incompletedTasksData].sort((a, b) =>
+    //     a.task_priority.localeCompare(b.task_priority)
+    //   );
+    //   return props.updateTasks(sorted);
+    // } else {
       const sortedSearch = [...searchResults].sort((a, b) =>
         a.task_priority.localeCompare(b.task_priority)
       );
-      setSearchResults(sortedSearch);
-    }
+      return setSearchResults(sortedSearch);
+    
   };
   const sortByLowestPriority = () => {
     setAnimationType("sort");
-    if (searchItem === "") {
-      const sorted = [...props.incompletedTasksData].sort((a, b) =>
-        b.task_priority.localeCompare(a.task_priority)
-      );
-      props.updateTasks(sorted);
-    } else {
+    // if (searchItem === "") {
+    //   const sorted = [...props.incompletedTasksData].sort((a, b) =>
+    //     b.task_priority.localeCompare(a.task_priority)
+    //   );
+    //   return props.updateTasks(sorted);
+    // } else {
       const sortedSearch = [...searchResults].sort((a, b) =>
         b.task_priority.localeCompare(a.task_priority)
       );
-      setSearchResults(sortedSearch);
-    }
+      return setSearchResults(sortedSearch);
+    
   };
   const sortByFarthestDate = () => {
     setAnimationType("sort");
-    if (searchItem === "") {
-      const sorted = [...props.incompletedTasksData].sort(
-        (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
-      );
-      props.updateTasks(sorted);
-    } else {
+    // if (searchItem === "") {
+    //   const sorted = [...props.incompletedTasksData].sort(
+    //     (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
+    //   );
+    //   return props.updateTasks(sorted);
+    // } else {
       const sortedSearch = [...searchResults].sort(
         (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
       );
-      setSearchResults(sortedSearch);
-    }
+      return setSearchResults(sortedSearch);
+    
   };
   const sortByClosestDate = () => {
     setAnimationType("sort");
-    if (searchItem === "") {
-      const sorted = [...props.incompletedTasksData].sort(
-        (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
-      );
-      props.updateTasks(sorted);
-    } else {
+    // if (searchItem === "") {
+    //   const sorted = [...props.incompletedTasksData].sort(
+    //     (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
+    //   );
+    //   return props.updateTasks(sorted);
+    // } else {
       const sortedSearch = [...searchResults].sort(
         (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
       );
-      setSearchResults(sortedSearch);
-    }
+      return setSearchResults(sortedSearch);
+    
   };
   const sortByTaskName = () => {
     setAnimationType("sort");
-    if (searchItem === "") {
-      const sorted = [...props.incompletedTasksData].sort((a, b) =>
-        a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
-      );
-      props.updateTasks(sorted);
-    } else {
+    // if (searchItem === "") {
+    //   const sorted = [...props.incompletedTasksData].sort((a, b) =>
+    //     a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
+    //   );
+    //   return props.updateTasks(sorted);
+    // } else {
       const sortedSearch = [...searchResults].sort((a, b) =>
         a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
       );
-      setSearchResults(sortedSearch);
-    }
+      return setSearchResults(sortedSearch);
+    
   };
   // const popover = (
   //   <Popover id="popover-basic">
@@ -253,7 +255,20 @@ function Tasks(props) {
   if (props.show === true && props.incompletedTasksData !== null)
     return (
       <div>
+<Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
+      
         
+        <Button
+          // className="create-button"
+          className="create-task-nav"
+          variant="success"
+          size="lg"
+          onClick={(e) => setcreateModalShow(true)}
+        >
+          Create
+        </Button>
+        
+    </Navbar>
         <CreateTaskModal
           show={createmodalShow}
           onHide={() => setcreateModalShow(false)}
@@ -298,9 +313,9 @@ function Tasks(props) {
             </ButtonGroup>
           </Offcanvas.Body>
         </Offcanvas>
-        <h1 className="title">Do or Do not</h1>
+        <h2 className="title">Do or Do not</h2>
      {/* <div className="sticky-top">  */}
-        <Button
+        {/* <Button
           // className="create-button"
           className="create-task"
           variant="success"
@@ -308,7 +323,7 @@ function Tasks(props) {
           onClick={(e) => setcreateModalShow(true)}
         >
           Create
-        </Button>
+        </Button> */}
         {/* </div>  */}
         
         <ButtonToolbar

@@ -8,7 +8,7 @@ justify-content: center;
   
   text-align:center;
  
-  position:relative
+
   
   
 }
@@ -43,6 +43,15 @@ left: 50%;
 transform: translate(-50%, -20%); 
  
 
+}
+.create-task-nav{
+  position: relative;
+
+width:100%;
+top: 10%;
+left: 50%;
+-ms-transform: translate(-10%, -50%);
+transform: translate(-50%, 20%); 
 }
 nav-bar-fix{
   position:fixed
@@ -88,6 +97,7 @@ position:relative
 .title{
   font-family: "Galano Grotesque", sans-serif;
   text-align:center;
+  margin-top:80px;
   margin-bottom:20px
 }
 
