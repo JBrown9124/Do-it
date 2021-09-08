@@ -27,6 +27,10 @@ height: 100%
   padding: 5px;
   
 }
+.completed-badge{
+  margin-left:1px
+
+}
 /* .App-logo {
   height: 40vmin;
   pointer-events: none;

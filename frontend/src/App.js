@@ -25,14 +25,14 @@ function App() {
   const [allData, setallData] = useState(null)
   
   const [userID, setUserID] = useState(null);
-  const [ShowCompletedTasks, setShowCompletedTasks] = useState(null);
+  const [showCompletedTasks, setShowCompletedTasks] = useState(null);
 
   const [completedData, setCompletedData] = useState([])
   const [incompletedData, setIncompletedData] = useState([])
   const [carouselIndex, setCarouselIndex] = useState(0)
   const [modalShow, setModalShow] = useState(true)
   const [logOutSuccessful, setLogOutSuccessful] = useState(false)
-
+  
   // const [completedTask, setCompletedTask] = React.useState(null)
   
   
@@ -59,6 +59,8 @@ function App() {
         
       });
   };
+ 
+    
   
   useEffect(()=>handleData(), [userID])
   if (modalShow===false && tasksShow===false){
@@ -67,8 +69,8 @@ function App() {
     
   }
   return (
-    <div style={{ position: 'relative' }}>
-      <Navigation showLoginHideTasks={()=>handleShowLoginHideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
+    <div >
+      <Navigation completeCount={Object.keys(completedData).length} showLoginHideTasks={()=>handleShowLoginHideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
       
       
             <Tasks
@@ -79,6 +81,7 @@ function App() {
               show={tasksShow}
               completedhandleTasks={handleTasks}
               handledcompletedTasks ={ () => sethandleTasks(false)}
+             
               
             />
             <CompletedTasks
@@ -86,9 +89,10 @@ function App() {
               incompletedTasksData = {incompletedData}
               completedTasksData = {completedData}
               user_id={userID}
-              show={ShowCompletedTasks}
+              show={showCompletedTasks}
               handleCompletedTasks={(props) => setShowCompletedTasks(props)}
               handleTasks={(props) => sethandleTasks(true)}
+              completeCount={Object.keys(completedData).length}
               
               
             />

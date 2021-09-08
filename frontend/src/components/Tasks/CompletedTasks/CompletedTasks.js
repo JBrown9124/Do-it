@@ -9,7 +9,7 @@ import {
   Offcanvas,
   OverlayTrigger,
   Popover,
-  DropdownButton
+  DropdownButton,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -24,25 +24,24 @@ import EditTaskModal from "../IncompletedTasks/EditTaskModal";
 import useWindowSize from "react-use/lib/useWindowSize";
 import ReuseTaskModal from "./ReuseTaskModal";
 import FlipMove from "react-flip-move";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 function CompletedTasks(props) {
-  
   const [show, setShow] = useState(false);
   const [reusemodalShow, setreusemodalShow] = useState(false);
-  
+
   const [reuseData, setreuseData] = useState("");
-  const [animationType, setAnimationType] = useState("")
+  const [animationType, setAnimationType] = useState("");
   const handleClose = () => props.handleCompletedTasks(false);
   const handleShow = () => setShow(true);
-  const [showDeleteAllPopOver, setShowDeleteAllPopOver] = useState(false)
-  const [showDeletePopOver, setShowDeletePopOver] = useState(false)
-  const [deleteTaskID, setDeleteTaskID] = useState(false)
+  const [showDeleteAllPopOver, setShowDeleteAllPopOver] = useState(false);
+  const [showDeletePopOver, setShowDeletePopOver] = useState(false);
+  const [deleteTaskID, setDeleteTaskID] = useState(false);
 
   const handleUndo = (e) => {
-    setAnimationType("undo")
+    setAnimationType("undo");
     console.log(e);
-    
+
     const findTaskByID = props.completedTasksData.find(
       ({ task_id }) => task_id === e
     );
@@ -59,47 +58,43 @@ function CompletedTasks(props) {
     const data = { undo_completed_task_id: e };
     axios
       .put(
-        `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`, data
+        `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`,
+        data
       )
-      .then((response) => {
-        
-
-      });
+      .then((response) => {});
   };
-  const handleDeletePopOver =(e)=>{
+  const handleDeletePopOver = (e) => {
     setShowDeletePopOver(true);
     setDeleteTaskID(e);
-  }
+  };
   const handleDelete = (e) => {
-    setAnimationType("delete")
+    setAnimationType("delete");
     const findTasksByID = (task) => {
       return e !== task.task_id;
     };
     findTasksByID(props.completedTasksData);
     const remainingTasks = props.completedTasksData.filter(findTasksByID);
-    
+
     props.updateTasks(remainingTasks);
     const data = { task_id: e };
-     axios
-       .delete(
-         `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`, {data:data}
-       )
-       .then((response) => {
-         
-       });
+    axios
+      .delete(
+        `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`,
+        { data: data }
+      )
+      .then((response) => {});
   };
-  const handleDeleteAll = () =>{
+  const handleDeleteAll = () => {
     setAnimationType("deleteAll");
     setShowDeleteAllPopOver(false);
     props.updateTasks([]);
     const data = { task_id: "all" };
     axios
-       .delete(
-         `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`, {data:data}
-       )
-       .then((response) => {
-         
-       });
+      .delete(
+        `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`,
+        { data: data }
+      )
+      .then((response) => {});
   };
   const sortByHighestPriority = () => {
     const sorted = [...props.completedTasksData].sort((a, b) =>
@@ -133,8 +128,6 @@ function CompletedTasks(props) {
     );
     props.updateTasks(sorted);
   };
-  
- 
 
   const cardBorder = {
     A: "danger",
@@ -146,10 +139,10 @@ function CompletedTasks(props) {
   const cardAnimation = {
     undo: "accordionVertical",
     delete: "elevator",
-    deleteAll: "elevator"
+    deleteAll: "elevator",
   };
   const deleteAllPopover = (
-    <Popover className="tasks-container"id="popover-basic">
+    <Popover className="tasks-container" id="popover-basic">
       <Popover.Header as="h3">Are you sure?</Popover.Header>
       <Popover.Body>This will be permanent!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
@@ -157,14 +150,17 @@ function CompletedTasks(props) {
           Yes
         </Button>
 
-        <Button variant="primary" onClick={() => setShowDeleteAllPopOver(false)}>
+        <Button
+          variant="primary"
+          onClick={() => setShowDeleteAllPopOver(false)}
+        >
           No
         </Button>
       </ButtonGroup>
     </Popover>
   );
   const deletePopOver = (
-    <Popover className="tasks-container"id="popover-basic">
+    <Popover className="tasks-container" id="popover-basic">
       <Popover.Header as="h3">Are you sure?</Popover.Header>
       <Popover.Body> This will be permanent!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
@@ -179,55 +175,53 @@ function CompletedTasks(props) {
     </Popover>
   );
   // if (props.show === true && props.completedTasksData !== null) {
-  
-  return (
-    <div  >
-      
-    
-    <Offcanvas  show={props.show} onHide={handleClose}>
-      <Offcanvas.Header closeButton onClick={() => handleClose()}>
-        <Offcanvas.Title>Completed</Offcanvas.Title>
-      </Offcanvas.Header>
-      <Offcanvas.Body>
-        
-      <ButtonGroup>
-      <OverlayTrigger
-                      trigger="focus"
-                      placement="right"
-                      overlay={deleteAllPopover}
-                    >
-      <Button
-            variant="danger"
-            size="sm"
-            onClick={() => setShowDeleteAllPopOver(true)}
-          >
-            Clear Completed
-          </Button>
-          </OverlayTrigger>
-          <DropdownButton
-            size="sm"
-            variant="secondary"
-            id="dropdown-basic-button"
-            title="Sort by"
-          >
-            <Dropdown.Item onClick={() => sortByLowestPriority()}>
-              Lowest priority
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => sortByHighestPriority()}>
-              Highest priority
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => sortByClosestDate()}>
-              Earliest date/time
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => sortByFarthestDate()}>
-              Latest date/time
-            </Dropdown.Item>
 
-            <Dropdown.Item onClick={() => sortByTaskName()}>
-              Name
-            </Dropdown.Item>
-          </DropdownButton>
-          {/* <Button
+  return (
+    <div>
+      <Offcanvas show={props.show} onHide={handleClose}>
+        <Offcanvas.Header closeButton onClick={() => handleClose()}>
+          <Offcanvas.Title>Completed</Offcanvas.Title>
+        </Offcanvas.Header>
+        <Offcanvas.Body>
+          <ButtonGroup className="completed-task-top-buttons">
+            <OverlayTrigger
+              trigger="focus"
+              placement="right"
+              overlay={deleteAllPopover}
+            >
+              <Button
+                variant="danger"
+                size="sm"
+                onClick={() => setShowDeleteAllPopOver(true)}
+              >
+                Clear Completed
+              </Button>
+            </OverlayTrigger>
+            <DropdownButton
+              size="sm"
+              variant="secondary"
+              id="dropdown-basic-button"
+              title="Sort by"
+              className="completed-sort-by"
+            >
+              <Dropdown.Item onClick={() => sortByLowestPriority()}>
+                Lowest priority
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => sortByHighestPriority()}>
+                Highest priority
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => sortByClosestDate()}>
+                Earliest date/time
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => sortByFarthestDate()}>
+                Latest date/time
+              </Dropdown.Item>
+
+              <Dropdown.Item onClick={() => sortByTaskName()}>
+                Name
+              </Dropdown.Item>
+            </DropdownButton>
+            {/* <Button
                     
                     onClick={() => handledeleteAll()}
                     variant="danger"
@@ -235,33 +229,20 @@ function CompletedTasks(props) {
                   >
                     Delete All
                   </Button> */}
-        </ButtonGroup>
-        <div style={{ position: 'relative' }}>
-        <FlipMove typeName={null}
-          staggerDelayBy={150}
-   
-   leaveAnimation={cardAnimation[animationType]}
-        >
-        
-        {props.completedTasksData.map((task) => (
+          </ButtonGroup>
+
          
-       
-            <div className="task-card-seperator" key={task.task_id}>
-              <Card
-              
-              key={task.task_id}
-                border={cardBorder[task.task_priority]}
-                style={{ width: "20rem" }}
-              >
-                <Card.Header >
-                  {task.task_name}
-                </Card.Header>
-                <Card.Body>
-                  <Card.Text>
-                    {task.task_description}
-                  </Card.Text>
-                  
-                 
+            {props.completedTasksData.map((task) => (
+              <div className="completed-task-card-seperator" key={task.task_id}>
+                <Card className="completed-task-card"
+                  key={task.task_id}
+                  border={cardBorder[task.task_priority]}
+                  style={{ width: "20rem" }}
+                >
+                  <Card.Header>{task.task_name}</Card.Header>
+                  <Card.Body>
+                    <Card.Text>{task.task_description}</Card.Text>
+
                     <ButtonGroup aria-label="Basic example">
                       {/* <Button
                         variant="primary"
@@ -281,37 +262,33 @@ function CompletedTasks(props) {
                         Undo
                       </Button>
                       <OverlayTrigger
-                      trigger="focus"
-                      placement="left"
-                      overlay={deletePopOver}
-                    >
-                      <Button
-                    value={task.task_id}
-                    // onClick={(e) => handleDelete(e.target.value)}
-                    onClick={(e) => handleDeletePopOver(e.target.value)}
-                    variant="danger"
-                    size="med"
-                  >
-                    Delete
-                  </Button>
-                  </OverlayTrigger>
+                        trigger="focus"
+                        placement="left"
+                        overlay={deletePopOver}
+                      >
+                        <Button
+                          value={task.task_id}
+                          // onClick={(e) => handleDelete(e.target.value)}
+                          onClick={(e) => handleDeletePopOver(e.target.value)}
+                          variant="danger"
+                          size="med"
+                        >
+                          Delete
+                        </Button>
+                      </OverlayTrigger>
                     </ButtonGroup>
-                  
-                </Card.Body>
-                <Card.Footer >
-                  {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
-                </Card.Footer>
-              </Card>
+                  </Card.Body>
+                  <Card.Footer>
+                    {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
+                  </Card.Footer>
+                </Card>
               </div>
-            
-        ))}
-        
-        </FlipMove>
-        </div>
-        {/* </FlipMove> */}
-      </Offcanvas.Body>
-      
-    </Offcanvas>
+            ))}
+         
+
+          {/* </FlipMove> */}
+        </Offcanvas.Body>
+      </Offcanvas>
     </div>
   );
   // } else {

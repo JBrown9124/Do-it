@@ -1,13 +1,24 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 
-import { Navbar, Nav, NavDropdown, Form, FormControl, OverlayTrigger, ButtonGroup, Button, Popover} from "react-bootstrap";
+import {
+  Navbar,
+  Nav,
+  NavDropdown,
+  Form,
+  FormControl,
+  OverlayTrigger,
+  ButtonGroup,
+  Button,
+  Popover,
+  Badge,
+} from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 
 const Navigation = (props) => {
-  const [showLogOutPopOver, setShowLogOutPopOver]=useState(false)
-  
+  const [showLogOutPopOver, setShowLogOutPopOver] = useState(false);
+
   const LogOutPopOver = (
-    <Popover className="tasks-container"id="popover-basic">
+    <Popover className="tasks-container" id="popover-basic">
       <Popover.Header as="h3">Are you sure you want to leave?</Popover.Header>
       <Popover.Body> Hate to see you go!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
@@ -22,28 +33,38 @@ const Navigation = (props) => {
     </Popover>
   );
   return (
-    
-    <Navbar collapseOnSelect className="Navcontainer">
+    <div className="sticky-top">
+    <Navbar bg="light" collapseOnSelect className="Navcontainer">
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav>
-        <OverlayTrigger
-                      trigger="focus"
-                      placement="bottom"
-                      overlay={LogOutPopOver}
-                    >
-          <Nav.Link onClick={()=> setShowLogOutPopOver(true)}className="Navbtn">
-            Log out
-
-          </Nav.Link>
+          <OverlayTrigger
+            trigger="focus"
+            placement="bottom"
+            overlay={LogOutPopOver}
+          >
+            <Nav.Link bg="light"
+              onClick={() => setShowLogOutPopOver(true)}
+              className="Navbtn"
+            >
+              Log out
+            </Nav.Link>
           </OverlayTrigger>
-          <Nav.Link className="Navbtn" onClick={()=>props.showComplete(true)} >
-            Completed 
-            
+          <Nav.Link bg="light"className="Navbtn" onClick={() => props.showComplete(true)}>
+            Completed
+            <Badge className="completed-badge" bg="secondary">
+              {props.completeCount}
+            </Badge>
+          </Nav.Link>
+          <Nav.Link bg="light"className="Navbtn" onClick={() => props.showComplete(true)}>
+            Social
+            <Badge className="completed-badge" bg="secondary">
+              {props.completeCount}
+            </Badge>
           </Nav.Link>
         </Nav>
       </Navbar.Collapse>
     </Navbar>
-    
+    </div>
   );
 };
 

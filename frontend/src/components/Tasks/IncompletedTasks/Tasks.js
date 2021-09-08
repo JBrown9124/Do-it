@@ -35,9 +35,11 @@ import ReactTransitionGroup from "react-transition-group";
 import FlipMove from "react-flip-move";
 import { Transition } from "react-transition-group";
 import { motion } from "framer-motion";
+import Draggable from "react-draggable";
+import ScrollUpButton from "react-scroll-up-button"
 function Tasks(props) {
   const [deleteTaskID, setDeleteTaskID] = useState(null);
-  const [deleteTaskName, setDeleteTaskName]=useState(null);
+  const [deleteTaskName, setDeleteTaskName] = useState(null);
   const [sendEditData, setSendEditData] = useState("");
 
   const [createmodalShow, setcreateModalShow] = useState(false);
@@ -46,13 +48,23 @@ function Tasks(props) {
   const [animationType, setAnimationType] = useState("delete");
   const [showOffCanvas, setShowOffCanvas] = useState(false);
   const [searchItem, setSearchItem] = useState("");
-  const [searchResults, setSearchResults] = useState([])
-  
-  useEffect(()=>setSearchResults(props.incompletedTasksData),[props.incompletedTasksData, props.completedTasksData])
+  const [searchResults, setSearchResults] = useState([]);
+  const [flipDisabled, setFlipDisabled] = useState(true)
+
+  useEffect(
+    () => setSearchResults(props.incompletedTasksData),
+    [props.incompletedTasksData, props.completedTasksData]
+  );
+ 
   useEffect(() => {
     setAnimationType("sort");
-    const results = props.incompletedTasksData.filter(task_name =>
-      task_name.task_name.toLowerCase().includes(searchItem) || moment(task_name.task_date_time).format("MMMM DD YYYY hh:mm A").toLowerCase().includes(searchItem)
+    const results = props.incompletedTasksData.filter(
+      (task_name) =>
+        task_name.task_name.toLowerCase().includes(searchItem) ||
+        moment(task_name.task_date_time)
+          .format("MMMM DD YYYY hh:mm A")
+          .toLowerCase()
+          .includes(searchItem)
     );
     setSearchResults(results);
   }, [searchItem]);
@@ -63,13 +75,15 @@ function Tasks(props) {
   //   setDeleteTaskID(e);
   // };
   const handleCreate = (data) => {
+    
     props.incompletedTasksData.unshift(data);
     
     axios
       .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/tasks`, data)
-      .then((res) => {})
+      .then((res) => {});
   };
   const handleComplete = (e) => {
+    
     setAnimationType("complete");
     const findTaskByID = props.incompletedTasksData.find(
       ({ task_id }) => task_id === e
@@ -107,19 +121,16 @@ function Tasks(props) {
       .delete(`http://127.0.0.1:8000/to_do_list/${props.user_id}/tasks`, {
         data: data,
       })
-      .then((resp) => {
-         
-      });
+      .then((resp) => {});
   };
-  const handleDeleteOffCanvas =(e) =>{
+  const handleDeleteOffCanvas = (e) => {
     setDeleteTaskID(e);
     const findTaskByID = props.incompletedTasksData.find(
       ({ task_id }) => task_id === e
     );
     setDeleteTaskName(findTaskByID.task_name);
     setShowOffCanvas(true);
-
-  }
+  };
   const handleRetrieveEditData = (data) => {
     const taskByID = props.incompletedTasksData.find(
       ({ task_id }) => task_id === data.task_id
@@ -140,74 +151,76 @@ function Tasks(props) {
     setSendEditData(data);
     setEditModalShow(true);
   };
-  
 
   const sortByHighestPriority = () => {
     setAnimationType("sort");
-    if (searchItem === ""){
-    const sorted = [...props.incompletedTasksData].sort((a, b) =>
-      a.task_priority.localeCompare(b.task_priority)
-    );props.updateTasks(sorted);
-  }
-    else{const sortedSearch = [...searchResults].sort((a, b) =>
-      a.task_priority.localeCompare(b.task_priority)
-    );
-    setSearchResults(sortedSearch);}
-    
+    if (searchItem === "") {
+      const sorted = [...props.incompletedTasksData].sort((a, b) =>
+        a.task_priority.localeCompare(b.task_priority)
+      );
+      props.updateTasks(sorted);
+    } else {
+      const sortedSearch = [...searchResults].sort((a, b) =>
+        a.task_priority.localeCompare(b.task_priority)
+      );
+      setSearchResults(sortedSearch);
+    }
   };
   const sortByLowestPriority = () => {
     setAnimationType("sort");
-    if (searchItem ===""){
-    const sorted = [...props.incompletedTasksData].sort((a, b) =>
-      b.task_priority.localeCompare(a.task_priority)
-    );props.updateTasks(sorted);
-  }
-    else{const sortedSearch = [...searchResults].sort((a, b) =>
-      b.task_priority.localeCompare(a.task_priority)
-    );
-    setSearchResults(sortedSearch);}
-    
+    if (searchItem === "") {
+      const sorted = [...props.incompletedTasksData].sort((a, b) =>
+        b.task_priority.localeCompare(a.task_priority)
+      );
+      props.updateTasks(sorted);
+    } else {
+      const sortedSearch = [...searchResults].sort((a, b) =>
+        b.task_priority.localeCompare(a.task_priority)
+      );
+      setSearchResults(sortedSearch);
+    }
   };
   const sortByFarthestDate = () => {
     setAnimationType("sort");
-    if (searchItem === ""){
-    const sorted = [...props.incompletedTasksData].sort(
-      (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
-    );props.updateTasks(sorted);
-  }
-    else{const sortedSearch = [...searchResults].sort(
-      (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
-    );
-    setSearchResults(sortedSearch);}
-    
+    if (searchItem === "") {
+      const sorted = [...props.incompletedTasksData].sort(
+        (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
+      );
+      props.updateTasks(sorted);
+    } else {
+      const sortedSearch = [...searchResults].sort(
+        (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
+      );
+      setSearchResults(sortedSearch);
+    }
   };
   const sortByClosestDate = () => {
     setAnimationType("sort");
-    if (searchItem === ""){
-    const sorted = [...props.incompletedTasksData].sort(
-      (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
-    );
-    props.updateTasks(sorted);}
-    else{
-    const sortedSearch = [...searchResults].sort(
-      (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
-    );
-    setSearchResults(sortedSearch);}
-    
+    if (searchItem === "") {
+      const sorted = [...props.incompletedTasksData].sort(
+        (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
+      );
+      props.updateTasks(sorted);
+    } else {
+      const sortedSearch = [...searchResults].sort(
+        (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
+      );
+      setSearchResults(sortedSearch);
+    }
   };
   const sortByTaskName = () => {
     setAnimationType("sort");
-    if (searchItem === ""){
-    const sorted = [...props.incompletedTasksData].sort((a, b) =>
-      a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
-    );props.updateTasks(sorted);
+    if (searchItem === "") {
+      const sorted = [...props.incompletedTasksData].sort((a, b) =>
+        a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
+      );
+      props.updateTasks(sorted);
+    } else {
+      const sortedSearch = [...searchResults].sort((a, b) =>
+        a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
+      );
+      setSearchResults(sortedSearch);
     }
-    else{
-    const sortedSearch = [...searchResults].sort((a, b) =>
-      a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
-    );
-    setSearchResults(sortedSearch);}
-    
   };
   // const popover = (
   //   <Popover id="popover-basic">
@@ -234,13 +247,13 @@ function Tasks(props) {
   const cardAnimation = {
     complete: "accordionHorizontal",
     delete: "elevator",
-    sort: "accordionVertical"
+    sort: "accordionVertical",
   };
 
   if (props.show === true && props.incompletedTasksData !== null)
     return (
-      
-      <div style={{ position: 'relative' }}>
+      <div>
+        
         <CreateTaskModal
           show={createmodalShow}
           onHide={() => setcreateModalShow(false)}
@@ -258,14 +271,14 @@ function Tasks(props) {
           show={showOffCanvas}
           onHide={() => setShowOffCanvas(false)}
           placement="bottom"
-          
         >
           <Offcanvas.Header className="tasks-container">
-            <Offcanvas.Title >Are you sure you want to delete "{deleteTaskName}"? </Offcanvas.Title>
+            <Offcanvas.Title>
+              Are you sure you want to delete "{deleteTaskName}"?{" "}
+            </Offcanvas.Title>
           </Offcanvas.Header>
           <div className="text-center">This will be permanent!</div>
           <Offcanvas.Body className="tasks-container">
-            
             <ButtonGroup aria-label="Basic example">
               <Button
                 onClick={(e) => handleDelete(deleteTaskID)}
@@ -286,56 +299,64 @@ function Tasks(props) {
           </Offcanvas.Body>
         </Offcanvas>
         <h1 className="title">Do or Do not</h1>
-        <ButtonToolbar className="top-tasks-buttons" aria-label="Toolbar with button groups">
-        <ButtonGroup className="me-2" aria-label="First group">
-          <Button
-            variant="success"
-            size="med"
-            onClick={(e) => setcreateModalShow(true)}
-          >
-            Create
-          </Button>
-          </ButtonGroup>
+     {/* <div className="sticky-top">  */}
+        <Button
+          // className="create-button"
+          className="create-task"
+          variant="success"
+          size="med"
+          onClick={(e) => setcreateModalShow(true)}
+        >
+          Create
+        </Button>
+        {/* </div>  */}
+        
+        <ButtonToolbar
+          className="top-tasks-buttons"
+          aria-label="Toolbar with button groups"
+        >
           <ButtonGroup className="me-2" aria-label="Second group">
-          <Form className="d-flex">
-      <FormControl
-        onKeyPress={(e) => { e.key === 'Enter' && e.preventDefault(); }}
-        type="search"
-        placeholder="Search"
-        className="mr-2"
-        aria-label="Search"
-        variant = "primary"
-        value={searchItem}
-        onChange={(e)=>setSearchItem(e.target.value)}
-      />
-      {/* <Button variant="outline-primary">Search</Button> */}
-    </Form>
-    </ButtonGroup>
-    <ButtonGroup aria-label="Third group">
-          <DropdownButton
-            size="med"
-            variant="secondary"
-            id="dropdown-basic-button"
-            title="Sort by"
-          >
-            <Dropdown.Item onClick={() => sortByLowestPriority()}>
-              Lowest priority
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => sortByHighestPriority()}>
-              Highest priority
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => sortByClosestDate()}>
-              Earliest date/time
-            </Dropdown.Item>
-            <Dropdown.Item onClick={() => sortByFarthestDate()}>
-              Latest date/time
-            </Dropdown.Item>
+            <Form className="d-flex">
+              <FormControl
+                onKeyPress={(e) => {
+                  e.key === "Enter" && e.preventDefault();
+                }}
+                type="search"
+                placeholder="Search"
+                className="mr-2"
+                aria-label="Search"
+                variant="primary"
+                value={searchItem}
+                onChange={(e) => setSearchItem(e.target.value)}
+              />
+              {/* <Button variant="outline-primary">Search</Button> */}
+            </Form>
+          </ButtonGroup>
+          <ButtonGroup aria-label="Third group">
+            <DropdownButton
+              size="med"
+              variant="secondary"
+              id="dropdown-basic-button"
+              title="Sort by"
+            >
+              <Dropdown.Item onClick={() => sortByLowestPriority()}>
+                Lowest priority
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => sortByHighestPriority()}>
+                Highest priority
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => sortByClosestDate()}>
+                Earliest date/time
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => sortByFarthestDate()}>
+                Latest date/time
+              </Dropdown.Item>
 
-            <Dropdown.Item onClick={() => sortByTaskName()}>
-              Name
-            </Dropdown.Item>
-          </DropdownButton>
-          {/* <Button
+              <Dropdown.Item onClick={() => sortByTaskName()}>
+                Name
+              </Dropdown.Item>
+            </DropdownButton>
+            {/* <Button
                     
                     onClick={() => handledeleteAll()}
                     variant="danger"
@@ -343,21 +364,15 @@ function Tasks(props) {
                   >
                     Delete All
                   </Button> */}
-        </ButtonGroup>
+          </ButtonGroup>
         </ButtonToolbar>
-        <div style={{ position: 'relative' }}>
-        <FlipMove
-        typeName={null}
-          staggerDelayBy={150}
-          leaveAnimation={cardAnimation[animationType]}
-        >
-          
+       
+        
           {searchResults.map((task) => (
             // <li  className="ulremovebullets">
-            <div className="task-card-seperator"  key={task.task_id} >
+            <div key={task.task_id}>
               <Card
-             
-                className="mx-auto"
+                className="task-card"
                 border={cardBorder[task.task_priority]}
                 style={{ width: "22rem" }}
               >
@@ -365,7 +380,7 @@ function Tasks(props) {
                 <Card.Body>
                   <Card.Text>{task.task_description}</Card.Text>
 
-                  <ButtonGroup >
+                  <ButtonGroup>
                     <Button
                       variant="warning"
                       onClick={(e) => handleSendEditData(e.target.value)}
@@ -419,14 +434,10 @@ function Tasks(props) {
                   {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
                 </Card.Footer>
               </Card>
-              </div>
-            
+            </div>
           ))}
-          
-        </FlipMove>
-        </div>
+        
       </div>
-      
     );
   else return null;
 }

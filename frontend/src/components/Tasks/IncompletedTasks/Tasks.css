@@ -1,6 +1,4 @@
-.ulremovebullets {
-    list-style-type: none;
-  }
+
 
 .tasks-container{
   
@@ -14,29 +12,83 @@ justify-content: center;
   
   
 }
+.task-card{
+  text-align:center;
+  
+  justify-content: relative;
+  position: relative;
+  margin:auto;
+  margin-bottom:15px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
 .top-tasks-buttons{
-  
   justify-content: center;
-  
+  margin-bottom: 20px;
+ 
     
     
 }
+.completed-task-card{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
+}
+.create-task{
+ 
+position: relative;
+
+/* width:32.1%; */
+top: 10%;
+left: 50%;
+-ms-transform: translate(-10%, -50%);
+transform: translate(-50%, -20%); 
+ 
+
+}
+nav-bar-fix{
+  position:fixed
+}
 .task-card-seperator{
-  margin:5px;
-  display: center;
-align-items: center;
-justify-content: center;
+  margin:8px;
+  
 
 
   
   text-align:center;
-  position:center;
+ 
 }
+.completed-tasks-container{
+   
+  text-align:center;
 
+
+  
+
+
+position:relative
+}
+.completed-task-card-seperator{
+  margin-bottom:15px;
+
+
+  
+
+
+  
+  text-align:center;
+
+
+}
+.completed-task-top-buttons{
+  margin-bottom:15px;
+}
+.completed-sort-by{
+  margin-left:5px
+
+}
 .title{
   font-family: "Galano Grotesque", sans-serif;
   text-align:center;
+  margin-bottom:20px
 }
 
 
