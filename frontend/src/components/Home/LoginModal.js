@@ -55,7 +55,7 @@ function Login(props) {
     //     <Modal.Title id="contained-modal-title-vcenter">Log In</Modal.Title>
     //   </Modal.Header>
     //   <Modal.Body>
-        
+        <>
         <div className="container p-3">
           
           <div style={{ maxWidth: 350 }}>
@@ -125,6 +125,7 @@ function Login(props) {
            
           
         </div>
+        </>
       
   );
 }

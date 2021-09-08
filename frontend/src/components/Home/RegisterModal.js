@@ -69,6 +69,7 @@ function Register(props) {
     //     <Modal.Title id="contained-modal-title-vcenter">Register</Modal.Title>
     //   </Modal.Header>
     //   <Modal.Body>
+        <>
         <div className="container p-3">
           
           <div style={{ maxWidth: 350 }}>
@@ -162,8 +163,8 @@ function Register(props) {
             
           
         </div>
-       // </Modal.Body> 
       
+      </>
      // </Modal>    
   );
 }

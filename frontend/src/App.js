@@ -69,7 +69,8 @@ function App() {
     
   }
   return (
-    <div >
+    <>
+      
       <Navigation completeCount={Object.keys(completedData).length} showLoginHideTasks={()=>handleShowLoginHideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
       
       
@@ -133,7 +134,7 @@ function App() {
       
 
       {/* <Routes /> */}
-    </div>
+    </>
   );
 }
 

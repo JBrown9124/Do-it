@@ -1,4 +1,4 @@
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button, Form, Container} from "react-bootstrap";
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
@@ -75,7 +75,9 @@ function CreateTaskModal(props) {
   // };
   
   return (
+    
     <div>
+      
       <Modal
         {...props}
         size="med"

@@ -10,14 +10,14 @@ height: 100%
 } */
 @import url("https://fonts.googleapis.com/css?family=Galano Grotesque");
 .app-modal{padding: 10px;
-  display: center;
-  align-items: center;
-  justify-content: center;
+ 
+ 
+
   
   
     
     text-align:center;
-    position:center;
+    
 }
 .log-modal-pw{
   padding: 5px;

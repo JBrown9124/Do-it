@@ -34,8 +34,8 @@ const Navigation = (props) => {
     </Popover>
   );
   return (
-   
-    <Navbar expand="lg"  fixed="top" bg="light" collapseOnSelect >
+   <>
+    <Navbar expand="xl"  fixed="top" bg="light" collapseOnSelect >
       <Container>
       <Navbar.Toggle aria-controls="responsive-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
@@ -73,7 +73,7 @@ const Navigation = (props) => {
       </Navbar.Collapse>
       </Container>
     </Navbar>
-   
+    </>
 
   );
 };

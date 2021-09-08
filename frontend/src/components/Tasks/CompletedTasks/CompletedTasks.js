@@ -177,7 +177,7 @@ function CompletedTasks(props) {
   // if (props.show === true && props.completedTasksData !== null) {
 
   return (
-    <div>
+    <>
       <Offcanvas show={props.show} onHide={handleClose}>
         <Offcanvas.Header closeButton onClick={() => handleClose()}>
           <Offcanvas.Title>Completed</Offcanvas.Title>
@@ -289,7 +289,7 @@ function CompletedTasks(props) {
           {/* </FlipMove> */}
         </Offcanvas.Body>
       </Offcanvas>
-    </div>
+    </>
   );
   // } else {
   //   return null;

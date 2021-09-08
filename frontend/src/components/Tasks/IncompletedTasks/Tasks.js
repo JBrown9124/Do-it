@@ -18,7 +18,11 @@ import {
   Offcanvas,
   ButtonToolbar,
   Navbar,
-  Nav
+  Nav,
+  Tooltip,
+  Toast,
+  ToastContainer,
+  Alert,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -38,7 +42,7 @@ import FlipMove from "react-flip-move";
 import { Transition } from "react-transition-group";
 import { motion } from "framer-motion";
 import Draggable from "react-draggable";
-import ScrollUpButton from "react-scroll-up-button"
+import ScrollUpButton from "react-scroll-up-button";
 function Tasks(props) {
   const [deleteTaskID, setDeleteTaskID] = useState(null);
   const [deleteTaskName, setDeleteTaskName] = useState(null);
@@ -51,13 +55,14 @@ function Tasks(props) {
   const [showOffCanvas, setShowOffCanvas] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [flipDisabled, setFlipDisabled] = useState(true)
+  const [flipDisabled, setFlipDisabled] = useState(true);
+  const [showToast, setShowToast] = useState(false);
 
   useEffect(
     () => setSearchResults(props.incompletedTasksData),
     [props.incompletedTasksData.length, props.completedTasksData.length]
   );
- 
+
   useEffect(() => {
     setAnimationType("sort");
     const results = props.incompletedTasksData.filter(
@@ -77,15 +82,15 @@ function Tasks(props) {
   //   setDeleteTaskID(e);
   // };
   const handleCreate = (data) => {
-    
     props.incompletedTasksData.unshift(data);
-    
+
     axios
       .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/tasks`, data)
-      .then((res) => {});
+      .then((res) => {
+        setShowToast(true);
+      });
   };
   const handleComplete = (e) => {
-    
     setAnimationType("complete");
     const findTaskByID = props.incompletedTasksData.find(
       ({ task_id }) => task_id === e
@@ -156,17 +161,16 @@ function Tasks(props) {
 
   const sortByHighestPriority = () => {
     setAnimationType("sort");
-    // if (searchItem === "") { 
+    // if (searchItem === "") {
     //   const sorted = [...props.incompletedTasksData].sort((a, b) =>
     //     a.task_priority.localeCompare(b.task_priority)
     //   );
     //   return props.updateTasks(sorted);
     // } else {
-      const sortedSearch = [...searchResults].sort((a, b) =>
-        a.task_priority.localeCompare(b.task_priority)
-      );
-      return setSearchResults(sortedSearch);
-    
+    const sortedSearch = [...searchResults].sort((a, b) =>
+      a.task_priority.localeCompare(b.task_priority)
+    );
+    return setSearchResults(sortedSearch);
   };
   const sortByLowestPriority = () => {
     setAnimationType("sort");
@@ -176,11 +180,10 @@ function Tasks(props) {
     //   );
     //   return props.updateTasks(sorted);
     // } else {
-      const sortedSearch = [...searchResults].sort((a, b) =>
-        b.task_priority.localeCompare(a.task_priority)
-      );
-      return setSearchResults(sortedSearch);
-    
+    const sortedSearch = [...searchResults].sort((a, b) =>
+      b.task_priority.localeCompare(a.task_priority)
+    );
+    return setSearchResults(sortedSearch);
   };
   const sortByFarthestDate = () => {
     setAnimationType("sort");
@@ -190,11 +193,10 @@ function Tasks(props) {
     //   );
     //   return props.updateTasks(sorted);
     // } else {
-      const sortedSearch = [...searchResults].sort(
-        (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
-      );
-      return setSearchResults(sortedSearch);
-    
+    const sortedSearch = [...searchResults].sort(
+      (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
+    );
+    return setSearchResults(sortedSearch);
   };
   const sortByClosestDate = () => {
     setAnimationType("sort");
@@ -204,11 +206,10 @@ function Tasks(props) {
     //   );
     //   return props.updateTasks(sorted);
     // } else {
-      const sortedSearch = [...searchResults].sort(
-        (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
-      );
-      return setSearchResults(sortedSearch);
-    
+    const sortedSearch = [...searchResults].sort(
+      (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
+    );
+    return setSearchResults(sortedSearch);
   };
   const sortByTaskName = () => {
     setAnimationType("sort");
@@ -218,11 +219,10 @@ function Tasks(props) {
     //   );
     //   return props.updateTasks(sorted);
     // } else {
-      const sortedSearch = [...searchResults].sort((a, b) =>
-        a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
-      );
-      return setSearchResults(sortedSearch);
-    
+    const sortedSearch = [...searchResults].sort((a, b) =>
+      a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
+    );
+    return setSearchResults(sortedSearch);
   };
   // const popover = (
   //   <Popover id="popover-basic">
@@ -254,21 +254,23 @@ function Tasks(props) {
 
   if (props.show === true && props.incompletedTasksData !== null)
     return (
-      <div>
-<Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
-      
+      <>
         
-        <Button
-          // className="create-button"
-          className="create-task-nav"
-          variant="success"
-          size="lg"
-          onClick={(e) => setcreateModalShow(true)}
-        >
-          Create
-        </Button>
-        
-    </Navbar>
+       
+        <Alert className="position-fixed">
+  <Alert.Heading>Hey, nice to see you</Alert.Heading>
+  <p>
+    Aww yeah, you successfully read this important alert message. This example
+    text is going to run a bit longer so that you can see how spacing within an
+    alert works with this kind of content.
+  </p>
+  <hr />
+  <p className="mb-0">
+    Whenever you need to, be sure to use margin utilities to keep things nice
+    and tidy.
+  </p>
+</Alert> 
+
         <CreateTaskModal
           show={createmodalShow}
           onHide={() => setcreateModalShow(false)}
@@ -314,7 +316,7 @@ function Tasks(props) {
           </Offcanvas.Body>
         </Offcanvas>
         <h2 className="title">Do or Do not</h2>
-     {/* <div className="sticky-top">  */}
+        {/* <div className="sticky-top">  */}
         {/* <Button
           // className="create-button"
           className="create-task"
@@ -325,7 +327,7 @@ function Tasks(props) {
           Create
         </Button> */}
         {/* </div>  */}
-        
+
         <ButtonToolbar
           className="top-tasks-buttons"
           aria-label="Toolbar with button groups"
@@ -344,9 +346,9 @@ function Tasks(props) {
                 value={searchItem}
                 onChange={(e) => setSearchItem(e.target.value)}
               />
-              {/* <Button variant="outline-primary">Search</Button> */}
             </Form>
           </ButtonGroup>
+
           <ButtonGroup aria-label="Third group">
             <DropdownButton
               size="med"
@@ -371,88 +373,85 @@ function Tasks(props) {
                 Name
               </Dropdown.Item>
             </DropdownButton>
-            {/* <Button
-                    
-                    onClick={() => handledeleteAll()}
-                    variant="danger"
-                    size="lg"
-                  >
-                    Delete All
-                  </Button> */}
           </ButtonGroup>
         </ButtonToolbar>
-       
+
+       {/* <ToastContainer className="toast-container" position={"middle-center"} >
+          <Toast animation={true} className="toast-container" onClose={() => setShowToast(false)}  show={showToast} delay={3000} autohide >
+            
+            <Toast.Body>Saved.</Toast.Body>
+          </Toast>
+        </ToastContainer>  */}
         
-          {searchResults.map((task) => (
-            // <li  className="ulremovebullets">
-            <div key={task.task_id}>
-              <Card
-                className="task-card"
-                border={cardBorder[task.task_priority]}
-                style={{ width: "22rem" }}
-              >
-                <Card.Header>{task.task_name}</Card.Header>
-                <Card.Body>
-                  <Card.Text>{task.task_description}</Card.Text>
+        <div>
+        {searchResults.map((task) => (
+          <div className="tasks-container" key={task.task_id}>
+           
+            <Card
+              className="task-card"
+              border={cardBorder[task.task_priority]}
+              style={{ width: "22rem" }}
+            >
+              <Card.Header>{task.task_name}</Card.Header>
+              <Card.Body>
+                <Card.Text>{task.task_description}</Card.Text>
 
-                  <ButtonGroup>
-                    <Button
-                      variant="warning"
-                      onClick={(e) => handleSendEditData(e.target.value)}
-                      size="med"
-                      value={[
-                        props.user_id,
-                        task.task_priority,
-                        task.task_name,
-                        task.task_id,
-                        task.task_description,
-                        task.task_date_time,
-                      ]}
-                    >
-                      Edit
-                    </Button>
+                <ButtonGroup>
+                  <Button
+                    variant="warning"
+                    onClick={(e) => handleSendEditData(e.target.value)}
+                    size="med"
+                    value={[
+                      props.user_id,
+                      task.task_priority,
+                      task.task_name,
+                      task.task_id,
+                      task.task_description,
+                      task.task_date_time,
+                    ]}
+                  >
+                    Edit
+                  </Button>
 
-                    <Button
-                      variant="primary"
-                      size="med"
-                      value={task.task_id}
-                      onClick={(e) => handleComplete(e.target.value)}
-                    >
-                      Complete
-                    </Button>
-                    <Button
-                      value={task.task_id}
-                      variant="danger"
-                      onClick={(e) => handleDeleteOffCanvas(e.target.value)}
-                      size="med"
-                    >
-                      Delete
-                    </Button>
-
-                    {/* <OverlayTrigger
-                      trigger="focus"
-                      placement="right"
-                      overlay={popover}
-                    >
-                      <Button
-                        onClick={(e) => settaskID(e.target.value)}
-                        value={task.task_id}
-                        variant="danger"
-                        size="lg"
-                      >
-                        Delete
-                      </Button>
-                    </OverlayTrigger> */}
-                  </ButtonGroup>
-                </Card.Body>
-                <Card.Footer>
-                  {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
-                </Card.Footer>
-              </Card>
-            </div>
-          ))}
-        
-      </div>
+                  <Button
+                    variant="primary"
+                    size="med"
+                    value={task.task_id}
+                    onClick={(e) => handleComplete(e.target.value)}
+                  >
+                    Complete
+                  </Button>
+                  <Button
+                    value={task.task_id}
+                    variant="danger"
+                    onClick={(e) => handleDeleteOffCanvas(e.target.value)}
+                    size="med"
+                  >
+                    Delete
+                  </Button>
+                </ButtonGroup>
+              </Card.Body>
+              <Card.Footer>
+                {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
+              </Card.Footer>
+            </Card>
+          </div>
+        ))}
+        </div>
+        <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
+          
+          <Button
+            // className="create-button"
+            className="create-task-nav"
+            variant="success"
+            size="lg"
+            onClick={(e) => setcreateModalShow(true)}
+          >
+            Create
+          </Button>
+          
+        </Navbar>
+      </>
     );
   else return null;
 }
