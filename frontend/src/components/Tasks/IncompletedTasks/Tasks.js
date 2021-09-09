@@ -42,13 +42,14 @@ import FlipMove from "react-flip-move";
 import { Transition } from "react-transition-group";
 import { motion } from "framer-motion";
 import Draggable from "react-draggable";
-import ScrollUpButton from "react-scroll-up-button";
+
+import {FaArrowCircleUp} from 'react-icons/fa';
 function Tasks(props) {
   const [deleteTaskID, setDeleteTaskID] = useState(null);
   const [deleteTaskName, setDeleteTaskName] = useState(null);
   const [sendEditData, setSendEditData] = useState("");
 
-  const [createmodalShow, setcreateModalShow] = useState(false);
+  const [createModalShow, setcreateModalShow] = useState(false);
 
   const [editModalShow, setEditModalShow] = useState(false);
   const [animationType, setAnimationType] = useState("delete");
@@ -57,10 +58,21 @@ function Tasks(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [flipDisabled, setFlipDisabled] = useState(true);
   const [showToast, setShowToast] = useState(false);
-
-  useEffect(
+  const [showScroll, setShowScroll] = useState(false)
+const checkScrollTop = () => {    
+   if (!showScroll && window.pageYOffset > 400){
+      setShowScroll(true)    
+   } else if (showScroll && window.pageYOffset <= 400){
+      setShowScroll(false)    
+   }  
+};
+window.addEventListener('scroll', checkScrollTop)
+const scrollTop = () =>{
+  window.scrollTo({top: 0, behavior: 'smooth'});
+};  
+useEffect(
     () => setSearchResults(props.incompletedTasksData),
-    [props.incompletedTasksData.length, props.completedTasksData.length]
+    [props.incompletedTasksData.length]
   );
 
   useEffect(() => {
@@ -255,24 +267,20 @@ function Tasks(props) {
   if (props.show === true && props.incompletedTasksData !== null)
     return (
       <>
+     
         
+     <FaArrowCircleUp 
+   className="scrollTop" 
+   onClick={scrollTop} 
+   style={{height: 40, display: showScroll ? 'flex' : 'none'}}
+/>
+
+
        
-        <Alert className="position-fixed">
-  <Alert.Heading>Hey, nice to see you</Alert.Heading>
-  <p>
-    Aww yeah, you successfully read this important alert message. This example
-    text is going to run a bit longer so that you can see how spacing within an
-    alert works with this kind of content.
-  </p>
-  <hr />
-  <p className="mb-0">
-    Whenever you need to, be sure to use margin utilities to keep things nice
-    and tidy.
-  </p>
-</Alert> 
+        
 
         <CreateTaskModal
-          show={createmodalShow}
+          show={createModalShow}
           onHide={() => setcreateModalShow(false)}
           user_id={props.user_id}
           createData={(data) => handleCreate(data)}
@@ -375,15 +383,23 @@ function Tasks(props) {
             </DropdownButton>
           </ButtonGroup>
         </ButtonToolbar>
+        {/* <Alert  animation={true} variant="light"  className="toast-container" onClose={() => setShowToast(false)}  show={showToast} delay={3000}  autohide>
+  
+ 
+  Saved.
 
-       {/* <ToastContainer className="toast-container" position={"middle-center"} >
-          <Toast animation={true} className="toast-container" onClose={() => setShowToast(false)}  show={showToast} delay={3000} autohide >
-            
-            <Toast.Body>Saved.</Toast.Body>
+
+</Alert>  */}
+
+       
+          <Toast bg="light" className="toast-container"animation={true}  onClose={() => setShowToast(false)}  show={showToast} delay={3000} autohide >
+            <Toast.Body>
+            Saved.
+            </Toast.Body>
           </Toast>
-        </ToastContainer>  */}
         
-        <div>
+        
+        
         {searchResults.map((task) => (
           <div className="tasks-container" key={task.task_id}>
            
@@ -392,6 +408,7 @@ function Tasks(props) {
               border={cardBorder[task.task_priority]}
               style={{ width: "22rem" }}
             >
+              
               <Card.Header>{task.task_name}</Card.Header>
               <Card.Body>
                 <Card.Text>{task.task_description}</Card.Text>
@@ -437,8 +454,9 @@ function Tasks(props) {
             </Card>
           </div>
         ))}
-        </div>
-        <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
+        
+
+         <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
           
           <Button
             // className="create-button"
@@ -447,11 +465,12 @@ function Tasks(props) {
             size="lg"
             onClick={(e) => setcreateModalShow(true)}
           >
-            Create
+            {createModalShow ? "Creating...": "Create"}
           </Button>
           
-        </Navbar>
+        </Navbar> 
       </>
+      
     );
   else return null;
 }

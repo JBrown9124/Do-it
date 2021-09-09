@@ -2,6 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
+from viewflow.fields import CompositeKey
 import datetime
 
 # Create your models here.
@@ -28,4 +29,16 @@ class Tasks(models.Model):
         return f"{self.user.user_id}: {self.user.user_email}: {self.task_name}: {self.task_id}: {self.task_description}"
     def was_published_recently(self):
         return self.date_time >= timezone.now() - datetime.timedelta(days=1)
+class SharedTasks(models.Model):
     
+    task = models.OneToOneField(Tasks, primary_key=True, on_delete=models.CASCADE)
+    sender = models.ForeignKey(Users, on_delete=models.CASCADE, related_name ='sender')
+    recipient = models.ForeignKey(Users, on_delete=models.CASCADE, related_name='recipient')
+# class FriendsList(models.Model):
+#     friends_list = CompositeKey(columns=['requester_id', 'addressee_id'])
+#     requester= models.ForeignKey(Users,  on_delete=models.CASCADE, related_name='requester')
+#     addressee = models.ForeignKey(Users,  on_delete=models.CASCADE, related_name='addressee')
+
+class FriendsList(models.Model):
+    user = models.OneToOneField(Users, primary_key=True, default=None, on_delete=models.CASCADE)
+    friend = models.ForeignKey(Users, on_delete=models.CASCADE, default=None, related_name ='friend')

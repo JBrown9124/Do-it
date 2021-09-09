@@ -1,109 +1,137 @@
+.tasks-container {
 
 
-.tasks-container{
-  
-z-index:-1
- 
-
-  
-  
+  text-align: center
 }
-.task-card{
-  text-align:center;
-  
- 
-  
-  
-  margin:auto;
-  margin-bottom:15px;
+
+.task-card {
+  text-align: center;
+
+
+
+
+  margin: auto;
+  margin-bottom: 15px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
-.top-tasks-buttons{
+
+.top-tasks-buttons {
   justify-content: center;
   margin-bottom: 20px;
- 
-    
-    
+
+
+
 }
-.completed-task-card{
+
+.completed-task-card {
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
 }
-.create-task{
- 
-position: relative;
 
-/* width:32.1%; */
-top: 10%;
-left: 50%;
--ms-transform: translate(-10%, -50%);
-transform: translate(-50%, -20%); 
- 
+.create-task {
 
-}
-.create-task-nav{
   position: relative;
 
-width:100%;
-top: 10%;
-left: 50%;
--ms-transform: translate(-10%, -50%);
-transform: translate(-50%, 20%); 
-}
-nav-bar-fix{
-  position:fixed
-}
-.task-card-seperator{
-  margin:8px;
-  
+  /* width:32.1%; */
+  top: 10%;
+  left: 50%;
+  -ms-transform: translate(-10%, -50%);
+  transform: translate(-50%, -20%);
 
 
+}
+
+.create-task-nav {
+  position: relative;
+  /* margin-bottom:-1.4%; */
+  width: 200%;
+  top: 10%;
+  left: 50%;
+  -ms-transform: translate(-10%, -50%);
+  transform: translate(-50%, 20%);
+}
+
+nav-bar-fix {
+  position: fixed
+}
+
+.task-card-seperator {
+  margin: 8px;
+
+
+
+
+  text-align: center;
+
+}
+
+.completed-tasks-container {
+
+  text-align: center;
+
+
+
+
+
+  position: relative
+}
+
+.completed-task-card-seperator {
+  margin-bottom: 15px;
+
+
+
+
+
+
+  text-align: center;
+
+
+}
+
+.completed-task-top-buttons {
+  margin-bottom: 15px;
+  margin-left:15px
+}
+
+/* .completed-sort-by{
+  margin-left:10px
   
-  text-align:center;
+
+} */
+.title {
+  font-family: "Galano Grotesque", sans-serif;
+  text-align: center;
+  margin-top: 80px;
+  margin-bottom: 20px
+}
+.completed-title{
+  justify-content: center;
+  margin:auto;
  
 }
-.completed-tasks-container{
-   
-  text-align:center;
+
+.toast-container {
+  position: fixed;
+
+  top: 10%;
+  left: 50%;
+  -ms-transform: translate(-10%, -50%);
+  transform: translate(-50%, 1000%);
+  z-index: 9999;
 
 
-  
 
 
-position:relative
-}
-.completed-task-card-seperator{
-  margin-bottom:15px;
 
-
-  
-
-
-  
-  text-align:center;
-
-
-}
-.completed-task-top-buttons{
-  margin-bottom:15px;
 }
 .completed-sort-by{
-  margin-left:5px
-
+  margin-left:9px
 }
-.title{
-  font-family: "Galano Grotesque", sans-serif;
-  text-align:center;
-  margin-top:80px;
-  margin-bottom:20px
-}
-
-
-toast-container{
-  position: fixed;
-  z-index: 1;
+.completed-clear{
+  margin-bottom:20px;
+  left:-50px;
+ 
   
-
-
-
-} 
+  /* transform:translateX(-14.8px) translateY(-3px); */
+}

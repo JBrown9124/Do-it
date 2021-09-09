@@ -1,7 +1,7 @@
 import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Button, Row, Container, Col, Modal, Carousel,} from "react-bootstrap";
+import { Button, Row, Container, Col, Modal, Carousel, Alert} from "react-bootstrap";
 import React, {useEffect, useState} from "react";
 import Register from "./components/Home/RegisterModal";
 // import Routes from "./services/Routes";
@@ -71,10 +71,11 @@ function App() {
   return (
     <>
       
-      <Navigation completeCount={Object.keys(completedData).length} showLoginHideTasks={()=>handleShowLoginHideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
+      <Navigation completeCount={tasksShow ? Object.keys(completedData).length : null} showLoginHideTasks={()=>handleShowLoginHideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
       
       
             <Tasks
+            
               updateTasks ={(props)=> setIncompletedData(props)}
               incompletedTasksData = {incompletedData}
               completedTasksData = {completedData}
@@ -93,7 +94,7 @@ function App() {
               show={showCompletedTasks}
               handleCompletedTasks={(props) => setShowCompletedTasks(props)}
               handleTasks={(props) => sethandleTasks(true)}
-              completeCount={Object.keys(completedData).length}
+              
               
               
             />

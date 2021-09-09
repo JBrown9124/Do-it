@@ -31,6 +31,36 @@ height: 100%
   margin-left:1px
 
 }
+.scrollTop {
+  position: fixed; 
+  width: 100%;
+  bottom: 60px;
+  align-items: center;
+  height: 20px;
+  justify-content: center;
+  z-index: 1000;
+  cursor: pointer;
+  animation: fadeIn 0.3s;
+  transition: opacity 0.4s;
+  opacity: 0.5;
+  
+left: 30%;
+
+}
+
+.scrollTop:hover{
+  opacity: 1;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
 /* .App-logo {
   height: 40vmin;
   pointer-events: none;

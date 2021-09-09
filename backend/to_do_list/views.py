@@ -104,6 +104,16 @@ def tasks(request, user):
 
 
 
+def friends(request, user):
+    u = Objects.Users.get(pk=user)
+    if request.method == 'GET':
+        u = Objects.Users.get(pk=user)
+        friends = u.friends_list
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        u = Objects.Users.get(pk=user)
+        add_friend = FriendsList(requester=u, addressee=json_data['friend'])
+        add_friend.save()
 
 
 
