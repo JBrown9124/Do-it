@@ -11,7 +11,7 @@ import {
   Button,
   Popover,
   Badge,
-  Container
+  Container,
 } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 
@@ -34,47 +34,51 @@ const Navigation = (props) => {
     </Popover>
   );
   return (
-   <>
-    <Navbar expand="xl"  fixed="top" bg="light" collapseOnSelect >
+    <>
+      <Navbar  expand="lg" fixed="top" bg="light" collapseOnSelect>
       <Container>
-      <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-      <Navbar.Collapse id="basic-navbar-nav">
-        <Nav className="me-auto">
-          
-          <Nav.Link bg="light"className="Navbtn" onClick={() => props.showComplete(true)}>
-            Completed
-            <Badge className="completed-badge" bg="secondary">
-              {props.completeCount}
-            </Badge>
-          </Nav.Link>
-          <Nav.Link bg="light" onClick={() => props.showComplete(true)}>
-            Social
-            <Badge className="completed-badge" bg="secondary">
-              {props.completeCount}
-            </Badge>
-          </Nav.Link>
-          </Nav>
-          <Nav>
-          <OverlayTrigger
-            trigger="focus"
-            placement="bottom"
-            overlay={LogOutPopOver}
-          >
-            <Nav.Link bg="light"
-              onClick={() => setShowLogOutPopOver(true)}
-              className="Navbtn"
-              eventKey={2}
-            >
-              Sign out
-            </Nav.Link>
-            
-          </OverlayTrigger>
-          </Nav>
-      </Navbar.Collapse>
-      </Container>
-    </Navbar>
+      <Navbar.Brand >Slick Doing</Navbar.Brand>
+          <Navbar.Toggle aria-controls="responsive-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav">
+            <Nav className="me-auto">
+              <Nav.Link
+                bg="light"
+                className="Navbtn"
+                onClick={() => props.showComplete(true)}
+              >
+                Completed
+                <Badge className="completed-badge" bg="secondary">
+                  {props.completeCount}
+                </Badge>
+              </Nav.Link>
+             
+            </Nav>
+            <Nav>
+            <Nav.Link bg="light" onClick={() => props.showShared(true)}>
+                Shared
+                <Badge className="completed-badge" bg="secondary">
+                  {props.completeCount}
+                </Badge>
+              </Nav.Link>
+              <OverlayTrigger
+                trigger="focus"
+                placement="bottom"
+                overlay={LogOutPopOver}
+              >
+                <Nav.Link
+                  bg="light"
+                  onClick={() => setShowLogOutPopOver(true)}
+                  className="Navbtn"
+                  eventKey={2}
+                >
+                  Sign out
+                </Nav.Link>
+              </OverlayTrigger>
+            </Nav>
+          </Navbar.Collapse>
+          </Container>
+      </Navbar>
     </>
-
   );
 };
 

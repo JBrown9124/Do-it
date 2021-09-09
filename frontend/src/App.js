@@ -14,7 +14,7 @@ import axios from "axios";
 import Login from "./components/Home/LoginModal";
 import "./components/Home/Home.css"
 import "./components/NavBar.css"
-
+import SharedTasks from "./components/Tasks/SharedTasks/SharedTasks.js"
 import Tasks from "./components/Tasks/IncompletedTasks/Tasks.js";
 import CompletedTasks from "./components/Tasks/CompletedTasks/CompletedTasks";
 function App() {
@@ -26,7 +26,7 @@ function App() {
   
   const [userID, setUserID] = useState(null);
   const [showCompletedTasks, setShowCompletedTasks] = useState(null);
-
+  const [showSharedTasks, setShowSharedTasks] = useState(false);
   const [completedData, setCompletedData] = useState([])
   const [incompletedData, setIncompletedData] = useState([])
   const [carouselIndex, setCarouselIndex] = useState(0)
@@ -71,7 +71,11 @@ function App() {
   return (
     <>
       
-      <Navigation completeCount={tasksShow ? Object.keys(completedData).length : null} showLoginHideTasks={()=>handleShowLoginHideTasks()}showComplete={(props) => setShowCompletedTasks(props)} />
+      <Navigation 
+      showShared={() => setShowSharedTasks(true)} 
+      completeCount={tasksShow ? Object.keys(completedData).length : null} 
+      showLoginHideTasks={()=>handleShowLoginHideTasks()}
+      showComplete={(props) => setShowCompletedTasks(props)} />
       
       
             <Tasks
@@ -92,11 +96,20 @@ function App() {
               completedTasksData = {completedData}
               user_id={userID}
               show={showCompletedTasks}
-              handleCompletedTasks={(props) => setShowCompletedTasks(props)}
-              handleTasks={(props) => sethandleTasks(true)}
+              hideCompletedTasks={(props) => setShowCompletedTasks(false)}
+              // handleTasks={(props) => sethandleTasks(true)}
               
               
               
+            />
+            <SharedTasks
+            updateTasks ={(props)=> setCompletedData(props)}
+            incompletedTasksData = {incompletedData}
+            completedTasksData = {completedData}
+            user_id={userID}
+            show={showSharedTasks}
+            hideSharedTasks={(props) => setShowSharedTasks(false)}
+            
             />
           <Modal show={modalShow} size="sm" keyboard={false} backdrop="static"
       aria-labelledby="contained-modal-title-vcenter"  centered>

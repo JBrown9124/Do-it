@@ -18,8 +18,13 @@
 .top-tasks-buttons {
   justify-content: center;
   margin-bottom: 20px;
+  margin-top:80px;
 
 
+
+}
+.card-buttons{
+  margin-left:7px
 
 }
 

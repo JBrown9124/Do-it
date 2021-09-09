@@ -105,15 +105,15 @@ def tasks(request, user):
 
 
 def friends(request, user):
-    u = Objects.Users.get(pk=user)
+    
     if request.method == 'GET':
-        u = Objects.Users.get(pk=user)
-        friends = u.friends_list
+        user_friends = list(Objects.Users.get(pk=user).values())
+        return JsonResponse({'user_friends': user_friends})
     if request.method == 'POST':
         json_data = json.loads(request.body)
-        u = Objects.Users.get(pk=user)
-        add_friend = FriendsList(requester=u, addressee=json_data['friend'])
-        add_friend.save()
+        
+        friend_added = FriendsList(pk=user, friend=json_data['friend'])
+        friend_added.save()
 
 
 

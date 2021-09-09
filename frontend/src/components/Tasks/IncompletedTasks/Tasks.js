@@ -323,7 +323,7 @@ useEffect(
             </ButtonGroup>
           </Offcanvas.Body>
         </Offcanvas>
-        <h2 className="title">Do or Do not</h2>
+       
         {/* <div className="sticky-top">  */}
         {/* <Button
           // className="create-button"
@@ -414,6 +414,27 @@ useEffect(
                 <Card.Text>{task.task_description}</Card.Text>
 
                 <ButtonGroup>
+                  
+                <Button
+                
+                    variant="info"
+                    size="med"
+                    value={task.task_id}
+                    onClick={(e) => handleComplete(e.target.value)}
+                  >
+                    Share
+                  </Button>
+                  <div className="card-buttons">
+                  <Button
+                    variant="primary"
+                    size="med"
+                    value={task.task_id}
+                    onClick={(e) => handleComplete(e.target.value)}
+                  >
+                    Complete
+                  </Button>
+                  </div>
+                  <div className="card-buttons">
                   <Button
                     variant="warning"
                     onClick={(e) => handleSendEditData(e.target.value)}
@@ -429,15 +450,8 @@ useEffect(
                   >
                     Edit
                   </Button>
-
-                  <Button
-                    variant="primary"
-                    size="med"
-                    value={task.task_id}
-                    onClick={(e) => handleComplete(e.target.value)}
-                  >
-                    Complete
-                  </Button>
+                  </div>
+                  <div className="card-buttons">
                   <Button
                     value={task.task_id}
                     variant="danger"
@@ -446,6 +460,7 @@ useEffect(
                   >
                     Delete
                   </Button>
+                  </div>
                 </ButtonGroup>
               </Card.Body>
               <Card.Footer>

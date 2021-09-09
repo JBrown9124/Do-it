@@ -35,13 +35,14 @@ function CompletedTasks(props) {
 
   const [reuseData, setreuseData] = useState("");
   const [animationType, setAnimationType] = useState("");
-  const handleClose = () => props.handleCompletedTasks(false);
+  
   const handleShow = () => setShow(true);
   const [showDeleteAllPopOver, setShowDeleteAllPopOver] = useState(false);
   const [showDeletePopOver, setShowDeletePopOver] = useState(false);
   const [deleteTaskID, setDeleteTaskID] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [searchResults, setSearchResults] = useState([]);
+  const handleClose = () => props.hideCompletedTasks();
   useEffect(
     () => setSearchResults(props.completedTasksData),
     [props.completedTasksData.length]
@@ -123,11 +124,11 @@ function CompletedTasks(props) {
     return setSearchResults(sortedSearch);
   };
   const sortByLowestPriority = () => {
-    const sorted = [...searchResults].sort((a, b) =>
+    const sortedSearch = [...searchResults].sort((a, b) =>
       b.task_priority.localeCompare(a.task_priority)
     );
 
-    props.updateTasks(sorted);
+    return setSearchResults(sortedSearch);
   };
   const sortByFarthestDate = () => {
     const sortedSearch = [...searchResults].sort(
