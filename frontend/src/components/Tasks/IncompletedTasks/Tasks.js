@@ -415,15 +415,15 @@ useEffect(
 
                 <ButtonGroup>
                   
-                <Button
+                <DropdownButton
                 
-                    variant="info"
-                    size="med"
-                    value={task.task_id}
-                    onClick={(e) => handleComplete(e.target.value)}
+                size="med"
+                variant="info"
+                id="dropdown-basic-button"
+                title="Share"
                   >
                     Share
-                  </Button>
+                  </DropdownButton>
                   <div className="card-buttons">
                   <Button
                     variant="primary"

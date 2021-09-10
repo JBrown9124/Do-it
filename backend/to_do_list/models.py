@@ -19,7 +19,9 @@ class Users(models.Model):
     user_created = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.user_email}: {self.user_display_name}"
+        return f"{self.user_id}:{self.user_email}, {self.user_display_name}"
+    def safe_data(self):
+        return self.user_id, self.user_email, self.user_display_name
 
 
 class Tasks(models.Model):
@@ -47,6 +49,8 @@ class SharedTasks(models.Model):
         Users, on_delete=models.CASCADE, related_name='sender')
     recipient = models.ForeignKey(
         Users, on_delete=models.CASCADE, related_name='recipient')
+    def __str__(self):
+        return f"{self.task} = {self.sender} + {self.recipient} "
 
 
 class Friendship(models.Model):
@@ -56,12 +60,15 @@ class Friendship(models.Model):
     addressee = models.ForeignKey(
         Users,  on_delete=models.CASCADE, related_name='addressee')
     created_date_time = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return f"{self.requester} + {self.addressee}"
 
 
 class MyStatus(models.Model):
     status_code = models.CharField(max_length=1, primary_key=True)
     name = models.CharField(max_length=30, unique=True)
-
+    def __str__(self):
+        return f"{self.status_code}"
 
 class FriendshipStatus(models.Model):
     friendship_status = models.AutoField(primary_key=True)
@@ -70,3 +77,5 @@ class FriendshipStatus(models.Model):
     specified_date_time = models.DateTimeField()
     status_code = models.ForeignKey(MyStatus, on_delete=models.CASCADE)
     specifier_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+    def __str__(self):
+        return f"{self.requester_status}\n{self.status_code}\n{self.specifier_id}"

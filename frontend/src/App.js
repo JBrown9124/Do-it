@@ -17,6 +17,7 @@ import "./components/NavBar.css"
 import SharedTasks from "./components/Tasks/SharedTasks/SharedTasks.js"
 import Tasks from "./components/Tasks/IncompletedTasks/Tasks.js";
 import CompletedTasks from "./components/Tasks/CompletedTasks/CompletedTasks";
+import Friends from "./components/Tasks/SharedTasks/Friends.js"
 function App() {
   const [loginmodalShow, setloginmodalShow] = useState(true);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -25,6 +26,7 @@ function App() {
   const [allData, setallData] = useState(null)
   
   const [userID, setUserID] = useState(null);
+  const [showFriends, setShowFriends] = useState(false);
   const [showCompletedTasks, setShowCompletedTasks] = useState(null);
   const [showSharedTasks, setShowSharedTasks] = useState(false);
   const [completedData, setCompletedData] = useState([])
@@ -72,11 +74,12 @@ function App() {
     <>
       
       <Navigation 
+      showFriends={()=>setShowFriends(true)}
       showShared={() => setShowSharedTasks(true)} 
       completeCount={tasksShow ? Object.keys(completedData).length : null} 
       showLoginHideTasks={()=>handleShowLoginHideTasks()}
       showComplete={(props) => setShowCompletedTasks(props)} />
-      
+
       
             <Tasks
             
@@ -110,6 +113,14 @@ function App() {
             show={showSharedTasks}
             hideSharedTasks={(props) => setShowSharedTasks(false)}
             
+            />
+            <Friends
+            updateTasks ={(props)=> setCompletedData(props)}
+            incompletedTasksData = {incompletedData}
+            completedTasksData = {completedData}
+            user_id={userID}
+            show={showFriends}
+            hideFriends={(props) => setShowFriends(false)}
             />
           <Modal show={modalShow} size="sm" keyboard={false} backdrop="static"
       aria-labelledby="contained-modal-title-vcenter"  centered>

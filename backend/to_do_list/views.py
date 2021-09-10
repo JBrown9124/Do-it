@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .ResponseModels.tasks import TasksResponseModel
+from .ResponseModels.users import UsersResponseModel
 
 from django.core.exceptions import ValidationError
 import hashlib
@@ -116,7 +117,19 @@ def friends(request, user):
         friend_added.save()
 
 
-
+def users(request):
+    if request.method == 'GET':
+        # safe_user_data = []
+        # all_users_info = Users.objects.all()
+        # for user in all_users_info:
+        #     user_response_model = UsersResponseModel()
+        #     user_response_model.user_id = user.user_id
+        #     user_response_model.user_email = user.user_email
+        #     user_response_model.user_display_name = user.user_display_name
+        #     safe_user_data.append(user_response_model)
+        safe_user_query = Users.objects.values("user_email", "user_display_name", "user_id")
+        safe_user_data = list(safe_user_query)
+        return JsonResponse({'all_users': safe_user_data})
     
 
 
