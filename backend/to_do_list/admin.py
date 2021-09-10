@@ -3,5 +3,8 @@ from .models import *
 # Register your models here.
 admin.site.register(Users)
 admin.site.register(Tasks)
-admin.site.register(FriendsList)
+
 admin.site.register(SharedTasks)
+admin.site.register(MyStatus)
+admin.site.register(FriendshipStatus)
+admin.site.register(Friendship)

@@ -117,6 +117,7 @@ def friends(request, user):
 
 
 
+    
 
 
 @csrf_exempt
