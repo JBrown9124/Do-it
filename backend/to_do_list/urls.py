@@ -14,6 +14,7 @@ urlpatterns = [
     path('<int:user>/users', views.users),
     
     path('<int:user>/completed-tasks', views.completed_tasks),
-    path('<int:user>/friends', views.friends),
-    
+    path('<int:user>/add-friend', views.add_friend),
+    path('<int:user>/accept-friend', views.accept_friend),
+    path('<int:user>/users-friends', views.list_users_friends),
 ]

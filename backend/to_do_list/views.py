@@ -15,6 +15,7 @@ from .ResponseModels.tasks import TasksResponseModel
 from .ResponseModels.users import UsersResponseModel
 from friendship.models import Block, Follow, Friend, FriendshipRequest
 
+
 from django.core.exceptions import ValidationError
 import hashlib
 import uuid
@@ -27,7 +28,7 @@ def user_id(request, user):
 
 @csrf_exempt
 def completed_tasks(request, user):
-    u = Users.objects.get(pk=user)
+    u = User.objects.get(pk=user)
     if request.method == 'GET':
         
         data = list(Tasks.objects.filter(
@@ -65,7 +66,7 @@ def completed_tasks(request, user):
 
 @csrf_exempt
 def tasks(request, user):
-    u = Users.objects.get(pk=user)
+    u = User.objects.get(pk=user)
     if request.method == 'GET':
         
         Incompleted = list(Tasks.objects.filter(
@@ -105,20 +106,7 @@ def tasks(request, user):
 
 
 
-@csrf_exempt
-def friends(request, user):
-    
-    if request.method == 'GET':
-        user_friends = list(Objects.Users.get(pk=user).values())
-        return JsonResponse({'user_friends': user_friends})
-    if request.method == 'POST':
-        json_data = json.loads(request.body)
-        from_user = Users.objects.get(pk=user)
-        to_user = Users.objects.get(pk=json_data['to_user'])
-            
-        Friend.objects.add_friend(from_user, to_user)
-        # except:
-        #     return HTTPResponseServerError("You are already friends with this user")
+
 
 def users(request, user):
     if request.method == 'GET':
@@ -130,7 +118,7 @@ def users(request, user):
         #     user_response_model.user_email = user.user_email
         #     user_response_model.user_display_name = user.user_display_name
         #     safe_user_data.append(user_response_model)
-        safe_user_query = Users.objects.exclude(user_id=user).values("user_email", "user_display_name", "user_id")
+        safe_user_query = User.objects.exclude(user_id=user).values("user_email", "user_display_name", "user_id")
         safe_user_data = list(safe_user_query)
         return JsonResponse({'all_users': safe_user_data})
     if request.method == "POST":
@@ -143,11 +131,11 @@ def log_in(request):
         json_data = json.loads(request.body)
 
         try:
-            user_salt = Users.objects.get(
+            user_salt = User.objects.get(
                 user_email=json_data['email']).user_salt
             hashed_password = hashlib.sha512(json_data['password'].encode(
                 'utf-8') + user_salt.encode('utf-8')).hexdigest()
-            user = Users.objects.get(
+            user = User.objects.get(
                 user_email=json_data['email'], user_hash=hashed_password)
 
             return HttpResponse(user.user_id)
@@ -170,17 +158,17 @@ def register(request):
             
         try:
             try:    
-                if Users.objects.get(user_email=json_data['email']).user_registered:
+                if User.objects.get(user_email=json_data['email']).user_registered:
                     return HttpResponseServerError("Email already registered")  
            
             except:
-                if Users.objects.get(user_display_name=json_data['name']).user_registered:
+                if User.objects.get(user_display_name=json_data['name']).user_registered:
                     return HttpResponseServerError("Display name taken")
         except:
             salt = uuid.uuid4().hex
             hashed_password = hashlib.sha512(json_data['password'].encode(
                 'utf-8') + salt.encode('utf-8')).hexdigest()
-            u = Users(user_hash=hashed_password, user_salt=salt,
+            u = User(user_hash=hashed_password, user_salt=salt,
                       user_display_name=json_data['name'], user_email=json_data['email'], user_registered=True)
             u.save()
             return HttpResponse(u.user_id)
@@ -188,3 +176,36 @@ def register(request):
 
 def index(request):
     return HttpResponse("Hello, world. You're at the polls index.")
+
+@csrf_exempt
+def add_friend(request, user):
+    
+    if request.method == 'GET':
+        user_friends = list(Objects.User.get(pk=user).values())
+        return JsonResponse({'user_friends': user_friends})
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        from_user = User.objects.get(pk=user)
+        to_user = User.objects.get(pk=json_data['to_user'])
+            
+        Friend.objects.add_friend(from_user, to_user)
+        # except:
+        #     return HTTPResponseServerError("You are already friends with this user")
+@csrf_exempt
+def accept_friend(request, user):
+    if request.method == 'POST':
+        to_user_id = User.objects.get(pk=user)
+        json_data = json.loads(request.body)
+        from_user_id = User.objects.get(pk=json_data['from_user_id'])
+        friend_request = FriendshipRequest.objects.get(from_user_id=from_user_id, to_user_id=to_user_id)
+        friend_request.accept()
+        return HttpResponse("friend successfully added")
+def list_users_friends(request,user):
+   u = User.objects.get(pk=user)
+   if request.method == 'GET':
+       data = []
+       users_friends=Friend.objects.friends(u)
+       for friend in users_friends:
+           data.append(friend.user_display_name)
+       
+       return JsonResponse({"user_friends":data}, safe=False)

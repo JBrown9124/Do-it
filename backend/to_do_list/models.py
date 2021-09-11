@@ -8,7 +8,7 @@ import datetime
 # Create your models here.
 
 
-class Users(models.Model):
+class User(models.Model):
     user_id = models.AutoField(primary_key=True)
 
     user_hash = models.CharField(max_length=1000)
@@ -26,7 +26,7 @@ class Users(models.Model):
 
 class Tasks(models.Model):
     task_id = models.CharField(primary_key=True, max_length=60)
-    user = models.ForeignKey(Users, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     task_name = models.CharField(max_length=1000)
     task_priority = models.CharField(max_length=1, default=None)
     task_description = models.TextField()
@@ -46,9 +46,9 @@ class SharedTasks(models.Model):
     task = models.OneToOneField(
         Tasks, primary_key=True, on_delete=models.CASCADE)
     sender = models.ForeignKey(
-        Users, on_delete=models.CASCADE, related_name='sender')
+        User, on_delete=models.CASCADE, related_name='sender')
     recipient = models.ForeignKey(
-        Users, on_delete=models.CASCADE, related_name='recipient')
+        User, on_delete=models.CASCADE, related_name='recipient')
     def __str__(self):
         return f"{self.task} = {self.sender} + {self.recipient} "
 
