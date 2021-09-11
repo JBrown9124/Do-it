@@ -52,30 +52,50 @@ class SharedTasks(models.Model):
     def __str__(self):
         return f"{self.task} = {self.sender} + {self.recipient} "
 
+# class Friends(models.Model):
+#     friends = models.AutoField(primary_key=True)
+#     requester = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="requester")
+#     addressee = models.ForeignKey(Users, on_delete=models.CASCADE, related_name="addressee")
+#     created_datetime = models.DateTimeField(auto_now_add=True)
+#     def __str__(self):
+#         return f"{self.requester}   =>   {self.addressee}"
+# class Status(models.Model):
+#     status_code = models.CharField(max_length=1, primary_key=True)
+#     name = models.CharField(max_length=30, unique=True)
+#     def __str__(self):
+#         return f"{self.status_code}"
+# class FriendsStatus(models.Model):
+#     friends_status = models.AutoField(primary_key=True)
+#     friends_id = models.ForeignKey(Friends, on_delete=models.CASCADE)
+#     specifier_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+#     specified_datetime =models.DateTimeField(auto_now_add=True)
+    
+#     status_code = models.ForeignKey(Status, on_delete=models.CASCADE)
+#     def __str__(self):
+#         return f"{self.specifier_id} {self.friends_id} {self.status_code}"
+# class Friendship(models.Model):
+#     friendship = models.AutoField(primary_key=True)
+#     requester = models.ForeignKey(
+#         Users,  on_delete=models.CASCADE, related_name='requester')
+#     addressee = models.ForeignKey(
+#         Users,  on_delete=models.CASCADE, related_name='addressee')
+#     created_date_time = models.DateTimeField(auto_now_add=True)
+#     def __str__(self):
+#         return f"{self.requester} + {self.addressee}"
 
-class Friendship(models.Model):
-    friendship = models.AutoField(primary_key=True)
-    requester = models.ForeignKey(
-        Users,  on_delete=models.CASCADE, related_name='requester')
-    addressee = models.ForeignKey(
-        Users,  on_delete=models.CASCADE, related_name='addressee')
-    created_date_time = models.DateTimeField(auto_now_add=True)
-    def __str__(self):
-        return f"{self.requester} + {self.addressee}"
 
+# class MyStatus(models.Model):
+    # status_code = models.CharField(max_length=1, primary_key=True)
+    # name = models.CharField(max_length=30, unique=True)
+#     def __str__(self):
+#         return f"{self.status_code}"
 
-class MyStatus(models.Model):
-    status_code = models.CharField(max_length=1, primary_key=True)
-    name = models.CharField(max_length=30, unique=True)
-    def __str__(self):
-        return f"{self.status_code}"
-
-class FriendshipStatus(models.Model):
-    friendship_status = models.AutoField(primary_key=True)
-    requester_status = models.ForeignKey(Friendship, default=None, on_delete=models.CASCADE, related_name='requester_status')
-    addressee_status = models.ForeignKey(Friendship, default=None, on_delete=models.CASCADE, related_name='addressee_status')
-    specified_date_time = models.DateTimeField()
-    status_code = models.ForeignKey(MyStatus, on_delete=models.CASCADE)
-    specifier_id = models.ForeignKey(Users, on_delete=models.CASCADE)
-    def __str__(self):
-        return f"{self.requester_status}\n{self.status_code}\n{self.specifier_id}"
+# class FriendshipStatus(models.Model):
+#     friendship_status = models.AutoField(primary_key=True)
+#     requester_id = models.ForeignKey(Friendship, default=None, on_delete=models.CASCADE, related_name='requester_id')
+#     addressee_id = models.ForeignKey(Friendship, default=None, on_delete=models.CASCADE, related_name='addressee_id')
+#     specified_date_time = models.DateTimeField(auto_now_add=True)
+#     status_code = models.ForeignKey(MyStatus, on_delete=models.CASCADE)
+#     specifier_id = models.ForeignKey(Users, on_delete=models.CASCADE)
+#     def __str__(self):
+#         return f"{self.requester_id}\n{self.status_code}\n{self.specifier_id}"

@@ -13,6 +13,7 @@ from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
 from .ResponseModels.tasks import TasksResponseModel
 from .ResponseModels.users import UsersResponseModel
+from friendship.models import Block, Follow, Friend, FriendshipRequest
 
 from django.core.exceptions import ValidationError
 import hashlib
@@ -104,7 +105,7 @@ def tasks(request, user):
 
 
 
-
+@csrf_exempt
 def friends(request, user):
     
     if request.method == 'GET':
@@ -112,12 +113,14 @@ def friends(request, user):
         return JsonResponse({'user_friends': user_friends})
     if request.method == 'POST':
         json_data = json.loads(request.body)
-        
-        friend_added = FriendsList(pk=user, friend=json_data['friend'])
-        friend_added.save()
+        from_user = Users.objects.get(pk=user)
+        to_user = Users.objects.get(pk=json_data['to_user'])
+            
+        Friend.objects.add_friend(from_user, to_user)
+        # except:
+        #     return HTTPResponseServerError("You are already friends with this user")
 
-
-def users(request):
+def users(request, user):
     if request.method == 'GET':
         # safe_user_data = []
         # all_users_info = Users.objects.all()
@@ -127,10 +130,11 @@ def users(request):
         #     user_response_model.user_email = user.user_email
         #     user_response_model.user_display_name = user.user_display_name
         #     safe_user_data.append(user_response_model)
-        safe_user_query = Users.objects.values("user_email", "user_display_name", "user_id")
+        safe_user_query = Users.objects.exclude(user_id=user).values("user_email", "user_display_name", "user_id")
         safe_user_data = list(safe_user_query)
         return JsonResponse({'all_users': safe_user_data})
-    
+    if request.method == "POST":
+        pass
 
 
 @csrf_exempt

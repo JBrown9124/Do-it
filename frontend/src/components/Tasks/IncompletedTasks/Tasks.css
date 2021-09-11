@@ -81,7 +81,7 @@ nav-bar-fix {
   position: relative
 }
 
-.completed-task-card-seperator {
+.completed-task-card {
   margin-bottom: 15px;
 
 
@@ -96,7 +96,7 @@ nav-bar-fix {
 
 .completed-task-top-buttons {
   margin-bottom: 15px;
-  margin-left:15px
+  
 }
 
 /* .completed-sort-by{

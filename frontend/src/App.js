@@ -10,14 +10,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "./components/Tasks/IncompletedTasks/Tasks.css";
 
 import axios from "axios";
-
+import "./components/Friends/Friends.css"
 import Login from "./components/Home/LoginModal";
 import "./components/Home/Home.css"
 import "./components/NavBar.css"
 import SharedTasks from "./components/Tasks/SharedTasks/SharedTasks.js"
 import Tasks from "./components/Tasks/IncompletedTasks/Tasks.js";
 import CompletedTasks from "./components/Tasks/CompletedTasks/CompletedTasks";
-import Friends from "./components/Tasks/SharedTasks/Friends.js"
+import Friends from "./components/Friends/Friends.js"
 function App() {
   const [loginmodalShow, setloginmodalShow] = useState(true);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -118,7 +118,7 @@ function App() {
             updateTasks ={(props)=> setCompletedData(props)}
             incompletedTasksData = {incompletedData}
             completedTasksData = {completedData}
-            user_id={userID}
+            userID={userID}
             show={showFriends}
             hideFriends={(props) => setShowFriends(false)}
             />

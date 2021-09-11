@@ -35,9 +35,9 @@ const Navigation = (props) => {
   );
   return (
     <>
-      <Navbar  expand="lg" fixed="top" bg="light" collapseOnSelect>
-      <Container>
-      <Navbar.Brand >Slick Doing</Navbar.Brand>
+      <Navbar expand="lg" fixed="top" bg="light" collapseOnSelect>
+        <Container>
+          <Navbar.Brand>Slick Doing</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -51,17 +51,18 @@ const Navigation = (props) => {
                   {props.completeCount}
                 </Badge>
               </Nav.Link>
-             
             </Nav>
             <Nav>
-            <Nav.Link bg="light" onClick={() => props.showShared(true)}>
+              <Nav.Link bg="light" onClick={() => props.showShared(true)}>
                 Shared
                 <Badge className="completed-badge" bg="secondary">
                   {props.completeCount}
                 </Badge>
               </Nav.Link>
-              <Nav.Link onClick={() => props.showFriends(true)}>                Friends
-                </Nav.Link>
+              <Nav.Link onClick={() => props.showFriends(true)}>
+                {" "}
+                Friends
+              </Nav.Link>
               <OverlayTrigger
                 trigger="focus"
                 placement="bottom"
@@ -78,7 +79,7 @@ const Navigation = (props) => {
               </OverlayTrigger>
             </Nav>
           </Navbar.Collapse>
-          </Container>
+        </Container>
       </Navbar>
     </>
   );

@@ -200,9 +200,9 @@ function CompletedTasks(props) {
   return (
     <>
       <Offcanvas show={props.show} onHide={handleClose}>
-        <Offcanvas.Header className="text-center"closeButton onClick={() => handleClose()}>
+        <Offcanvas.Header closeButton onClick={() => handleClose()}>
           
-          <Offcanvas.Title className="completed-title" >
+          <Offcanvas.Title >
            
             Completed
           </Offcanvas.Title>
@@ -233,7 +233,7 @@ function CompletedTasks(props) {
      </div>
      
           <ButtonGroup className="completed-task-top-buttons">
-            <Form className="completed-sort-by">
+            <Form>
               <FormControl
                 onKeyPress={(e) => {
                   e.key === "Enter" && e.preventDefault();
@@ -284,7 +284,7 @@ function CompletedTasks(props) {
           {searchResults.map((task) => (
             <div  key={task.task_id}>
               <Card
-                className="task-card"
+                className="completed-task-card"
                 key={task.task_id}
                 border={cardBorder[task.task_priority]}
                 style={{ width: "20rem" }}

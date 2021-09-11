@@ -15,15 +15,15 @@ import {
   } from "react-bootstrap";
   import React, { useState, useEffect } from "react";
   import axios from "axios";
-  import History from "../../../services/History";
-  import Routes from "../../../services/Routes";
+  import History from "../../services/History";
+  import Routes from "../../services/Routes";
   import { Link } from "react-router-dom";
   import AddFriendModal from "./AddFriendModal";
   // import "./Tasks.css";
   
   import moment from "moment";
-  import CreateTaskModal from "../IncompletedTasks/CreateTaskModal";
-  import EditTaskModal from "../IncompletedTasks/EditTaskModal";
+  import CreateTaskModal from "../Tasks/IncompletedTasks/CreateTaskModal";
+  import EditTaskModal from "../Tasks/IncompletedTasks/EditTaskModal";
   import useWindowSize from "react-use/lib/useWindowSize";
  
   import FlipMove from "react-flip-move";
@@ -234,6 +234,8 @@ import {
          </Button>
        </OverlayTrigger>
        <AddFriendModal
+       
+       userID={props.userID}
        show={showAddFriendModal}
        onHide = {()=> setShowAddFriendModal(false)}
        />

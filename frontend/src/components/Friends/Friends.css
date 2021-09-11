@@ -1,0 +1,20 @@
+.request-form{
+    
+    justify-content: center;
+    margin:auto;
+    text-align:center;
+    
+}
+.add-friend-title{
+   
+    margin:auto;
+    text-align:center;
+}
+
+.friend-search-box{
+    width:130%
+}
+
+.friend-request-button{
+    margin-left:20px
+}

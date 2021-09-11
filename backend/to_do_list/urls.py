@@ -11,9 +11,9 @@ urlpatterns = [
     
     path('<int:user>/tasks', views.tasks),
     
-    path('users/', views.users),
+    path('<int:user>/users', views.users),
     
     path('<int:user>/completed-tasks', views.completed_tasks),
-   
+    path('<int:user>/friends', views.friends),
     
 ]
