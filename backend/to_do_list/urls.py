@@ -15,7 +15,10 @@ urlpatterns = [
     
     path('<int:user>/completed-tasks', views.completed_tasks),
     path('<int:user>/add-friend', views.add_friend),
+    path('<int:user>/remove-friend', views.remove_friend),
     path('<int:user>/accept-friend', views.accept_friend),
+    path('<int:user>/reject-friend', views.reject_friend),
     path('<int:user>/user-friends', views.list_users_friends),
-    path('<int:user>/user-friend-requests', views.list_all_friend_requests),
+    path('<int:user>/user-received-friend-requests', views.list_received_friend_requests),
+    path('<int:user>/user-sent-friend-requests', views.list_sent_friend_requests),
 ]

@@ -193,6 +193,14 @@ def add_friend(request, user):
         # except:
         #     return HTTPResponseServerError("You are already friends with this user")
 @csrf_exempt
+def remove_friend(request, user):
+    if request.method == 'POST':
+        json_data = json.loads(request.body)
+        from_user = User.objects.get(pk=user)
+        to_user = User.objects.get(pk=json_data['to_user_id'])
+        Friend.objects.remove_friend(from_user, to_user)
+        return HttpResponse("friend successfully removed")
+@csrf_exempt
 def accept_friend(request, user):
     if request.method == 'POST':
         to_user_id = User.objects.get(pk=user)
@@ -201,7 +209,18 @@ def accept_friend(request, user):
         friend_request = FriendshipRequest.objects.get(from_user_id=from_user_id, to_user_id=to_user_id)
         friend_request.accept()
         return HttpResponse("friend successfully added")
-def list_all_friend_requests(request, user):
+@csrf_exempt
+def reject_friend(request,user):
+    if request.method == 'POST':
+        to_user_id = User.objects.get(pk=user)
+        json_data = json.loads(request.body)
+        from_user_id = User.objects.get(pk=json_data['from_user_id'])
+        friend_request = FriendshipRequest.objects.get(from_user_id=from_user_id, to_user_id=to_user_id)
+        friend_request.reject()
+        return HttpResponse("friend successfully added")
+
+
+def list_received_friend_requests(request, user):
     u = User.objects.get(pk=user)
     if request.method == "GET":
         data = []
@@ -209,7 +228,14 @@ def list_all_friend_requests(request, user):
         for request in user_friend_requests:
             data.append({"user_display_name": request.from_user.user_display_name, "user_id":request.from_user.user_id})
         return JsonResponse({"user_friend_requests": data})
-
+def list_sent_friend_requests(request, user):
+    u = User.objects.get(pk=user)
+    if request.method == 'GET':
+        data = []
+        user_sent_friend_requests = Friend.objects.sent_requests(user=u)
+        for request in user_sent_friend_requests:
+            data.append({"user_display_name": request.from_user.user_display_name, "user_id":request.from_user.user_id})
+        return JsonResponse({"user_sent_friend_requests":data})
 def list_users_friends(request,user):
    u = User.objects.get(pk=user)
    if request.method == 'GET':

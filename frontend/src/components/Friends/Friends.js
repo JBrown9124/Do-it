@@ -79,7 +79,35 @@ function Friends(props) {
    
 
     props.updateAllFriendsData(remainingFriends);
+    const data = { to_user_id: friendID };
+    axios
+      .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/remove-friend`, data)
+      .then((response) => {
+        
+
+        // props.allFriendsData.push(user); request pending data
+
+        // isLoaded(true);
+      });
   }
+  const handleReject =(fromUserID)=>{
+    const findUserByID = props.allReceivedFriendRequestsData.find(
+      ({ user_id }) => user_id === fromUserID
+    );
+    console.log(findUserByID);
+    
+    handleRemoveFriendRequest(fromUserID);
+    const data = { from_user_id: fromUserID };
+    axios.post(
+      `http://127.0.0.1:8000/to_do_list/${props.userID}/reject-friend`,
+      data
+    )
+    .then((res) => {
+      
+    })
+    .catch((err) => {});
+};
+  
   const handleAccept = (fromUserID) => {
     // setSearchResults(remainingTasks);
 
@@ -154,6 +182,8 @@ function Friends(props) {
                 </Button>
 
                 <AddFriendModal
+                allReceivedFriendRequestsData={props.allReceivedFriendRequestsData}
+                allSentFriendRequestsData={props.allSentFriendRequestsData}
                   allFriendsData={props.allFriendsData}
                   userID={props.userID}
                   show={showAddFriendModal}
@@ -226,6 +256,8 @@ function Friends(props) {
                   // className="completed-clear"
                   variant="danger"
                   size="med"
+                  value={receivedRequest.user_id}
+                  onClick={(e)=>handleReject(parseInt(e.target.value))}
                 >
                   Decline
                 </Button>
@@ -237,9 +269,16 @@ function Friends(props) {
             </Tab>
             
             <Tab eventKey="Sent Requests" title="Sent Requests">
-              <Requests  
+            {props.allSentFriendRequestsData.map((sentRequest) => (
+        <div key={sentRequest.user_id}>
+          <ListGroup className="friend-list-container" horizontal="xxl">
+            <ListGroup.Item>
+              {sentRequest.user_display_name}{""} Pending
               
-              />
+            </ListGroup.Item>
+          </ListGroup>
+        </div>
+      ))}
             </Tab>
           </Tabs>
           {/* </FlipMove> */}

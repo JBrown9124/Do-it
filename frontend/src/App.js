@@ -32,8 +32,8 @@ function App() {
   const [tasksShow, settasksShow] = useState(false);
   const [handleTasks, sethandleTasks] = useState(false);
   const [allData, setallData] = useState(null);
-  
-  const [userID, setUserID] = useState(0);
+
+  const [userID, setUserID] = useState();
   const [showFriends, setShowFriends] = useState(false);
   const [showCompletedTasks, setShowCompletedTasks] = useState(null);
   const [showSharedTasks, setShowSharedTasks] = useState(false);
@@ -42,14 +42,14 @@ function App() {
 
   const [completedData, setCompletedData] = useState([]);
   const [incompletedData, setIncompletedData] = useState([]);
-  const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
-    useState([]);
+  const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =useState([]);
+  const [allSentFriendRequestsData, setAllSentFriendRequestsData] =useState([])
 
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [modalShow, setModalShow] = useState(true);
   const [logOutSuccessful, setLogOutSuccessful] = useState(false);
   useEffect(() => handleFriendsData(userID), [userID]);
-
+  useEffect(()=> handleSentFriendRequestsData(), [userID]);
   useEffect(() => handleTasksData(userID), [userID]);
   // const [completedTask, setCompletedTask] = React.useState(null)
 
@@ -66,16 +66,21 @@ function App() {
   };
   const handleReceivedFriendRequestsData = () => {
     axios
-      .get(`http://127.0.0.1:8000/to_do_list/${userID}/user-friend-requests`)
+      .get(`http://127.0.0.1:8000/to_do_list/${userID}/user-received-friend-requests`)
       .then((response) => {
         setAllReceivedFriendRequestsData(response.data.user_friend_requests);
         // isLoaded(true);
       });
   };
-  const MINUTE_MS = 60000;
+  const handleSentFriendRequestsData = () => {axios
+    .get(`http://127.0.0.1:8000/to_do_list/${userID}/user-sent-friend-requests`)
+    .then((response) => {
+      setAllSentFriendRequestsData(response.data.user_sent_friend_requests);
+      // isLoaded(true);
+    });};
+  const MINUTE_MS = 30000;
   // useEffect(() => handleReceivedFriendRequestsData(userID), [userID]);
   useEffect(() => {
-    
     const interval = setInterval(() => {
       handleReceivedFriendRequestsData(userID);
     }, MINUTE_MS);
@@ -94,14 +99,13 @@ function App() {
   const handleFriendsData = () => {
     axios
       .get(`http://127.0.0.1:8000/to_do_list/${userID}/user-friends`)
-      .then((response) => {handleReceivedFriendRequestsData(userID);
+      .then((response) => {
+        handleReceivedFriendRequestsData(userID);
         setAllFriendsData(response.data.user_friends);
         // isLoaded(true);
       });
   };
 
-  
-  
   if (modalShow === false && tasksShow === false) {
     settasksShow(true);
   }
@@ -145,8 +149,11 @@ function App() {
       />
       <Friends
         allReceivedFriendRequestsData={allReceivedFriendRequestsData}
+        allSentFriendRequestsData={allSentFriendRequestsData}
         allFriendsData={allFriendsData}
-        updateAllReceivedFriendRequestsData={(data)=>setAllReceivedFriendRequestsData(data)}
+        updateAllReceivedFriendRequestsData={(data) =>
+          setAllReceivedFriendRequestsData(data)
+        }
         updateAllFriendsData={(data) => setAllFriendsData(data)}
         userID={userID}
         show={showFriends}

@@ -15,6 +15,7 @@ import {
   ListGroup,
   Row,
   Col,
+  Toast,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -37,6 +38,8 @@ function AddFriendModal(props) {
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [requestSuccess, setRequestSuccess] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
   useEffect(() => handleClearInput(), [props.show]);
   const handleClearInput = () => {
     setSearchItem("");
@@ -51,14 +54,21 @@ function AddFriendModal(props) {
         // isLoaded(true);
       });
   };
+  const MINUTE_MS = 30000;
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleUsers(props.userID);
+    }, MINUTE_MS);
 
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [props.userID]);
   const doesUserExist = () => {
     setLoading(true);
     setIsError(false);
     const findUser = allUsersData.filter(
       (user) =>
-        user.user_display_name.toLowerCase() === searchItem ||
-        user.user_email.toLowerCase() === searchItem
+        user.user_display_name.toLowerCase() === searchItem.toLowerCase() ||
+        user.user_email.toLowerCase() === searchItem.toLowerCase()
     );
 
     if (findUser.length === 0) {
@@ -76,33 +86,60 @@ function AddFriendModal(props) {
 
   const isUserFriend = (user) => {
     const isUserFriend = props.allFriendsData.filter(
-      (friend) => friend.user_display_name === user.user_display_name
+      (friend) => friend.user_id === user.user_id
     );
     if (isUserFriend.length > 0) {
       setIsError(true);
       setLoading(false);
       return setErrorMessage("User is already a friend");
     } else {
-      handleFriendRequest(user)
+      isUserInReceived(user);
     }
   };
-  const handleFriendRequest = (user) =>{
-    setIsError(false);
-      setErrorMessage("");
-      const data = { to_user_id: user.user_id };
-      axios
-        .post(
-          `http://127.0.0.1:8000/to_do_list/${props.userID}/add-friend`,
-          data
-        )
-        .then((response) => {
-          setLoading(false);
-          setIsError(false);
-          // props.allFriendsData.push(user); request pending data
+  const isUserInReceived = (user) => {
+    const userInReceived = props.allReceivedFriendRequestsData.filter(
+      (friend) => friend.user_id === user.user_id
+    );
 
-          // isLoaded(true);
-        });
-  }
+    if (userInReceived.length > 0) {
+      setIsError(true);
+      setLoading(false);
+      return setErrorMessage("User's friend request is in your recieved inbox");
+    } else {
+      isUserInSent(user);
+    }
+  };
+  const isUserInSent = (user) => {
+    const userInSent = props.allSentFriendRequestsData.filter(
+      (friend) => friend.user_id === user.user_id
+    );
+
+    if (userInSent.length > 0) {
+      setIsError(true);
+      setLoading(false);
+      return setErrorMessage("User's friend request is sent and pending");
+    } else {
+      handleFriendRequest(user);
+      props.allSentFriendRequestsData.push(user);
+    }
+  };
+
+  const handleFriendRequest = (user) => {
+    const data = { to_user_id: user.user_id };
+    axios
+      .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/add-friend`, data)
+      .then((response) => {
+        setShowSuccessToast(true);
+        setLoading(false);
+        setIsError(false);
+        setErrorMessage("");
+
+        // props.allFriendsData.push(user); request pending data
+
+        // isLoaded(true);
+      });
+  };
+
   // .catch((err) => {
   //   setErrorMessage(err.response.data);
   //   setIsError(true);
@@ -120,6 +157,17 @@ function AddFriendModal(props) {
         </Modal.Header>
 
         <Modal.Body>
+          <Toast
+            bg="light"
+            className="toast-container"
+            animation={true}
+            onClose={() => setShowSuccessToast(false)}
+            show={showSuccessToast}
+            delay={3000}
+            autohide
+          >
+            <Toast.Body>Friend request sent!</Toast.Body>
+          </Toast>
           <Form className="request-form">
             <Row>
               <Col>
@@ -140,6 +188,7 @@ function AddFriendModal(props) {
                   className="friend-request-button"
                 >
                   {loading ? "Sending..." : "Send request"}
+                  {requestSuccess ? "Sent!" : ""}
                 </Button>
               </Col>
             </Row>
