@@ -180,15 +180,16 @@ def index(request):
 @csrf_exempt
 def add_friend(request, user):
     
-    if request.method == 'GET':
-        user_friends = list(Objects.User.get(pk=user).values())
-        return JsonResponse({'user_friends': user_friends})
+    
     if request.method == 'POST':
         json_data = json.loads(request.body)
         from_user = User.objects.get(pk=user)
-        to_user = User.objects.get(pk=json_data['to_user'])
-            
+        to_user = User.objects.get(pk=json_data['to_user_id'])
+    try:    
         Friend.objects.add_friend(from_user, to_user)
+        return HttpResponse("friend request sent")
+    except:
+        return HttpResponseServerError("User is already your friend")
         # except:
         #     return HTTPResponseServerError("You are already friends with this user")
 @csrf_exempt
@@ -200,12 +201,21 @@ def accept_friend(request, user):
         friend_request = FriendshipRequest.objects.get(from_user_id=from_user_id, to_user_id=to_user_id)
         friend_request.accept()
         return HttpResponse("friend successfully added")
+def list_all_friend_requests(request, user):
+    u = User.objects.get(pk=user)
+    if request.method == "GET":
+        data = []
+        user_friend_requests = Friend.objects.unrejected_requests(user=u)
+        for request in user_friend_requests:
+            data.append({"user_display_name": request.from_user.user_display_name, "user_id":request.from_user.user_id})
+        return JsonResponse({"user_friend_requests": data})
+
 def list_users_friends(request,user):
    u = User.objects.get(pk=user)
    if request.method == 'GET':
        data = []
        users_friends=Friend.objects.friends(u)
        for friend in users_friends:
-           data.append(friend.user_display_name)
+           data.append({"user_display_name":friend.user_display_name, "user_id":friend.user_id})
        
        return JsonResponse({"user_friends":data}, safe=False)

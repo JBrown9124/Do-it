@@ -59,6 +59,10 @@ function Tasks(props) {
   const [flipDisabled, setFlipDisabled] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [showScroll, setShowScroll] = useState(false)
+
+
+
+  
 const checkScrollTop = () => {    
    if (!showScroll && window.pageYOffset > 400){
       setShowScroll(true)    
@@ -97,7 +101,7 @@ useEffect(
     props.incompletedTasksData.unshift(data);
 
     axios
-      .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/tasks`, data)
+      .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
       .then((res) => {
         setShowToast(true);
       });
@@ -112,7 +116,7 @@ useEffect(
     props.completedTasksData.unshift(findTaskByID);
     axios
       .put(
-        `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`,
+        `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
         data
       )
       .then((resp) => {});
@@ -137,7 +141,7 @@ useEffect(
     setShowOffCanvas(false);
     const data = { task_id: e };
     axios
-      .delete(`http://127.0.0.1:8000/to_do_list/${props.user_id}/tasks`, {
+      .delete(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, {
         data: data,
       })
       .then((resp) => {});
@@ -161,7 +165,7 @@ useEffect(
     taskByID.task_name = data.task_name;
 
     axios
-      .put(`http://127.0.0.1:8000/to_do_list/${props.user_id}/tasks`, data)
+      .put(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
       .then((res) => {});
   };
 
@@ -173,12 +177,7 @@ useEffect(
 
   const sortByHighestPriority = () => {
     setAnimationType("sort");
-    // if (searchItem === "") {
-    //   const sorted = [...props.incompletedTasksData].sort((a, b) =>
-    //     a.task_priority.localeCompare(b.task_priority)
-    //   );
-    //   return props.updateTasks(sorted);
-    // } else {
+    
     const sortedSearch = [...searchResults].sort((a, b) =>
       a.task_priority.localeCompare(b.task_priority)
     );
@@ -186,12 +185,7 @@ useEffect(
   };
   const sortByLowestPriority = () => {
     setAnimationType("sort");
-    // if (searchItem === "") {
-    //   const sorted = [...props.incompletedTasksData].sort((a, b) =>
-    //     b.task_priority.localeCompare(a.task_priority)
-    //   );
-    //   return props.updateTasks(sorted);
-    // } else {
+    
     const sortedSearch = [...searchResults].sort((a, b) =>
       b.task_priority.localeCompare(a.task_priority)
     );
@@ -199,12 +193,7 @@ useEffect(
   };
   const sortByFarthestDate = () => {
     setAnimationType("sort");
-    // if (searchItem === "") {
-    //   const sorted = [...props.incompletedTasksData].sort(
-    //     (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
-    //   );
-    //   return props.updateTasks(sorted);
-    // } else {
+    
     const sortedSearch = [...searchResults].sort(
       (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
     );
@@ -212,12 +201,7 @@ useEffect(
   };
   const sortByClosestDate = () => {
     setAnimationType("sort");
-    // if (searchItem === "") {
-    //   const sorted = [...props.incompletedTasksData].sort(
-    //     (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
-    //   );
-    //   return props.updateTasks(sorted);
-    // } else {
+    
     const sortedSearch = [...searchResults].sort(
       (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
     );
@@ -225,32 +209,13 @@ useEffect(
   };
   const sortByTaskName = () => {
     setAnimationType("sort");
-    // if (searchItem === "") {
-    //   const sorted = [...props.incompletedTasksData].sort((a, b) =>
-    //     a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
-    //   );
-    //   return props.updateTasks(sorted);
-    // } else {
+    
     const sortedSearch = [...searchResults].sort((a, b) =>
       a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
     );
     return setSearchResults(sortedSearch);
   };
-  // const popover = (
-  //   <Popover id="popover-basic">
-  //     <Popover.Header as="h3">Are you sure you want to delete?</Popover.Header>
-  //     <Popover.Body>Note: This will be permanent!</Popover.Body>
-  //     <ButtonGroup aria-label="Basic example">
-  //       <Button onClick={(e) => handleDelete(taskID)} variant="secondary">
-  //         Yes
-  //       </Button>
-
-  //       <Button variant="secondary" onClick={() => settaskID(null)}>
-  //         No
-  //       </Button>
-  //     </ButtonGroup>
-  //   </Popover>
-  // );
+  
   const cardBorder = {
     A: "danger",
     B: "warning",
@@ -282,14 +247,14 @@ useEffect(
         <CreateTaskModal
           show={createModalShow}
           onHide={() => setcreateModalShow(false)}
-          user_id={props.user_id}
+          userID={props.userID}
           createData={(data) => handleCreate(data)}
         />
         <EditTaskModal
           show={editModalShow}
           onHide={() => setEditModalShow(false)}
           targeteditData={sendEditData}
-          user_id={sendEditData[0]}
+          userID={sendEditData[0]}
           retrieveEditData={(data) => handleRetrieveEditData(data)}
         />
         <Offcanvas
@@ -440,7 +405,7 @@ useEffect(
                     onClick={(e) => handleSendEditData(e.target.value)}
                     size="med"
                     value={[
-                      props.user_id,
+                      props.userID,
                       task.task_priority,
                       task.task_name,
                       task.task_id,

@@ -36,7 +36,7 @@ function Login(props) {
 
         setLoading(false);
         props.hideModal()
-        return props.user(res.data);
+        props.user(res.data);
       })
       .catch((err) => {
         setLoading(false);

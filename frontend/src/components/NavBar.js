@@ -60,7 +60,7 @@ const Navigation = (props) => {
                 </Badge>
               </Nav.Link>
               <Nav.Link onClick={() => props.showFriends(true)}>
-                {" "}
+                
                 Friends
               </Nav.Link>
               <OverlayTrigger

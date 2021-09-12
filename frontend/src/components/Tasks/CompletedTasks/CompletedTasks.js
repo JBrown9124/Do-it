@@ -79,7 +79,7 @@ function CompletedTasks(props) {
     const data = { undo_completed_task_id: e };
     axios
       .put(
-        `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`,
+        `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
         data
       )
       .then((response) => {});
@@ -100,7 +100,7 @@ function CompletedTasks(props) {
     const data = { task_id: e };
     axios
       .delete(
-        `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`,
+        `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
         { data: data }
       )
       .then((response) => {});
@@ -112,7 +112,7 @@ function CompletedTasks(props) {
     const data = { task_id: "all" };
     axios
       .delete(
-        `http://127.0.0.1:8000/to_do_list/${props.user_id}/completed-tasks`,
+        `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
         { data: data }
       )
       .then((response) => {});

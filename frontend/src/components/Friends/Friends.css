@@ -18,3 +18,8 @@
 .friend-request-button{
     margin-left:20px
 }
+.friend-list-container{
+    justify-content: center;
+    margin:auto;
+    text-align:center;
+}
