@@ -140,3 +140,9 @@ nav-bar-fix {
   
   /* transform:translateX(-14.8px) translateY(-3px); */
 }
+
+.tasks-tab{
+  justify-content: center;
+  margin-bottom: 20px;
+  margin-top:70px;
+}

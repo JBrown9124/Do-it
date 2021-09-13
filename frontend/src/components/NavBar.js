@@ -53,12 +53,7 @@ const Navigation = (props) => {
               </Nav.Link>
             </Nav>
             <Nav>
-              <Nav.Link bg="light" onClick={() => props.showShared(true)}>
-                Shared
-                <Badge className="completed-badge" bg="secondary">
-                  {props.completeCount}
-                </Badge>
-              </Nav.Link>
+              
               <Nav.Link onClick={() => props.showFriends(true)}>
                 
                 Friends

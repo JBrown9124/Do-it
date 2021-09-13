@@ -9,6 +9,8 @@ import {
   Modal,
   Carousel,
   Alert,
+  Tabs,
+  Tab
 } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import Register from "./components/Home/RegisterModal";
@@ -45,9 +47,22 @@ function App() {
   const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =useState([]);
   const [allSentFriendRequestsData, setAllSentFriendRequestsData] =useState([])
 
-  const [carouselIndex, setCarouselIndex] = useState(0);
+  const [loginRegisterCarouselIndex, setloginRegisterCarouselIndex] = useState(0);
+  const [tasksCarouselIndex, setTasksCarouselIndex] = useState(0);
   const [modalShow, setModalShow] = useState(true);
   const [logOutSuccessful, setLogOutSuccessful] = useState(false);
+  const [tabKey, setTabKey] =useState("Solo")
+  const handleTabSelect=(key)=>{
+  setTabKey(key);
+  if (key === "Solo"){
+   
+    return setTasksCarouselIndex(0)
+
+  }
+  if (key === "Shared"){
+    return setTasksCarouselIndex(1)
+  }
+}
   useEffect(() => handleFriendsData(userID), [userID]);
   useEffect(()=> handleSentFriendRequestsData(), [userID]);
   useEffect(() => handleTasksData(userID), [userID]);
@@ -119,8 +134,29 @@ function App() {
         showComplete={(props) => setShowCompletedTasks(props)}
         userID={userID}
       />
-
+        <Tabs variant='pills' 
+        activeKey={tabKey}
+  onSelect={(k)=>handleTabSelect(k)}
+  id="noanim-tab-example"
+  className="tasks-tab">
+        <Tab eventKey="Solo" title="Solo" >
+      <Carousel 
+       touch={false}
+       keyboard={false}
+       interval={null}
+       indicators={false}
+       controls={false}
+       activeIndex={tasksCarouselIndex}
+          >
+              
+        
+      
+       
+        
+        
+       <Carousel.Item>
       <Tasks
+      handleSharedSelected={()=> setTasksCarouselIndex(1)}
         updateTasks={(props) => setIncompletedData(props)}
         incompletedTasksData={incompletedData}
         completedTasksData={completedData}
@@ -129,6 +165,34 @@ function App() {
         completedhandleTasks={handleTasks}
         handledcompletedTasks={() => sethandleTasks(false)}
       />
+         </Carousel.Item>
+ 
+        
+      
+      
+      
+    
+      <Carousel.Item>
+      <SharedTasks
+        handleSoloSelected={()=>setTasksCarouselIndex(0)}
+        updateTasks={(props) => setIncompletedData(props)}
+        incompletedTasksData={incompletedData}
+        completedTasksData={completedData}
+        userID={userID}
+        show={tasksShow}
+        completedhandleTasks={handleTasks}
+        handledcompletedTasks={() => sethandleTasks(false)}
+      />
+       </Carousel.Item>
+    
+      
+      
+      
+       
+      </Carousel>
+      </Tab>
+      <Tab eventKey="Shared" title="Shared"  ></Tab>
+      </Tabs>
       <CompletedTasks
         updateTasks={(props) => setCompletedData(props)}
         incompletedTasksData={incompletedData}
@@ -137,15 +201,6 @@ function App() {
         show={showCompletedTasks}
         hideCompletedTasks={(props) => setShowCompletedTasks(false)}
         // handleTasks={(props) => sethandleTasks(true)}
-      />
-      <SharedTasks
-        allFriendsData={allFriendsData}
-        updateTasks={(props) => setCompletedData(props)}
-        incompletedTasksData={incompletedData}
-        completedTasksData={completedData}
-        userID={userID}
-        show={showSharedTasks}
-        hideSharedTasks={(props) => setShowSharedTasks(false)}
       />
       <Friends
         allReceivedFriendRequestsData={allReceivedFriendRequestsData}
@@ -168,7 +223,7 @@ function App() {
         centered
       >
         <Modal.Title className="app-modal" id="contained-modal-title-vcenter">
-          {carouselIndex === 1 ? "Create an account" : "Sign in"}
+          {loginRegisterCarouselIndex === 1 ? "Create an account" : "Sign in"}
         </Modal.Title>
         <p className="text-center"> to continue to Do or Do not</p>
 
@@ -178,7 +233,7 @@ function App() {
           interval={null}
           indicators={false}
           controls={false}
-          activeIndex={carouselIndex}
+          activeIndex={loginRegisterCarouselIndex}
         >
           <Carousel.Item>
             <Login
@@ -188,7 +243,7 @@ function App() {
               // keyboard={false}
               hideModal={() => setModalShow(false)}
               user={(props) => setUserID(props)}
-              showRegister={(props) => setCarouselIndex(1)}
+              showRegister={(props) => setloginRegisterCarouselIndex(1)}
             />
           </Carousel.Item>
           <Carousel.Item>
@@ -199,7 +254,7 @@ function App() {
               // keyboard={false}
               hideModal={() => setModalShow(false)}
               user={(props) => setUserID(props)}
-              showLogin={(props) => setCarouselIndex(0)}
+              showLogin={(props) => setloginRegisterCarouselIndex(0)}
             />
           </Carousel.Item>
         </Carousel>

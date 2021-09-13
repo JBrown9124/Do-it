@@ -23,6 +23,9 @@ import {
   Toast,
   ToastContainer,
   Alert,
+  Carousel,
+  Tabs,
+  Tab
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -59,8 +62,15 @@ function Tasks(props) {
   const [flipDisabled, setFlipDisabled] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [showScroll, setShowScroll] = useState(false)
+  const [tabKey, setTabKey] =useState("Solo")
+const handleTabSelect=(key)=>{
+  setTabKey(key);
+  if (key === "Shared"){
+    setTabKey("Solo")
+    return props.handleSharedSelected()
+  }
 
-
+}
 
   
 const checkScrollTop = () => {    
@@ -233,7 +243,6 @@ useEffect(
     return (
       <>
      
-        
      <FaArrowCircleUp 
    className="scrollTop" 
    onClick={scrollTop} 
@@ -300,6 +309,15 @@ useEffect(
           Create
         </Button> */}
         {/* </div>  */}
+        {/* <Tabs variant='pills' 
+        activeKey={tabKey}
+  onSelect={(k)=>handleTabSelect(k)}
+  id="noanim-tab-example"
+  className="tasks-tab">
+        <Tab eventKey="Solo" title="Solo" ></Tab>
+        
+        <Tab eventKey="Shared" title="Shared"  ></Tab>
+        </Tabs> */}
 
         <ButtonToolbar
           className="top-tasks-buttons"
@@ -449,6 +467,7 @@ useEffect(
           </Button>
           
         </Navbar> 
+        
       </>
       
     );
