@@ -10,7 +10,7 @@ urlpatterns = [
     path('log-in/', views.log_in),
     
     path('<int:user>/tasks', views.tasks),
-    
+    path('<int:user>/shared-tasks', views.shared_tasks),
     path('<int:user>/users', views.users),
     
     path('<int:user>/completed-tasks', views.completed_tasks),

@@ -15,6 +15,8 @@ import {
   ListGroup,
   Tabs,
   Tab,
+  Row,
+  Column
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -56,7 +58,19 @@ function Friends(props) {
   const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
     useState([]);
   
+    useEffect(
+      () => setSearchResults(props.allFriendsData),
+      [props.allFriendsData.length]
+    );
   
+    useEffect(() => {
+      setAnimationType("sort");
+      const results = props.allFriendsData.filter(
+        (friend) =>
+          friend.user_display_name.toLowerCase().includes(searchItem) 
+      );
+      setSearchResults(results);
+    }, [searchItem]);
   
   
   
@@ -76,7 +90,7 @@ function Friends(props) {
       return value.user_id !== friendID
     });
 
-   
+    console.log(remainingFriends)
 
     props.updateAllFriendsData(remainingFriends);
     const data = { to_user_id: friendID };
@@ -147,10 +161,7 @@ function Friends(props) {
   
     //   props.updateAllFriendsData(remainingFriends);
     // };
-    useEffect(
-      () => setSearchResults(props.allFriendsData),
-      [props.allFriendsData.length]
-    );
+    
   return (
     <>
       <Offcanvas show={props.show} onHide={handleClose} placement="top">
@@ -163,13 +174,16 @@ function Friends(props) {
         </Offcanvas.Header>
 
         <Offcanvas.Body>
+        
           <Tabs
-            defaultActiveKey="home"
-            transition={false}
+            defaultActiveKey="Friends"
+            
             id="noanim-tab-example"
-            className="mb-3"
+            className="friend-tabs-container"
           >
+            
             <Tab eventKey="Friends" title="Friends">
+              
               <div className="d-grid gap-2">
                 <Button
                   // className="completed-clear"
@@ -191,15 +205,15 @@ function Friends(props) {
                 />
               </div>
 
-              <ButtonGroup className="completed-task-top-buttons">
-                <Form className="completed-sort-by">
+             
+                <Form >
                   <FormControl
                     onKeyPress={(e) => {
                       e.key === "Enter" && e.preventDefault();
                     }}
                     type="search"
                     placeholder="Search"
-                    className="mr-2"
+                    className="friend-search-container"
                     aria-label="Search"
                     variant="primary"
                     value={searchItem}
@@ -215,7 +229,7 @@ function Friends(props) {
                     >
                       Delete All
                     </Button> */}
-              </ButtonGroup>
+              
 
               {searchResults.map((friend) => (
                 <div key={friend.user_id}>
@@ -280,7 +294,9 @@ function Friends(props) {
         </div>
       ))}
             </Tab>
+            
           </Tabs>
+        
           {/* </FlipMove> */}
         </Offcanvas.Body>
       </Offcanvas>

@@ -22,4 +22,21 @@
     justify-content: center;
     margin:auto;
     text-align:center;
+    
+}
+.friend-tabs-container{
+    margin-bottom:10px;
+    font-size: 12px;
+    justify-content: center;
+    /* justify-content: center;
+    margin:auto;
+    text-align:center; */
+}
+.friend-search-container{
+    width:50%;
+    margin:auto;
+    margin-bottom: 15px;
+    justify-content: center;
+    
+    position:relative;
 }

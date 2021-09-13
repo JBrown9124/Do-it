@@ -35,8 +35,9 @@ class Tasks(models.Model):
     task_completed = models.BooleanField(default=False)
 
     def __str__(self):
-        return f"{self.user.user_id}: {self.user.user_email}: {self.task_name}: {self.task_id}: {self.task_description}"
-
+        return f"{self.task_name}: {self.task_id}: {self.task_description}"
+    def __repr__(self):
+        return f"{self.task_name}: {self.task_id}: {self.task_description}"
     def was_published_recently(self):
         return self.date_time >= timezone.now() - datetime.timedelta(days=1)
 
@@ -49,6 +50,7 @@ class SharedTasks(models.Model):
         User, on_delete=models.CASCADE, related_name='sender')
     recipient = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name='recipient')
+    
     def __str__(self):
         return f"{self.task} = {self.sender} + {self.recipient} "
 

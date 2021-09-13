@@ -14,7 +14,7 @@ from django.core.exceptions import ValidationError
 from .ResponseModels.tasks import TasksResponseModel
 from .ResponseModels.users import UsersResponseModel
 from friendship.models import Block, Follow, Friend, FriendshipRequest
-
+from itertools import chain
 
 from django.core.exceptions import ValidationError
 import hashlib
@@ -105,6 +105,30 @@ def tasks(request, user):
 
 
 
+def shared_tasks(request, user):
+    if request.method == 'GET':
+        u = User.objects.get(pk=user)
+        data= []
+        task=None
+        sent_from = None
+        received_shared_tasks = SharedTasks.objects.filter(recipient=u)
+        for task in received_shared_tasks:
+            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
+            sent_from= list(User.objects.exclude(user_id=task.sender_id).values("user_email", "user_display_name", "user_id"))
+           
+            merged_data = task_info + sent_from
+            json_friendly = {"task": merged_data[0], "sent_from": merged_data[1]}
+            data.append(json_friendly)
+          
+            
+            
+        
+       
+       
+       
+       
+        
+        return JsonResponse({"shared_tasks": data})
 
 
 
