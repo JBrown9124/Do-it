@@ -231,6 +231,7 @@ function App() {
             updateTasks={(props) => setIncompletedSharedTasksData(props)}
             incompletedSharedTasksData={incompletedSharedTasksData}
             completedSharedTasksData={completedSharedTasksData}
+            allFriendsData = {allFriendsData}
             userID={userID}
             show={tasksShow}
             completedhandleTasks={handleTasks}

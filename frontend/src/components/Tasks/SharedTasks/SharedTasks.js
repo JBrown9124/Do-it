@@ -33,6 +33,7 @@ import Routes from "../../../services/Routes";
 import { Link } from "react-router-dom";
 
 import moment from "moment";
+import SharedCreateModal from "./SharedCreateModal"
 import CreateTaskModal from "../SoloTasks/CreateTaskModal";
 import EditTaskModal from "../SoloTasks/EditTaskModal";
 import useWindowSize from "react-use/lib/useWindowSize";
@@ -108,7 +109,7 @@ useEffect(
     props.incompletedSharedTasksData.unshift(data);
 
     axios
-      .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
+      .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`, data)
       .then((res) => {
         setShowToast(true);
       });
@@ -141,7 +142,7 @@ useEffect(
     setShowOffCanvas(false);
     const data = { task_id: e };
     axios
-      .delete(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, {
+      .delete(`http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`, {
         data: data,
       })
       .then((resp) => {});
@@ -156,7 +157,7 @@ useEffect(
   };
   const handleRetrieveEditData = (data) => {
     const taskByID = props.incompletedSharedTasksData.find(
-      ({ task_id }) => task_id === data.task_id
+      ({ task }) => task.task_id === data.task_id
     );
     console.log(taskByID);
     taskByID.task_date_time = data.task_date_time;
@@ -165,7 +166,7 @@ useEffect(
     taskByID.task_name = data.task_name;
 
     axios
-      .put(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
+      .put(`http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`, data)
       .then((res) => {});
   };
 
@@ -229,7 +230,7 @@ useEffect(
     sort: "accordionVertical",
   };
 
-  if (props.show === true && props.incompletedSharedTasksData !== null)
+  if (props.show === true && searchResults !== null)
     return (
       <div >
      
@@ -254,7 +255,8 @@ useEffect(
         
           </div>
           </div>
-        <CreateTaskModal
+        <SharedCreateModal
+        allFriendsData = {props.allFriendsData}
           show={createModalShow}
           onHide={() => setcreateModalShow(false)}
           userID={props.userID}
