@@ -137,7 +137,7 @@ def shared_tasks(request, user):
 
         return JsonResponse({"shared_tasks": completed_sharing})
 
-def completed_shared_tasks(request, user):
+def shared_tasks(request, user):
     if request.method == 'GET':
         u = User.objects.get(pk=user)
         received_data = []

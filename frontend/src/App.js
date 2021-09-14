@@ -100,7 +100,7 @@ function App() {
   const handleSharedTasksData = () =>{
     axios
       .get(
-        `http://127.0.0.1:8000/to_do_list/${userID}/completed-shared-tasks`
+        `http://127.0.0.1:8000/to_do_list/${userID}/shared-tasks`
       )
       .then((response) => {
         setCompletedSharedTasksData(response.data.completed_shared_tasks);

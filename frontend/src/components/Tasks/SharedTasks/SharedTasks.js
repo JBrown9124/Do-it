@@ -116,7 +116,7 @@ useEffect(
   const handleComplete = (e) => {
     setAnimationType("complete");
     const findTaskByID = props.incompletedSharedTasksData.find(
-      ({ task_id }) => task_id.task_id === e
+      ({ task }) => task.task_id === e
     );
     console.log(findTaskByID);
     const data = { completed_task_id: e };
