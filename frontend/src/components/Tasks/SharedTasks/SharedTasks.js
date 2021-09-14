@@ -82,16 +82,16 @@ const scrollTop = () =>{
   window.scrollTo({top: 0, behavior: 'smooth'});
 };  
 useEffect(
-    () => setSearchResults(props.incompletedTasksData),
-    [props.incompletedTasksData.length]
+    () => setSearchResults(props.incompletedSharedTasksData),
+    [props.incompletedSharedTasksData.length]
   );
 
   useEffect(() => {
     setAnimationType("sort");
-    const results = props.incompletedTasksData.filter(
+    const results = props.incompletedSharedTasksData.filter(
       (task_name) =>
-        task_name.task_name.toLowerCase().includes(searchItem) ||
-        moment(task_name.task_date_time)
+        task_name.task.task_name.toLowerCase().includes(searchItem) ||
+        moment(task_name.task.task_date_time)
           .format("MMMM DD YYYY hh:mm A")
           .toLowerCase()
           .includes(searchItem)
@@ -105,7 +105,7 @@ useEffect(
   //   setDeleteTaskID(e);
   // };
   const handleCreate = (data) => {
-    props.incompletedTasksData.unshift(data);
+    props.incompletedSharedTasksData.unshift(data);
 
     axios
       .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
@@ -115,34 +115,27 @@ useEffect(
   };
   const handleComplete = (e) => {
     setAnimationType("complete");
-    const findTaskByID = props.incompletedTasksData.find(
-      ({ task_id }) => task_id === e
+    const findTaskByID = props.incompletedSharedTasksData.find(
+      ({ task_id }) => task_id.task_id === e
     );
     console.log(findTaskByID);
     const data = { completed_task_id: e };
-    props.completedTasksData.unshift(findTaskByID);
+    props.completedSharedTasksData.unshift(findTaskByID);
     axios
       .put(
         `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
         data
       )
       .then((resp) => {});
-    const filterTasksHelper = (task) => {
-      return e !== task.task_id;
-    };
-    filterTasksHelper(props.incompletedTasksData);
-    const remainingTasks = props.incompletedTasksData.filter(filterTasksHelper);
-    // setSearchResults(remainingTasks);
-    props.updateTasks(remainingTasks);
+    handleDelete(e);
   };
 
   const handleDelete = (e) => {
     setAnimationType("delete");
-    const findTasksByID = (task) => {
-      return e !== task.task_id;
-    };
-    findTasksByID(props.incompletedTasksData);
-    const remainingTasks = props.incompletedTasksData.filter(findTasksByID);
+    const remainingTasks = props.incompletedSharedTasksData.filter(function(value, index, arr){
+      
+      return value.task.task_id !== e
+    });
     // setSearchResults(remainingTasks);
     props.updateTasks(remainingTasks);
     setShowOffCanvas(false);
@@ -155,14 +148,14 @@ useEffect(
   };
   const handleDeleteOffCanvas = (e) => {
     setDeleteTaskID(e);
-    const findTaskByID = props.incompletedTasksData.find(
-      ({ task_id }) => task_id === e
+    const findTaskByID = props.incompletedSharedTasksData.find(
+      ({ task }) => task.task_id === e
     );
     setDeleteTaskName(findTaskByID.task_name);
     setShowOffCanvas(true);
   };
   const handleRetrieveEditData = (data) => {
-    const taskByID = props.incompletedTasksData.find(
+    const taskByID = props.incompletedSharedTasksData.find(
       ({ task_id }) => task_id === data.task_id
     );
     console.log(taskByID);
@@ -236,7 +229,7 @@ useEffect(
     sort: "accordionVertical",
   };
 
-  if (props.show === true && props.incompletedTasksData !== null)
+  if (props.show === true && props.incompletedSharedTasksData !== null)
     return (
       <div >
      
@@ -393,7 +386,7 @@ useEffect(
         
         
         
-        {searchResults.map((task) => (
+        {searchResults.map(({task, sharing_with}) => (
           <div className="tasks-container" key={task.task_id}>
            
             <Card
@@ -404,6 +397,7 @@ useEffect(
               
               <Card.Header>{task.task_name}</Card.Header>
               <Card.Body>
+                Sharing with {sharing_with.user_display_name}
                 <Card.Text>{task.task_description}</Card.Text>
 
                 <ButtonGroup>

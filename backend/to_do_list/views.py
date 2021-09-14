@@ -170,8 +170,39 @@ def completed_shared_tasks(request, user):
             sent_data.append(json_friendly)
 
         completed_sharing = received_data + sent_data
+        
+        u = User.objects.get(pk=user)
+        received_data = []
+        
+        received_shared_tasks = SharedTasks.objects.filter(recipient=u)
+        for task in received_shared_tasks:
+            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
+            if task_info[0]["task_completed"] == True:
+                continue
+            sent_from = list(User.objects.filter(user_id=task.sender_id).values(
+                "user_email", "user_display_name", "user_id"))
 
-        return JsonResponse({"shared_tasks": completed_sharing})
+            merged_data = task_info + sent_from
+            json_friendly = {
+                "task": merged_data[0], "sharing_with": merged_data[1]}
+            received_data.append(json_friendly)
+        sent_data = []
+        sent_shared_tasks = SharedTasks.objects.filter(sender=u)
+        for task in sent_shared_tasks:
+            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
+            if task_info[0]["task_completed"] == True:
+                continue
+            received_from = list(User.objects.filter(user_id=task.recipient_id).values(
+                "user_email", "user_display_name", "user_id"))
+
+            merged_data = task_info + received_from
+            json_friendly = {
+                "task": merged_data[0], "sharing_with": merged_data[1]}
+            sent_data.append(json_friendly)
+
+        incompleted_sharing = received_data + sent_data
+
+        return JsonResponse({"completed_shared_tasks": completed_sharing, "incompleted_shared_tasks": incompleted_sharing})
 
 
 def users(request, user):

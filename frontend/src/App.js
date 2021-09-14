@@ -46,7 +46,8 @@ function App() {
   const [showSharedTasks, setShowSharedTasks] = useState(false);
 
   const [allFriendsData, setAllFriendsData] = useState([]);
-
+  const [completedSharedTasksData, setCompletedSharedTasksData] = useState([])
+  const[incompletedSharedTasksData,setIncompletedSharedTasksData]= useState([])
   const [completedData, setCompletedData] = useState([]);
   const [incompletedData, setIncompletedData] = useState([]);
   const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
@@ -84,9 +85,10 @@ function App() {
       return setcompletedTasksCarouselIndex(1);
     }
   };
-  useEffect(() => handleFriendsData(userID), [userID]);
+  useEffect(() => handleFriendsData(), [userID]);
   useEffect(() => handleSentFriendRequestsData(), [userID]);
-  useEffect(() => handleTasksData(userID), [userID]);
+  useEffect(() => handleTasksData(), [userID]);
+  useEffect(() => handleSharedTasksData(), [userID]);
   // const [completedTask, setCompletedTask] = React.useState(null)
 
   // if (loginmodalShow===true && registermodalShow===true){
@@ -95,7 +97,19 @@ function App() {
   // if (loginmodalShow===false && registermodalShow===true){
   //   setloginmodalShow(false)
   // }
+  const handleSharedTasksData = () =>{
+    axios
+      .get(
+        `http://127.0.0.1:8000/to_do_list/${userID}/completed-shared-tasks`
+      )
+      .then((response) => {
+        setCompletedSharedTasksData(response.data.completed_shared_tasks);
+        setIncompletedSharedTasksData(response.data.incompleted_shared_tasks);
+        // isLoaded(true);
+      });
+  };
 
+  
   const handleShowLoginHideTasks = () => {
     setModalShow(true);
     settasksShow(false);
@@ -214,9 +228,9 @@ function App() {
         <Carousel.Item>
           <SharedTasks
             handleSoloSelected={() => setTasksCarouselIndex(0)}
-            updateTasks={(props) => setIncompletedData(props)}
-            incompletedTasksData={incompletedData}
-            completedTasksData={completedData}
+            updateTasks={(props) => setIncompletedSharedTasksData(props)}
+            incompletedSharedTasksData={incompletedSharedTasksData}
+            completedSharedTasksData={completedSharedTasksData}
             userID={userID}
             show={tasksShow}
             completedhandleTasks={handleTasks}
@@ -262,6 +276,7 @@ function App() {
             <Carousel.Item>
               <CompletedTasks
                 updateTasks={(props) => setCompletedData(props)}
+                
                 incompletedTasksData={incompletedData}
                 completedTasksData={completedData}
                 userID={userID}
@@ -273,9 +288,9 @@ function App() {
             </Carousel.Item>
             <Carousel.Item>
               <SharedCompletedTasks
-                updateTasks={(props) => setCompletedData(props)}
-                incompletedTasksData={incompletedData}
-                completedTasksData={completedData}
+                updateTasks={(props) => setCompletedSharedTasksData(props)}
+                completedSharedTasksData = {completedSharedTasksData}
+                incompletedSharedTasksData = {incompletedSharedTasksData}
                 userID={userID}
                 show={showCompletedTasks}
                 hideCompletedTasks={(props) => setShowCompletedTasks(false)}

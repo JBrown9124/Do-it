@@ -40,15 +40,15 @@ import {
     const [searchResults, setSearchResults] = useState([]);
     const handleClose = () => props.hideCompletedTasks();
     useEffect(
-      () => setSearchResults(props.completedTasksData),
-      [props.completedTasksData.length]
+      () => setSearchResults(props.completedSharedTasksData),
+      [props.completedSharedTasksData.length]
     );
     useEffect(() => {
       setAnimationType("sort");
-      const results = props.completedTasksData.filter(
+      const results = props.completedSharedTasksData.filter(
         (task_name) =>
-          task_name.task_name.toLowerCase().includes(searchItem) ||
-          moment(task_name.task_date_time)
+          task_name.task.task_name.toLowerCase().includes(searchItem) ||
+          moment(task_name.task.task_date_time)
             .format("MMMM DD YYYY hh:mm A")
             .toLowerCase()
             .includes(searchItem)
@@ -59,17 +59,17 @@ import {
       setAnimationType("undo");
       console.log(e);
   
-      const findTaskByID = props.completedTasksData.find(
+      const findTaskByID = props.completedSharedTasksData.find(
         ({ task_id }) => task_id === e
       );
       console.log(findTaskByID);
   
-      props.incompletedTasksData.unshift(findTaskByID);
+      props.incompletedSharedTasksData.unshift(findTaskByID);
       const findTasksByID = (task) => {
-        return e !== task.task_id;
+        return e !== task.task.task_id;
       };
-      findTasksByID(props.completedTasksData);
-      const remainingTasks = props.completedTasksData.filter(findTasksByID);
+      findTasksByID(props.completedSharedTasksData);
+      const remainingTasks = props.completedSharedTasksData.filter(findTasksByID);
   
       props.updateTasks(remainingTasks);
       const data = { undo_completed_task_id: e };
@@ -89,8 +89,8 @@ import {
       const findTasksByID = (task) => {
         return e !== task.task_id;
       };
-      findTasksByID(props.completedTasksData);
-      const remainingTasks = props.completedTasksData.filter(findTasksByID);
+      findTasksByID(props.completedSharedTasksData);
+      const remainingTasks = props.completedSharedTasksData.filter(findTasksByID);
   
       props.updateTasks(remainingTasks);
       const data = { task_id: e };
@@ -277,7 +277,7 @@ import {
                     </Button> */}
             </ButtonGroup>
   </div>
-            {searchResults.map((task) => (
+            {searchResults.map(({task, sharing_with}) => (
               <div  className="tasks-container" key={task.task_id}>
                 <Card
                   className="task-card"
@@ -287,6 +287,7 @@ import {
                 >
                   <Card.Header>{task.task_name}</Card.Header>
                   <Card.Body>
+                    Sharing with {sharing_with.user_display_name}
                     <Card.Text>{task.task_description}</Card.Text>
   
                     <ButtonGroup aria-label="Basic example">
