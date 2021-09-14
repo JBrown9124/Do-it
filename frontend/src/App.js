@@ -10,24 +10,29 @@ import {
   Carousel,
   Alert,
   Tabs,
-  Tab
+  Tab,
+  Nav,
+  Offcanvas,
+  Navbar
 } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import Register from "./components/Home/RegisterModal";
 // import Routes from "./services/Routes";
 import Navigation from "./components/NavBar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "./components/Tasks/IncompletedTasks/Tasks.css";
+import "./components/Tasks/SoloTasks/Tasks.css";
 
 import axios from "axios";
 import "./components/Friends/Friends.css";
 import Login from "./components/Home/LoginModal";
 import "./components/Home/Home.css";
 import "./components/NavBar.css";
+import "./components/Tasks/SoloTasks/CompletedTasks/CompletedTasks.css";
 import SharedTasks from "./components/Tasks/SharedTasks/SharedTasks.js";
-import Tasks from "./components/Tasks/IncompletedTasks/Tasks.js";
-import CompletedTasks from "./components/Tasks/CompletedTasks/CompletedTasks";
+import Tasks from "./components/Tasks/SoloTasks/Tasks.js";
+import CompletedTasks from "./components/Tasks/SoloTasks/CompletedTasks/CompletedTasks";
 import Friends from "./components/Friends/Friends.js";
+import SharedCompletedTasks from "./components/Tasks/SharedTasks/SharedCompletedTasks/SharedCompletedTasks";
 function App() {
   const [loginmodalShow, setloginmodalShow] = useState(true);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -44,27 +49,43 @@ function App() {
 
   const [completedData, setCompletedData] = useState([]);
   const [incompletedData, setIncompletedData] = useState([]);
-  const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =useState([]);
-  const [allSentFriendRequestsData, setAllSentFriendRequestsData] =useState([])
+  const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
+    useState([]);
+  const [allSentFriendRequestsData, setAllSentFriendRequestsData] = useState(
+    []
+  );
 
-  const [loginRegisterCarouselIndex, setloginRegisterCarouselIndex] = useState(0);
+  const [loginRegisterCarouselIndex, setloginRegisterCarouselIndex] =
+    useState(0);
   const [tasksCarouselIndex, setTasksCarouselIndex] = useState(0);
+  const [completedTasksCarouselIndex, setcompletedTasksCarouselIndex] =
+    useState(0);
+
   const [modalShow, setModalShow] = useState(true);
   const [logOutSuccessful, setLogOutSuccessful] = useState(false);
-  const [tabKey, setTabKey] =useState("Solo")
-  const handleTabSelect=(key)=>{
-  setTabKey(key);
-  if (key === "Solo"){
-   
-    return setTasksCarouselIndex(0)
-
-  }
-  if (key === "Shared"){
-    return setTasksCarouselIndex(1)
-  }
-}
+  const [tasksTabKey, setTasksTabKey] = useState("Solo");
+  const [completedTasksTabKey, setCompletedTasksTabKey] =
+    useState("SoloCompleted");
+  const handleTasksTabSelect = (key) => {
+    setTasksTabKey(key);
+    if (key === "Solo") {
+      return setTasksCarouselIndex(0);
+    }
+    if (key === "Shared") {
+      return setTasksCarouselIndex(1);
+    }
+  };
+  const handleCompletedTasksTabSelect = (key) => {
+    setCompletedTasksTabKey(key);
+    if (key === "SoloCompleted") {
+      return setcompletedTasksCarouselIndex(0);
+    }
+    if (key === "SharedCompleted") {
+      return setcompletedTasksCarouselIndex(1);
+    }
+  };
   useEffect(() => handleFriendsData(userID), [userID]);
-  useEffect(()=> handleSentFriendRequestsData(), [userID]);
+  useEffect(() => handleSentFriendRequestsData(), [userID]);
   useEffect(() => handleTasksData(userID), [userID]);
   // const [completedTask, setCompletedTask] = React.useState(null)
 
@@ -81,18 +102,24 @@ function App() {
   };
   const handleReceivedFriendRequestsData = () => {
     axios
-      .get(`http://127.0.0.1:8000/to_do_list/${userID}/user-received-friend-requests`)
+      .get(
+        `http://127.0.0.1:8000/to_do_list/${userID}/user-received-friend-requests`
+      )
       .then((response) => {
         setAllReceivedFriendRequestsData(response.data.user_friend_requests);
         // isLoaded(true);
       });
   };
-  const handleSentFriendRequestsData = () => {axios
-    .get(`http://127.0.0.1:8000/to_do_list/${userID}/user-sent-friend-requests`)
-    .then((response) => {
-      setAllSentFriendRequestsData(response.data.user_sent_friend_requests);
-      // isLoaded(true);
-    });};
+  const handleSentFriendRequestsData = () => {
+    axios
+      .get(
+        `http://127.0.0.1:8000/to_do_list/${userID}/user-sent-friend-requests`
+      )
+      .then((response) => {
+        setAllSentFriendRequestsData(response.data.user_sent_friend_requests);
+        // isLoaded(true);
+      });
+  };
   const MINUTE_MS = 30000;
   // useEffect(() => handleReceivedFriendRequestsData(userID), [userID]);
   useEffect(() => {
@@ -125,7 +152,7 @@ function App() {
     settasksShow(true);
   }
   return (
-    <>
+    <div>
       <Navigation
         showFriends={() => setShowFriends(true)}
         showShared={() => setShowSharedTasks(true)}
@@ -134,74 +161,129 @@ function App() {
         showComplete={(props) => setShowCompletedTasks(props)}
         userID={userID}
       />
-        <Tabs variant='pills' 
-        activeKey={tabKey}
-  onSelect={(k)=>handleTabSelect(k)}
-  id="noanim-tab-example"
-  className="tasks-tab">
-        <Tab eventKey="Solo" title="Solo" >
-      <Carousel 
-       touch={false}
-       keyboard={false}
-       interval={null}
-       indicators={false}
-       controls={false}
-       activeIndex={tasksCarouselIndex}
-          >
-              
-        
-      
-       
-        
-        
-       <Carousel.Item>
-      <Tasks
-      handleSharedSelected={()=> setTasksCarouselIndex(1)}
-        updateTasks={(props) => setIncompletedData(props)}
-        incompletedTasksData={incompletedData}
-        completedTasksData={completedData}
-        userID={userID}
-        show={tasksShow}
-        completedhandleTasks={handleTasks}
-        handledcompletedTasks={() => sethandleTasks(false)}
-      />
-         </Carousel.Item>
+     <Navbar fixed="bottom" bg="light">
+      <Nav navbar={false} fill variant="pills" className="tasks-tab" activeKey={tasksTabKey}
+  onSelect={(k)=>handleTasksTabSelect(k)}
  
-        
+  >
       
+              <Nav.Item className="solo-shared-buttons">
+              <Nav.Link eventKey="Solo">Solo</Nav.Link>
+              </Nav.Item>
+              <Nav.Item>
+              <Nav.Link eventKey="Shared"> Shared
+              </Nav.Link>
+       </Nav.Item>
       
-      
-    
-      <Carousel.Item>
-      <SharedTasks
-        handleSoloSelected={()=>setTasksCarouselIndex(0)}
-        updateTasks={(props) => setIncompletedData(props)}
-        incompletedTasksData={incompletedData}
-        completedTasksData={completedData}
-        userID={userID}
-        show={tasksShow}
-        completedhandleTasks={handleTasks}
-        handledcompletedTasks={() => sethandleTasks(false)}
-      />
-       </Carousel.Item>
-    
-      
-      
-      
+       </Nav>
+       </Navbar>
        
+      {/* <Tabs
+        variant="pills"
+        activeKey={tasksTabKey}
+        onSelect={(k) => handleTasksTabSelect(k)}
+        id="noanim-tab-example"
+        className="tasks-tab"
+      >
+        <Tab eventKey="Solo" title="Solo"></Tab>
+
+        <Tab eventKey="Shared" title="Shared"></Tab>
+      </Tabs> */}
+
+      <Carousel
+        touch={false}
+        keyboard={false}
+        interval={null}
+        indicators={false}
+        controls={false}
+        activeIndex={tasksCarouselIndex}
+      >
+        <Carousel.Item>
+          <Tasks
+            handleSharedSelected={() => setTasksCarouselIndex(1)}
+            updateTasks={(props) => setIncompletedData(props)}
+            incompletedTasksData={incompletedData}
+            completedTasksData={completedData}
+            userID={userID}
+            show={tasksShow}
+            completedhandleTasks={handleTasks}
+            handledcompletedTasks={() => sethandleTasks(false)}
+          />
+        </Carousel.Item>
+
+        <Carousel.Item>
+          <SharedTasks
+            handleSoloSelected={() => setTasksCarouselIndex(0)}
+            updateTasks={(props) => setIncompletedData(props)}
+            incompletedTasksData={incompletedData}
+            completedTasksData={completedData}
+            userID={userID}
+            show={tasksShow}
+            completedhandleTasks={handleTasks}
+            handledcompletedTasks={() => sethandleTasks(false)}
+          />
+        </Carousel.Item>
+        
       </Carousel>
-      </Tab>
-      <Tab eventKey="Shared" title="Shared"  ></Tab>
-      </Tabs>
-      <CompletedTasks
-        updateTasks={(props) => setCompletedData(props)}
-        incompletedTasksData={incompletedData}
-        completedTasksData={completedData}
-        userID={userID}
+      <Offcanvas
         show={showCompletedTasks}
-        hideCompletedTasks={(props) => setShowCompletedTasks(false)}
-        // handleTasks={(props) => sethandleTasks(true)}
-      />
+        onHide={() => setShowCompletedTasks(false)}
+      >
+        <Offcanvas.Header
+          closeButton
+          onClick={() => setShowCompletedTasks(false)}
+        >
+          <Offcanvas.Title className="completed-title">Completed</Offcanvas.Title>
+        </Offcanvas.Header>
+
+        <Offcanvas.Body>
+          <Tabs
+         
+          fill variant="pills" 
+            
+            activeKey={completedTasksTabKey}
+            onSelect={(k) => handleCompletedTasksTabSelect(k)}
+            id="noanim-tab-example"
+            className="completed-tabs"
+          >
+            <Tab eventKey="SoloCompleted" title="Solo"></Tab>
+
+            <Tab eventKey="SharedCompleted" title="Shared"></Tab>
+          </Tabs>
+          
+          <Carousel
+            touch={false}
+            keyboard={false}
+            interval={null}
+            indicators={false}
+            controls={false}
+            activeIndex={completedTasksCarouselIndex}
+          >
+            <Carousel.Item>
+              <CompletedTasks
+                updateTasks={(props) => setCompletedData(props)}
+                incompletedTasksData={incompletedData}
+                completedTasksData={completedData}
+                userID={userID}
+                show={showCompletedTasks}
+                hideCompletedTasks={(props) => setShowCompletedTasks(false)}
+                // handleTasks={(props) => sethandleTasks(true)}
+              
+              />
+            </Carousel.Item>
+            <Carousel.Item>
+              <SharedCompletedTasks
+                updateTasks={(props) => setCompletedData(props)}
+                incompletedTasksData={incompletedData}
+                completedTasksData={completedData}
+                userID={userID}
+                show={showCompletedTasks}
+                hideCompletedTasks={(props) => setShowCompletedTasks(false)}
+              />
+            </Carousel.Item>
+          </Carousel>
+        </Offcanvas.Body>
+      </Offcanvas>
       <Friends
         allReceivedFriendRequestsData={allReceivedFriendRequestsData}
         allSentFriendRequestsData={allSentFriendRequestsData}
@@ -259,9 +341,12 @@ function App() {
           </Carousel.Item>
         </Carousel>
       </Modal>
+             
+
+       
 
       {/* <Routes /> */}
-    </>
+    </div>
   );
 }
 

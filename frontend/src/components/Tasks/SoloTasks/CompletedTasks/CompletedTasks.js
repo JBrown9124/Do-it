@@ -15,14 +15,13 @@ import {
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import History from "../../../services/History";
-import Routes from "../../../services/Routes";
+
+
 import { Link } from "react-router-dom";
 // import "./Tasks.css";
 
 import moment from "moment";
-import CreateTaskModal from "../IncompletedTasks/CreateTaskModal";
-import EditTaskModal from "../IncompletedTasks/EditTaskModal";
+
 import useWindowSize from "react-use/lib/useWindowSize";
 import ReuseTaskModal from "./ReuseTaskModal";
 import FlipMove from "react-flip-move";
@@ -199,7 +198,7 @@ function CompletedTasks(props) {
 
   return (
     <>
-      <Offcanvas show={props.show} onHide={handleClose}>
+      {/* <Offcanvas show={props.show} onHide={handleClose}>
         <Offcanvas.Header closeButton onClick={() => handleClose()}>
           
           <Offcanvas.Title >
@@ -210,7 +209,7 @@ function CompletedTasks(props) {
         </Offcanvas.Header>
        
         <Offcanvas.Body>
-         
+          */}
         <div className="d-grid gap-2">
  
  <OverlayTrigger
@@ -231,8 +230,8 @@ function CompletedTasks(props) {
        </Button>
      </OverlayTrigger>
      </div>
-     
-          <ButtonGroup className="completed-task-top-buttons">
+     <div className="completed-task-top-buttons">
+          <ButtonGroup>
             <Form>
               <FormControl
                 onKeyPress={(e) => {
@@ -280,11 +279,11 @@ function CompletedTasks(props) {
                     Delete All
                   </Button> */}
           </ButtonGroup>
-
+          </div>
           {searchResults.map((task) => (
-            <div  key={task.task_id}>
+            <div className="tasks-container" key={task.task_id}>
               <Card
-                className="completed-task-card"
+                className="task-card"
                 key={task.task_id}
                 border={cardBorder[task.task_priority]}
                 style={{ width: "20rem" }}
@@ -335,11 +334,11 @@ function CompletedTasks(props) {
             </div>
           ))}
 
-          {/* </FlipMove> */}
+         
           
-        </Offcanvas.Body>
+       {/* </Offcanvas.Body>
         
-      </Offcanvas>
+      /Offcanvas>  */}
     </>
   );
   // } else {

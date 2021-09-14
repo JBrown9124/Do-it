@@ -1,0 +1,50 @@
+.completed-sort-by{
+    margin-left:9px
+  }
+  .completed-clear{
+    margin-bottom:20px;
+    left:-50px;
+    margin-top:20px;
+   
+    
+    /* transform:translateX(-14.8px) translateY(-3px); */
+  }
+  .completed-title{
+    justify-content: center;
+    margin:auto;
+   
+  }
+  .completed-task-card {
+    margin-bottom: 15px;
+  
+    justify-content: center;
+  
+  
+  
+  
+  
+    text-align: center;
+  
+  
+  }
+  
+  .completed-task-top-buttons {
+    margin-bottom: 15px;
+    
+    justify-content: center;
+    text-align: center;
+  }
+  .completed-tasks-container {
+
+    text-align: center;
+  
+  
+  
+  
+  
+    position: relative
+  }
+  .completed-task-card {
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  
+  }

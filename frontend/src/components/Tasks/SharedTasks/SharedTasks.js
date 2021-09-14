@@ -33,11 +33,11 @@ import Routes from "../../../services/Routes";
 import { Link } from "react-router-dom";
 
 import moment from "moment";
-import CreateTaskModal from "../IncompletedTasks/CreateTaskModal";
-import EditTaskModal from "../IncompletedTasks/EditTaskModal";
+import CreateTaskModal from "../SoloTasks/CreateTaskModal";
+import EditTaskModal from "../SoloTasks/EditTaskModal";
 import useWindowSize from "react-use/lib/useWindowSize";
 import Confetti from "react-confetti";
-import CompletedTasks from "../CompletedTasks/CompletedTasks";
+
 import ReactTransitionGroup from "react-transition-group";
 import FlipMove from "react-flip-move";
 import { Transition } from "react-transition-group";
@@ -238,7 +238,7 @@ useEffect(
 
   if (props.show === true && props.incompletedTasksData !== null)
     return (
-      <>
+      <div >
      
         
      <FaArrowCircleUp 
@@ -246,11 +246,21 @@ useEffect(
    onClick={scrollTop} 
    style={{height: 40, display: showScroll ? 'flex' : 'none'}}
 />
-
-
+<div className="create-task">
+<div className="d-grid gap-2">
        
+<Button
+            // className="create-button"\
+            
+            variant="success"
+            size="lg"
+            onClick={(e) => setcreateModalShow(true)}
+          >
+            {createModalShow ? "Creating...": "Create"}
+          </Button>
         
-
+          </div>
+          </div>
         <CreateTaskModal
           show={createModalShow}
           onHide={() => setcreateModalShow(false)}
@@ -454,7 +464,7 @@ useEffect(
         ))}
         
 
-         <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
+         {/* <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
           
           <Button
             // className="create-button"
@@ -466,8 +476,8 @@ useEffect(
             {createModalShow ? "Creating...": "Create"}
           </Button>
           
-        </Navbar> 
-      </>
+        </Navbar>  */}
+      </div>
       
     );
   else return null;

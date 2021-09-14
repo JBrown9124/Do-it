@@ -18,7 +18,7 @@
 .top-tasks-buttons {
   justify-content: center;
   margin-bottom: 20px;
-  margin-top:80px;
+  margin-top:20px;
 
 
 
@@ -28,27 +28,19 @@
 
 }
 
-.completed-task-card {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 
-}
 
 .create-task {
 
-  position: relative;
-
-  /* width:32.1%; */
-  top: 10%;
-  left: 50%;
-  -ms-transform: translate(-10%, -50%);
-  transform: translate(-50%, -20%);
-
+  margin-top:70px;
+  margin-bottom: 20px;
+  
 
 }
 
 .create-task-nav {
   position: relative;
-  /* margin-bottom:-1.4%; */
+  
   width: 200%;
   top: 10%;
   left: 50%;
@@ -56,8 +48,9 @@
   transform: translate(-50%, 20%);
 }
 
-nav-bar-fix {
-  position: fixed
+.nav-bar-fix {
+  position:fixed;
+    
 }
 
 .task-card-seperator {
@@ -70,34 +63,9 @@ nav-bar-fix {
 
 }
 
-.completed-tasks-container {
-
-  text-align: center;
 
 
 
-
-
-  position: relative
-}
-
-.completed-task-card {
-  margin-bottom: 15px;
-
-
-
-
-
-
-  text-align: center;
-
-
-}
-
-.completed-task-top-buttons {
-  margin-bottom: 15px;
-  
-}
 
 /* .completed-sort-by{
   margin-left:10px
@@ -110,11 +78,7 @@ nav-bar-fix {
   margin-top: 80px;
   margin-bottom: 20px
 }
-.completed-title{
-  justify-content: center;
-  margin:auto;
- 
-}
+
 
 .toast-container {
   position: fixed;
@@ -130,19 +94,5 @@ nav-bar-fix {
 
 
 }
-.completed-sort-by{
-  margin-left:9px
-}
-.completed-clear{
-  margin-bottom:20px;
-  left:-50px;
- 
-  
-  /* transform:translateX(-14.8px) translateY(-3px); */
-}
 
-.tasks-tab{
-  justify-content: center;
-  margin-bottom: 20px;
-  margin-top:70px;
-}
+

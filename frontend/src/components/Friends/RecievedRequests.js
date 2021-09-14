@@ -25,8 +25,8 @@ import AddFriendModal from "./AddFriendModal";
 // import "./Tasks.css";
 
 import moment from "moment";
-import CreateTaskModal from "../Tasks/IncompletedTasks/CreateTaskModal";
-import EditTaskModal from "../Tasks/IncompletedTasks/EditTaskModal";
+import CreateTaskModal from "../Tasks/SoloTasks/CreateTaskModal";
+import EditTaskModal from "../Tasks/SoloTasks/EditTaskModal";
 import useWindowSize from "react-use/lib/useWindowSize";
 
 import FlipMove from "react-flip-move";
