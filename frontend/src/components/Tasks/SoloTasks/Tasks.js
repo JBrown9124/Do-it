@@ -342,6 +342,10 @@ useEffect(
           aria-label="Toolbar with button groups"
         >
           <ButtonGroup className="me-2" aria-label="Second group">
+          <OverlayTrigger trigger="hover" placement="bottom" overlay={<Tooltip id="tooltip-disabled">Search by task name or date/time!</Tooltip>}>
+  <span className="d-inline-block">
+   
+ 
             <Form className="d-flex">
               <FormControl
                 onKeyPress={(e) => {
@@ -356,6 +360,8 @@ useEffect(
                 onChange={(e) => setSearchItem(e.target.value)}
               />
             </Form>
+            </span>
+</OverlayTrigger>
           </ButtonGroup>
 
           <ButtonGroup aria-label="Third group">
