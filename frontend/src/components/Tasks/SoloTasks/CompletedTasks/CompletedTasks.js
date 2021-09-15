@@ -231,7 +231,7 @@ function CompletedTasks(props) {
      </OverlayTrigger>
      </div>
      <div className="completed-task-top-buttons">
-          <ButtonGroup>
+            <ButtonGroup className="completed-task-top-buttons">
             <Form>
               <FormControl
                 onKeyPress={(e) => {
@@ -302,6 +302,7 @@ function CompletedTasks(props) {
                       >
                         Reuse
                       </Button> */}
+                        <div className="card-buttons">
                     <Button
                       variant="warning"
                       size="med"
@@ -310,6 +311,8 @@ function CompletedTasks(props) {
                     >
                       Undo
                     </Button>
+                    </div>
+                    <div className="card-buttons">
                     <OverlayTrigger
                       trigger="focus"
                       placement="left"
@@ -325,6 +328,7 @@ function CompletedTasks(props) {
                         Delete
                       </Button>
                     </OverlayTrigger>
+                    </div>
                   </ButtonGroup>
                 </Card.Body>
                 <Card.Footer>

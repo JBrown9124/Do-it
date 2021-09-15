@@ -1,7 +1,7 @@
 .tasks-container {
 
-
-  text-align: center
+  justify-content: center;
+  text-align: center;
 }
 
 .task-card {
@@ -11,13 +11,13 @@
 
 
   margin: auto;
-  margin-bottom: 15px;
+  margin-bottom: 70px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .top-tasks-buttons {
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   margin-top:20px;
 
 
@@ -86,7 +86,7 @@
   top: 10%;
   left: 50%;
   -ms-transform: translate(-10%, -50%);
-  transform: translate(-50%, 1000%);
+  transform: translate(-50%, 735%);
   z-index: 9999;
 
 

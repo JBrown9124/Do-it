@@ -27,8 +27,8 @@ function Register(props) {
     setLoading(true);
     setIsError(false);
     const data = {
-      name: name.toLowerCase(),
-      email: email.toLowerCase(),
+      name: name,
+      email: email,
       password: password,
     };
     if (password === password2) {
@@ -42,7 +42,8 @@ function Register(props) {
           setPassword2("")
 
           setLoading(false);
-          props.user(res.data);
+          props.userDisplayName(res.data.user_display_name)
+          props.userID(res.data.user_id);
           props.hideModal()
         
         })

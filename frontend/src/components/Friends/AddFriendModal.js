@@ -41,6 +41,22 @@ function AddFriendModal(props) {
   const [requestSuccess, setRequestSuccess] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   useEffect(() => handleClearInput(), [props.show]);
+  function simulateNetworkRequest() {
+    return new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  
+  
+    
+  
+    useEffect(() => {
+      if (loading) {
+        simulateNetworkRequest().then(() => {
+          setLoading(false);
+        });
+      }
+    }, [loading]);
+
+
   const handleClearInput = () => {
     setSearchItem("");
     setIsError(false);
@@ -67,17 +83,17 @@ function AddFriendModal(props) {
     setIsError(false);
     const findUser = allUsersData.filter(
       (user) =>
-        user.user_display_name.toLowerCase() === searchItem.toLowerCase() ||
-        user.user_email.toLowerCase() === searchItem.toLowerCase()
+        user.user_display_name === searchItem ||
+        user.user_email === searchItem
     );
 
     if (findUser.length === 0) {
       setIsError(true);
-      setLoading(false);
+      
       setErrorMessage("User does not exist");
       return false;
     } else {
-      setLoading(false);
+     
 
       setIsError(false);
       return isUserFriend(findUser[0]);
@@ -85,12 +101,13 @@ function AddFriendModal(props) {
   };
 
   const isUserFriend = (user) => {
+
     const isUserFriend = props.allFriendsData.filter(
       (friend) => friend.user_id === user.user_id
     );
     if (isUserFriend.length > 0) {
       setIsError(true);
-      setLoading(false);
+      
       return setErrorMessage("User is already a friend");
     } else {
       isUserInReceived(user);
@@ -103,7 +120,7 @@ function AddFriendModal(props) {
 
     if (userInReceived.length > 0) {
       setIsError(true);
-      setLoading(false);
+      
       return setErrorMessage("User's friend request is in your recieved inbox");
     } else {
       isUserInSent(user);
@@ -116,7 +133,7 @@ function AddFriendModal(props) {
 
     if (userInSent.length > 0) {
       setIsError(true);
-      setLoading(false);
+      
       return setErrorMessage("User's friend request is sent and pending");
     } else {
       handleFriendRequest(user);
@@ -130,7 +147,7 @@ function AddFriendModal(props) {
       .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/add-friend`, data)
       .then((response) => {
         setShowSuccessToast(true);
-        setLoading(false);
+        
         setIsError(false);
         setErrorMessage("");
 
@@ -185,10 +202,11 @@ function AddFriendModal(props) {
               <Col>
                 <Button
                   onClick={() => doesUserExist()}
+                  disabled={loading}
                   className="friend-request-button"
                 >
                   {loading ? "Sending..." : "Send request"}
-                  {requestSuccess ? "Sent!" : ""}
+                 
                 </Button>
               </Col>
             </Row>

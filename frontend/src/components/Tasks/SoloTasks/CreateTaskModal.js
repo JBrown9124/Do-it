@@ -1,5 +1,5 @@
 import { Modal, Button, Form, Container} from "react-bootstrap";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import DateTimePicker from "react-datetime-picker";
@@ -19,6 +19,20 @@ function CreateTaskModal(props) {
   const [isError, setIsError] = useState(false);
 
   const [data, setData] = useState(null);
+  function simulateNetworkRequest() {
+    return new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  
+  
+    
+  
+  useEffect(() => {
+      if (loading) {
+        simulateNetworkRequest().then(() => {
+          setLoading(false);
+        });
+      }
+    }, [loading]);
   
   const handleSubmit = () => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
@@ -47,7 +61,7 @@ function CreateTaskModal(props) {
     setdateTime(new Date());
     
     props.onHide();
-    setLoading(false);
+    
     
     
     
@@ -154,7 +168,7 @@ function CreateTaskModal(props) {
             </div> */}
             <div className="form-group">
               <label htmlFor="dateTime" className="mt-2">
-                What day and time are you planning on completing this task?
+              Date/time you are planning on completing this task?
               </label>
               {/* <input
                 type="text"

@@ -61,6 +61,8 @@ function Tasks(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [flipDisabled, setFlipDisabled] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("Saved.")
+  const [toastColor, setToastColor] = useState("Light")
   const [showScroll, setShowScroll] = useState(false)
   const [tabKey, setTabKey] =useState("Solo")
 const handleTabSelect=(key)=>{
@@ -109,7 +111,8 @@ useEffect(
   // };
   const handleCreate = (data) => {
     props.incompletedTasksData.unshift(data);
-
+    setToastMessage("Saved.");
+    setToastColor("light");
     axios
       .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
       .then((res) => {
@@ -124,12 +127,14 @@ useEffect(
     console.log(findTaskByID);
     const data = { completed_task_id: e };
     props.completedTasksData.unshift(findTaskByID);
+    setToastColor("info");
+    setToastMessage("Completed!");
     axios
       .put(
         `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
         data
       )
-      .then((resp) => {});
+      .then((resp) => {setShowToast(true)});
     const filterTasksHelper = (task) => {
       return e !== task.task_id;
     };
@@ -149,12 +154,14 @@ useEffect(
     // setSearchResults(remainingTasks);
     props.updateTasks(remainingTasks);
     setShowOffCanvas(false);
+    setToastMessage("Deleted.");
+    setToastColor("danger");
     const data = { task_id: e };
     axios
       .delete(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, {
         data: data,
       })
-      .then((resp) => {});
+      .then((resp) => {setShowToast(true)});
   };
   const handleDeleteOffCanvas = (e) => {
     setDeleteTaskID(e);
@@ -173,10 +180,11 @@ useEffect(
     taskByID.task_priority = data.task_priority;
     taskByID.task_description = data.task_description;
     taskByID.task_name = data.task_name;
-
+    setToastMessage("Saved.");
+    setToastColor("warning");
     axios
       .put(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
-      .then((res) => {});
+      .then((res) => {setShowToast(true)});
   };
 
   const handleSendEditData = (e) => {
@@ -385,9 +393,9 @@ useEffect(
 </Alert>  */}
 
        
-          <Toast bg="light" className="toast-container"animation={true}  onClose={() => setShowToast(false)}  show={showToast} delay={3000} autohide >
+          <Toast bg={toastColor} className="toast-container"animation={true}  onClose={() => setShowToast(false)}  show={showToast} delay={3000} autohide >
             <Toast.Body>
-            Saved.
+            {toastMessage}
             </Toast.Body>
           </Toast>
         
@@ -408,15 +416,7 @@ useEffect(
 
                 <ButtonGroup>
                   
-                <DropdownButton
-                
-                size="med"
-                variant="info"
-                id="dropdown-basic-button"
-                title="Share"
-                  >
-                    Share
-                  </DropdownButton>
+               
                   <div className="card-buttons">
                   <Button
                     variant="primary"

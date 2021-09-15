@@ -54,7 +54,7 @@ def completed_tasks(request, user):
     elif request.method == 'DELETE':
         json_data = json.loads(request.body)
         if json_data['task_id'] == "all":
-            t = Tasks.objects.filter(user=u, task_completed=True)
+            t = Tasks.objects.filter(user=u, task_completed=True, sharedtasks=None)
             t.delete()
             return HttpResponse("completed tasks deleted")
         else:
@@ -69,9 +69,9 @@ def tasks(request, user):
     if request.method == 'GET':
 
         Incompleted = list(Tasks.objects.filter(
-            user=u, task_completed=False).order_by('task_priority').values())
+            user=u, task_completed=False, sharedtasks=None).order_by('task_priority').values())
         Completed = list(Tasks.objects.filter(
-            user=u, task_completed=True).order_by('task_priority').values())
+            user=u, task_completed=True, sharedtasks=None).order_by('task_priority').values())
         data = {"incomplete": Incompleted, "complete": Completed}
         return JsonResponse(data, safe=False)
     if request.method == 'DELETE':
@@ -230,7 +230,39 @@ def shared_tasks(request, user):
                   task_description=json_data['task_description'], task_date_time=d)
         t.save()
         return HttpResponse("nice")
+
+@csrf_exempt
+def completed_shared_tasks(request,user):
+    u= User.objects.get(pk=user)
+    if request.method == "PUT":
+
+        json_data = json.loads(request.body)
+        json_key = {}
+        for key, value in json_data.items():
+            json_key = key
+        if json_key == 'undo_completed_task_id':
+            t = Tasks.objects.get(pk=json_data['undo_completed_task_id'])
+            t.task_completed = False
+            t.save()
+            return HttpResponse("undo complete successful")
+        elif json_key == 'completed_task_id':
+            t = Tasks.objects.get(pk=json_data['completed_task_id'])
+            t.task_completed = True
+            t.save()
+            return HttpResponse("marked complete successful")
+    elif request.method == 'DELETE':
+        json_data = json.loads(request.body)
         
+        for task in json_data:
+            t=Tasks.objects.filter(pk=task['task']['task_id'])
+            t.delete()
+
+
+           
+            
+            
+        return HttpResponse("completed tasks deleted")    
+
 def users(request, user):
     if request.method == 'GET':
         # safe_user_data = []
@@ -262,7 +294,7 @@ def log_in(request):
             user = User.objects.get(
                 user_email=json_data['email'], user_hash=hashed_password)
 
-            return HttpResponse(user.user_id)
+            return JsonResponse({"user_id":user.user_id, "user_display_name":user.user_display_name})
         except:
             return HttpResponseServerError
 
@@ -293,7 +325,8 @@ def register(request):
             u = User(user_hash=hashed_password, user_salt=salt,
                      user_display_name=json_data['name'], user_email=json_data['email'], user_registered=True)
             u.save()
-            return HttpResponse(u.user_id)
+            
+            return JsonResponse({"user_id":u.user_id, "user_display_name":u.user_display_name})
 
 
 def index(request):
@@ -366,9 +399,9 @@ def list_sent_friend_requests(request, user):
     if request.method == 'GET':
         data = []
         user_sent_friend_requests = Friend.objects.sent_requests(user=u)
-        for request in user_sent_friend_requests:
-            data.append({"user_display_name": request.from_user.user_display_name,
-                        "user_id": request.from_user.user_id})
+        for friend_request in user_sent_friend_requests:
+            data.append({"user_display_name": friend_request.to_user.user_display_name,
+                        "user_id": friend_request.to_user.user_id})
         return JsonResponse({"user_sent_friend_requests": data})
 
 

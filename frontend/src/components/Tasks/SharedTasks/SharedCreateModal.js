@@ -1,5 +1,5 @@
 import { Modal, Button, Form, Container } from "react-bootstrap";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import DateTimePicker from "react-datetime-picker";
@@ -15,32 +15,50 @@ function SharedCreateModal(props) {
   const [attendees, setAttendees] = useState("");
   const [dateTime, setdateTime] = useState(new Date());
   const [friendID, setFriendID] = useState("");
-  const [friendInfo, setFriendInfo] = useState("");
+  
 
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   const [data, setData] = useState(null);
-  const isUserFriend = (user) => {
-    const foundUserFriend = props.allFriendsData.filter(
-      (friend) => friend.user_display_name === user
+  
+  function simulateNetworkRequest() {
+    return new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  
+  
+    
+  
+    useEffect(() => {
+      if (loading) {
+        simulateNetworkRequest().then(() => {
+          setLoading(false);
+        });
+      }
+    }, [loading]);
+  
+  
+  const isUserFriend = (userName) => {
+    const foundUserFriend = props.allFriendsData.find(
+      ({ user_display_name }) => user_display_name === userName
     );
-    setFriendInfo(foundUserFriend[0]);
-    if (foundUserFriend.length === 0) {
+    
+    if (foundUserFriend === undefined || foundUserFriend.length === 0) {
       setIsError(true);
-      setLoading(false);
+      
       return setErrorMessage("User is not on your friends list");
     } else {
-        
-      return true;
+      handleSubmit(foundUserFriend);
+      
+      
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (foundFriend) => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
     
-    if (isUserFriend(friendID)===true) {
+    
       const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
 
       setLoading(true);
@@ -60,10 +78,16 @@ function SharedCreateModal(props) {
           task_completed: false,
           task_id: makeID,
         },
-        sharing_with: friendInfo,
+        sharing_with: foundFriend,
       };
       console.log(data)
       props.createData(data);
+      
+    
+      
+
+      props.onHide();
+      
       setErrorMessage("");
       setName("");
       setPriority("");
@@ -71,11 +95,8 @@ function SharedCreateModal(props) {
       setAttendees("");
       setFriendID("");
       setdateTime(new Date());
-
-      props.onHide();
-      setLoading(false);
-    }
-  };
+    };
+ 
 
   //   axios
   //     .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
@@ -134,7 +155,7 @@ function SharedCreateModal(props) {
                 type="text"
                 className="form-control"
                 id="friend"
-                placeholder="Enter friends username"
+                placeholder="Enter friend's username"
                 value={friendID}
                 onChange={(e) => setFriendID(e.target.value)}
               />
@@ -191,7 +212,7 @@ function SharedCreateModal(props) {
             </div> */}
             <div className="form-group">
               <label htmlFor="dateTime" className="mt-2">
-                What day and time are you planning on completing this task?
+                Date/time you are planning on completing this task?
               </label>
               {/* <input
                 type="text"
@@ -213,7 +234,7 @@ function SharedCreateModal(props) {
             <button
               type="submit"
               className="btn btn-primary mt-3"
-              onClick={handleSubmit}
+              onClick={(e)=>isUserFriend(friendID)}
               disabled={loading}
             >
               {loading ? "Loading..." : "Create"}

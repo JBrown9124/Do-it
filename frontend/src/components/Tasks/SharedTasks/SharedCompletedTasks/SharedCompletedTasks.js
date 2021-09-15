@@ -21,9 +21,7 @@ import {
   
   import moment from "moment";
 
-  import FlipMove from "react-flip-move";
-  import { v4 as uuidv4 } from "uuid";
-  import { FaArrowCircleUp } from "react-icons/fa";
+  
   
   function SharedCompletedTasks(props) {
     const [show, setShow] = useState(false);
@@ -47,12 +45,12 @@ import {
       setAnimationType("sort");
       const results = props.completedSharedTasksData.filter(
         (task_name) =>
-          task_name.task.task_name.toLowerCase().includes(searchItem) ||
-          moment(task_name.task.task_date_time)
-            .format("MMMM DD YYYY hh:mm A")
-            .toLowerCase()
-            .includes(searchItem)
-      );
+        task_name.task.task_name.toLowerCase().includes(searchItem) ||
+        moment(task_name.task.task_date_time)
+          .format("MMMM DD YYYY hh:mm A")
+          .toLowerCase()
+          .includes(searchItem) || task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem)
+    );
       setSearchResults(results);
     }, [searchItem]);
     const handleUndo = (e) => {
@@ -60,17 +58,19 @@ import {
       console.log(e);
   
       const findTaskByID = props.completedSharedTasksData.find(
-        ({ task_id }) => task_id === e
+        ({ task }) => task.task_id === e
       );
       console.log(findTaskByID);
   
       props.incompletedSharedTasksData.unshift(findTaskByID);
-      const findTasksByID = (task) => {
-        return e !== task.task.task_id;
-      };
-      findTasksByID(props.completedSharedTasksData);
-      const remainingTasks = props.completedSharedTasksData.filter(findTasksByID);
-  
+      const remainingTasks = props.completedSharedTasksData.filter(function (
+        value,
+        index,
+        arr
+      ) {
+        return value.task.task_id !== e;
+      });
+      // setSearchResults(remainingTasks);
       props.updateTasks(remainingTasks);
       const data = { undo_completed_task_id: e };
       axios
@@ -86,12 +86,14 @@ import {
     };
     const handleDelete = (e) => {
       setAnimationType("delete");
-      const findTasksByID = (task) => {
-        return e !== task.task_id;
-      };
-      findTasksByID(props.completedSharedTasksData);
-      const remainingTasks = props.completedSharedTasksData.filter(findTasksByID);
-  
+      const remainingTasks = props.completedSharedTasksData.filter(function (
+        value,
+        index,
+        arr
+      ) {
+        return value.task.task_id !== e;
+      });
+      // setSearchResults(remainingTasks);
       props.updateTasks(remainingTasks);
       const data = { task_id: e };
       axios
@@ -105,43 +107,43 @@ import {
       setAnimationType("deleteAll");
       setShowDeleteAllPopOver(false);
       props.updateTasks([]);
-      const data = { task_id: "all" };
+      const data = props.completedSharedTasksData;
       axios
         .delete(
-          `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
+          `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-shared-tasks`,
           { data: data }
         )
         .then((response) => {});
     };
     const sortByHighestPriority = () => {
       const sortedSearch = [...searchResults].sort((a, b) =>
-        a.task_priority.localeCompare(b.task_priority)
+        a.task.task_priority.localeCompare(b.task.task_priority)
       );
       return setSearchResults(sortedSearch);
     };
     const sortByLowestPriority = () => {
       const sortedSearch = [...searchResults].sort((a, b) =>
-        b.task_priority.localeCompare(a.task_priority)
+        b.task.task_priority.localeCompare(a.task.task_priority)
       );
   
       return setSearchResults(sortedSearch);
     };
     const sortByFarthestDate = () => {
       const sortedSearch = [...searchResults].sort(
-        (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
+        (a, b) => new Date(b.task.task_date_time) - new Date(a.task.task_date_time)
       );
   
       return setSearchResults(sortedSearch);
     };
     const sortByClosestDate = () => {
       const sortedSearch = [...searchResults].sort(
-        (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
+        (a, b) => new Date(a.task.task_date_time) - new Date(b.task.task_date_time)
       );
       return setSearchResults(sortedSearch);
     };
     const sortByTaskName = () => {
       const sortedSearch = [...searchResults].sort((a, b) =>
-        a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
+        a.task.task_name.toLowerCase().localeCompare(b.task.task_name.toLowerCase())
       );
       return setSearchResults(sortedSearch);
     };
@@ -285,9 +287,9 @@ import {
                   border={cardBorder[task.task_priority]}
                   style={{ width: "20rem" }}
                 >
-                  <Card.Header>{task.task_name}</Card.Header>
+                  <Card.Header>Shared {task.task_name} with {sharing_with.user_display_name} </Card.Header>
                   <Card.Body>
-                    Sharing with {sharing_with.user_display_name}
+                    
                     <Card.Text>{task.task_description}</Card.Text>
   
                     <ButtonGroup aria-label="Basic example">
@@ -300,6 +302,8 @@ import {
                         >
                           Reuse
                         </Button> */}
+                        <div className="card-buttons">
+                        
                       <Button
                         variant="warning"
                         size="med"
@@ -308,6 +312,8 @@ import {
                       >
                         Undo
                       </Button>
+                      </div>
+                      <div className="card-buttons">
                       <OverlayTrigger
                         trigger="focus"
                         placement="left"
@@ -323,6 +329,7 @@ import {
                           Delete
                         </Button>
                       </OverlayTrigger>
+                      </div>
                     </ButtonGroup>
                   </Card.Body>
                   <Card.Footer>

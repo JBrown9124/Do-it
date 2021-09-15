@@ -16,7 +16,8 @@ import {
   Tabs,
   Tab,
   Row,
-  Column
+  Column,
+  Badge
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -46,11 +47,12 @@ function Friends(props) {
   const [animationType, setAnimationType] = useState("");
 
   const [showDeleteAllPopOver, setShowDeleteAllPopOver] = useState(false);
-  const [showDeletePopOver, setShowDeletePopOver] = useState(false);
+  
   const [deleteTaskID, setDeleteTaskID] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-
+  const [deleteFriendID, setDeleteFriendID] = useState("");
+  const [showDeletePopOver, setShowDeletePopOver]=useState(false);
   const handleClose = () => props.hideFriends(false);
   const handleShow = () => setShow(true);
   
@@ -142,7 +144,25 @@ function Friends(props) {
       })
       .catch((err) => {});
   };
-  
+  const handleDeletePopOver = (e) => {
+    setShowDeletePopOver(true);
+    setDeleteFriendID(e);
+  };
+  const deletePopOver = (
+    <Popover className="tasks-container" id="popover-basic">
+      <Popover.Header as="h3">Are you sure?</Popover.Header>
+      <Popover.Body> “I don’t know half of you half as well as I should like; and I like less than half of you half as well as you deserve.”— Bilbo Baggins of the Shire</Popover.Body>
+      <ButtonGroup aria-label="Basic example">
+        <Button onClick={() => handleRemoveFriend(deleteFriendID)} variant="danger">
+          Yes
+        </Button>
+
+        <Button variant="primary" onClick={() => setShowDeletePopOver(false)}>
+          No
+        </Button>
+      </ButtonGroup>
+    </Popover>
+  );
   
   
   // if (props.show === true && props.completedTasksData !== null) {
@@ -212,7 +232,7 @@ function Friends(props) {
                       e.key === "Enter" && e.preventDefault();
                     }}
                     type="search"
-                    placeholder="Search"
+                    placeholder="Friend filter"
                     className="friend-search-container"
                     aria-label="Search"
                     variant="primary"
@@ -234,29 +254,37 @@ function Friends(props) {
               {searchResults.map((friend) => (
                 <div key={friend.user_id}>
                   <ListGroup className="friend-list-container" horizontal="xxl">
-                    <ListGroup.Item>
+                    <ListGroup.Item className="friend-list-seperator">
                       {friend.user_display_name}
+                      <OverlayTrigger
+                        trigger="focus"
+                        placement="bottom"
+                        overlay={deletePopOver}
+                      >
                       <Button
-                        // className="completed-clear"
+                        className="remove-friend-button"
                         variant="danger"
                         size="med"
                         value={friend.user_id}
-                        onClick={(e) => handleRemoveFriend(parseInt(e.target.value))}
+                        onClick={(e) => handleDeletePopOver(parseInt(e.target.value))}
                       >
                         Remove friend
                       </Button>
+                     </OverlayTrigger>
                     </ListGroup.Item>
                   </ListGroup>
                 </div>
               ))}
             </Tab>
-            <Tab eventKey="Received Requests" title="Received Requests">
+            <Tab eventKey="Received Requests" title="Received Requests"
+            >
+            
             {props.allReceivedFriendRequestsData.map((receivedRequest) => (
         <div key={receivedRequest.user_id}>
           <ListGroup className="friend-list-container" horizontal="xxl">
-            <ListGroup.Item>
+            <ListGroup.Item className="friend-list-seperator">
               {receivedRequest.user_display_name}{" "}
-              <ButtonGroup>
+              <ButtonGroup className="remove-friend-button">
                 <Button
                   // className="completed-clear"
                   variant="success"
@@ -276,7 +304,7 @@ function Friends(props) {
                   Decline
                 </Button>
               </ButtonGroup>
-            </ListGroup.Item>
+            </ListGroup.Item >
           </ListGroup>
         </div>
       ))}
@@ -286,8 +314,8 @@ function Friends(props) {
             {props.allSentFriendRequestsData.map((sentRequest) => (
         <div key={sentRequest.user_id}>
           <ListGroup className="friend-list-container" horizontal="xxl">
-            <ListGroup.Item>
-              {sentRequest.user_display_name}{""} Pending
+            <ListGroup.Item className="friend-list-seperator">
+              {sentRequest.user_display_name}'s request is pending...
               
             </ListGroup.Item>
           </ListGroup>

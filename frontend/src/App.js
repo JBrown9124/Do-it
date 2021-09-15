@@ -13,7 +13,8 @@ import {
   Tab,
   Nav,
   Offcanvas,
-  Navbar
+  Navbar,
+  Badge
 } from "react-bootstrap";
 import React, { useEffect, useState } from "react";
 import Register from "./components/Home/RegisterModal";
@@ -39,7 +40,7 @@ function App() {
   const [tasksShow, settasksShow] = useState(false);
   const [handleTasks, sethandleTasks] = useState(false);
   const [allData, setallData] = useState(null);
-
+  const [userDisplayName, setUserDisplayName] = useState();
   const [userID, setUserID] = useState();
   const [showFriends, setShowFriends] = useState(false);
   const [showCompletedTasks, setShowCompletedTasks] = useState(null);
@@ -89,6 +90,15 @@ function App() {
   useEffect(() => handleSentFriendRequestsData(), [userID]);
   useEffect(() => handleTasksData(), [userID]);
   useEffect(() => handleSharedTasksData(), [userID]);
+  const MINUTE_MS = 30000;
+  // useEffect(() => handleReceivedFriendRequestsData(userID), [userID]);
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleReceivedFriendRequestsData(); handleSharedTasksData();
+    }, MINUTE_MS);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, [userID]);
   // const [completedTask, setCompletedTask] = React.useState(null)
 
   // if (loginmodalShow===true && registermodalShow===true){
@@ -134,15 +144,7 @@ function App() {
         // isLoaded(true);
       });
   };
-  const MINUTE_MS = 30000;
-  // useEffect(() => handleReceivedFriendRequestsData(userID), [userID]);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      handleReceivedFriendRequestsData(userID);
-    }, MINUTE_MS);
-
-    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-  }, [userID]);
+  
   const handleTasksData = () => {
     axios
       .get(`http://127.0.0.1:8000/to_do_list/${userID}/tasks`)
@@ -168,12 +170,14 @@ function App() {
   return (
     <div>
       <Navigation
+        userDisplayName={userDisplayName}
         showFriends={() => setShowFriends(true)}
         showShared={() => setShowSharedTasks(true)}
-        completeCount={tasksShow ? Object.keys(completedData).length : null}
+        completeCount={tasksShow ? Object.keys(completedData).length+Object.keys(completedSharedTasksData).length : null}
         showLoginHideTasks={() => handleShowLoginHideTasks()}
         showComplete={(props) => setShowCompletedTasks(props)}
         userID={userID}
+        receivedCount={tasksShow ? Object.keys(allReceivedFriendRequestsData).length : null}
       />
      <Navbar fixed="bottom" bg="light">
       <Nav navbar={false} fill variant="pills" className="tasks-tab" activeKey={tasksTabKey}
@@ -182,10 +186,17 @@ function App() {
   >
       
               <Nav.Item className="solo-shared-buttons">
-              <Nav.Link eventKey="Solo">Solo</Nav.Link>
+              <Nav.Link eventKey="Solo">Solo
+              <Badge className="completed-badge" bg="info">
+                  {Object.keys(incompletedData).length}
+                </Badge>
+              </Nav.Link>
               </Nav.Item>
               <Nav.Item>
               <Nav.Link eventKey="Shared"> Shared
+              <Badge className="completed-badge" bg="info">
+                  {Object.keys(incompletedSharedTasksData).length}
+                </Badge>
               </Nav.Link>
        </Nav.Item>
       
@@ -340,7 +351,8 @@ function App() {
               // backdrop="static"
               // keyboard={false}
               hideModal={() => setModalShow(false)}
-              user={(props) => setUserID(props)}
+              userDisplayName={(props)=>setUserDisplayName(props)}
+              userID={(props) => setUserID(props)}
               showRegister={(props) => setloginRegisterCarouselIndex(1)}
             />
           </Carousel.Item>
@@ -351,7 +363,8 @@ function App() {
               // backdrop="static"
               // keyboard={false}
               hideModal={() => setModalShow(false)}
-              user={(props) => setUserID(props)}
+              userDisplayName={(props)=>setUserDisplayName(props)}
+              userID={(props) => setUserID(props)}
               showLogin={(props) => setloginRegisterCarouselIndex(0)}
             />
           </Carousel.Item>

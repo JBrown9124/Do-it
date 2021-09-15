@@ -37,7 +37,7 @@ const Navigation = (props) => {
     <>
       <Navbar expand="lg" fixed="top" bg="light" collapseOnSelect>
         <Container>
-          <Navbar.Brand>Slick Doing</Navbar.Brand>
+          <Navbar.Brand>Do-it</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -55,10 +55,12 @@ const Navigation = (props) => {
             <Nav>
               
               <Nav.Link onClick={() => props.showFriends(true)}>
-                
+              <Badge className="completed-badge" bg="secondary">
+                  {props.receivedCount}
+                </Badge>
                 Friends
               </Nav.Link>
-              <OverlayTrigger
+              {/* <OverlayTrigger
                 trigger="focus"
                 placement="bottom"
                 overlay={LogOutPopOver}
@@ -71,7 +73,11 @@ const Navigation = (props) => {
                 >
                   Sign out
                 </Nav.Link>
-              </OverlayTrigger>
+                
+              </OverlayTrigger> */}
+              <Nav.Link>
+                {props.userDisplayName===undefined? "Welcome!":props.userDisplayName}
+                </Nav.Link>
             </Nav>
           </Navbar.Collapse>
         </Container>

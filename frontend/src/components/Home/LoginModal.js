@@ -36,7 +36,8 @@ function Login(props) {
 
         setLoading(false);
         props.hideModal()
-        props.user(res.data);
+        props.userDisplayName(res.data.user_display_name)
+        props.userID(res.data.user_id);
       })
       .catch((err) => {
         setLoading(false);

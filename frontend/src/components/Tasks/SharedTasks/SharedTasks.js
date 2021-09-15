@@ -24,7 +24,7 @@ import {
   ToastContainer,
   Alert,
   Tabs,
-  Tab
+  Tab,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -33,19 +33,14 @@ import Routes from "../../../services/Routes";
 import { Link } from "react-router-dom";
 
 import moment from "moment";
-import SharedCreateModal from "./SharedCreateModal"
-import CreateTaskModal from "../SoloTasks/CreateTaskModal";
+import SharedCreateModal from "./SharedCreateModal";
+
 import EditTaskModal from "../SoloTasks/EditTaskModal";
-import useWindowSize from "react-use/lib/useWindowSize";
-import Confetti from "react-confetti";
 
-import ReactTransitionGroup from "react-transition-group";
-import FlipMove from "react-flip-move";
-import { Transition } from "react-transition-group";
-import { motion } from "framer-motion";
-import Draggable from "react-draggable";
 
-import {FaArrowCircleUp} from 'react-icons/fa';
+
+
+import { FaArrowCircleUp } from "react-icons/fa";
 function SharedTasks(props) {
   const [deleteTaskID, setDeleteTaskID] = useState(null);
   const [deleteTaskName, setDeleteTaskName] = useState(null);
@@ -60,29 +55,30 @@ function SharedTasks(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [flipDisabled, setFlipDisabled] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [showScroll, setShowScroll] = useState(false)
-  const [tabKey, setTabKey] =useState("Shared")
-  const handleTabSelect=(key)=>{
-  setTabKey(key);
-  if (key === "Solo"){
-    setTabKey("Shared")
-    return props.handleSoloSelected()
-  }
+  const [toastMessage, setToastMessage] = useState("Saved.")
+  const [toastColor, setToastColor] = useState("Light")
+  const [showScroll, setShowScroll] = useState(false);
+  const [tabKey, setTabKey] = useState("Shared");
+  const handleTabSelect = (key) => {
+    setTabKey(key);
+    if (key === "Solo") {
+      setTabKey("Shared");
+      return props.handleSoloSelected();
+    }
+  };
 
-}
-  
-const checkScrollTop = () => {    
-   if (!showScroll && window.pageYOffset > 400){
-      setShowScroll(true)    
-   } else if (showScroll && window.pageYOffset <= 400){
-      setShowScroll(false)    
-   }  
-};
-window.addEventListener('scroll', checkScrollTop)
-const scrollTop = () =>{
-  window.scrollTo({top: 0, behavior: 'smooth'});
-};  
-useEffect(
+  const checkScrollTop = () => {
+    if (!showScroll && window.pageYOffset > 400) {
+      setShowScroll(true);
+    } else if (showScroll && window.pageYOffset <= 400) {
+      setShowScroll(false);
+    }
+  };
+  window.addEventListener("scroll", checkScrollTop);
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  useEffect(
     () => setSearchResults(props.incompletedSharedTasksData),
     [props.incompletedSharedTasksData.length]
   );
@@ -95,7 +91,7 @@ useEffect(
         moment(task_name.task.task_date_time)
           .format("MMMM DD YYYY hh:mm A")
           .toLowerCase()
-          .includes(searchItem)
+          .includes(searchItem) || task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem)
     );
     setSearchResults(results);
   }, [searchItem]);
@@ -107,9 +103,13 @@ useEffect(
   // };
   const handleCreate = (data) => {
     props.incompletedSharedTasksData.unshift(data);
-
+    setToastMessage("Saved.");
+    setToastColor("light");
     axios
-      .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`, data)
+      .post(
+        `http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`,
+        data
+      )
       .then((res) => {
         setShowToast(true);
       });
@@ -122,30 +122,45 @@ useEffect(
     console.log(findTaskByID);
     const data = { completed_task_id: e };
     props.completedSharedTasksData.unshift(findTaskByID);
+    setToastColor("info");
+    setToastMessage("Completed!");
     axios
       .put(
         `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
         data
       )
-      .then((resp) => {});
-    handleDelete(e);
+      .then((resp) => {setShowToast(true)});
+    const remainingTasks = props.incompletedSharedTasksData.filter(function (
+      value,
+      index,
+      arr
+    ) {
+      return value.task.task_id !== e;
+    });
+    // setSearchResults(remainingTasks);
+    props.updateTasks(remainingTasks);
   };
 
   const handleDelete = (e) => {
     setAnimationType("delete");
-    const remainingTasks = props.incompletedSharedTasksData.filter(function(value, index, arr){
-      
-      return value.task.task_id !== e
+    const remainingTasks = props.incompletedSharedTasksData.filter(function (
+      value,
+      index,
+      arr
+    ) {
+      return value.task.task_id !== e;
     });
     // setSearchResults(remainingTasks);
     props.updateTasks(remainingTasks);
     setShowOffCanvas(false);
+    setToastMessage("Deleted.");
+    setToastColor("danger");
     const data = { task_id: e };
     axios
       .delete(`http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`, {
         data: data,
       })
-      .then((resp) => {});
+      .then((resp) => {setShowToast(true)});
   };
   const handleDeleteOffCanvas = (e) => {
     setDeleteTaskID(e);
@@ -160,14 +175,18 @@ useEffect(
       ({ task }) => task.task_id === data.task_id
     );
     console.log(taskByID);
-    taskByID.task_date_time = data.task_date_time;
-    taskByID.task_priority = data.task_priority;
-    taskByID.task_description = data.task_description;
-    taskByID.task_name = data.task_name;
-
+    taskByID.task.task_date_time = data.task_date_time;
+    taskByID.task.task_priority = data.task_priority;
+    taskByID.task.task_description = data.task_description;
+    taskByID.task.task_name = data.task_name;
+    setToastMessage("Saved.");
+    setToastColor("warning");
     axios
-      .put(`http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`, data)
-      .then((res) => {});
+      .put(
+        `http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`,
+        data
+      )
+      .then((res) => {setShowToast(true)});
   };
 
   const handleSendEditData = (e) => {
@@ -178,45 +197,58 @@ useEffect(
 
   const sortByHighestPriority = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort((a, b) =>
-      a.task_priority.localeCompare(b.task_priority)
+      a.task.task_priority.localeCompare(b.task.task_priority)
     );
     return setSearchResults(sortedSearch);
   };
   const sortByLowestPriority = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort((a, b) =>
-      b.task_priority.localeCompare(a.task_priority)
+      b.task.task_priority.localeCompare(a.task.task_priority)
     );
     return setSearchResults(sortedSearch);
   };
   const sortByFarthestDate = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort(
-      (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
+      (a, b) =>
+        new Date(b.task.task_date_time) - new Date(a.task.task_date_time)
     );
     return setSearchResults(sortedSearch);
   };
   const sortByClosestDate = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort(
-      (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
+      (a, b) =>
+        new Date(a.task.task_date_time) - new Date(b.task.task_date_time)
     );
     return setSearchResults(sortedSearch);
   };
   const sortByTaskName = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort((a, b) =>
-      a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
+      a.task.task_name
+        .toLowerCase()
+        .localeCompare(b.task.task_name.toLowerCase())
     );
     return setSearchResults(sortedSearch);
   };
-  
+  const sortByFriendName = () => {
+    setAnimationType("sort");
+
+    const sortedSearch = [...searchResults].sort((a, b) =>
+      a.sharing_with.user_display_name
+        .toLowerCase()
+        .localeCompare(b.sharing_with.user_display_name.toLowerCase())
+    );
+    return setSearchResults(sortedSearch);
+  };
   const cardBorder = {
     A: "danger",
     B: "warning",
@@ -232,31 +264,27 @@ useEffect(
 
   if (props.show === true && searchResults !== null)
     return (
-      <div >
-     
-        
-     <FaArrowCircleUp 
-   className="scrollTop" 
-   onClick={scrollTop} 
-   style={{height: 40, display: showScroll ? 'flex' : 'none'}}
-/>
-<div className="create-task">
-<div className="d-grid gap-2">
-       
-<Button
-            // className="create-button"\
-            
-            variant="success"
-            size="lg"
-            onClick={(e) => setcreateModalShow(true)}
-          >
-            {createModalShow ? "Creating...": "Create"}
-          </Button>
-        
+      <div>
+        <FaArrowCircleUp
+          className="scrollTop"
+          onClick={scrollTop}
+          style={{ height: 40, display: showScroll ? "flex" : "none" }}
+        />
+        <div className="create-task">
+          <div className="d-grid gap-2">
+            <Button
+              // className="create-button"\
+
+              variant="success"
+              size="lg"
+              onClick={(e) => setcreateModalShow(true)}
+            >
+              {createModalShow ? "Creating..." : "Create"}
+            </Button>
           </div>
-          </div>
+        </div>
         <SharedCreateModal
-        allFriendsData = {props.allFriendsData}
+          allFriendsData={props.allFriendsData}
           show={createModalShow}
           onHide={() => setcreateModalShow(false)}
           userID={props.userID}
@@ -300,7 +328,7 @@ useEffect(
             </ButtonGroup>
           </Offcanvas.Body>
         </Offcanvas>
-       
+
         {/* <div className="sticky-top">  */}
         {/* <Button
           // className="create-button"
@@ -321,8 +349,6 @@ useEffect(
         
         <Tab eventKey="Shared" title="Shared"  ></Tab>
         </Tabs> */}
-
-
 
         <ButtonToolbar
           className="top-tasks-buttons"
@@ -368,6 +394,10 @@ useEffect(
               <Dropdown.Item onClick={() => sortByTaskName()}>
                 Name
               </Dropdown.Item>
+              <Dropdown.Item onClick={() => sortByFriendName()}>
+                Friend name
+              </Dropdown.Item>
+
             </DropdownButton>
           </ButtonGroup>
         </ButtonToolbar>
@@ -379,76 +409,62 @@ useEffect(
 
 </Alert>  */}
 
-       
-          <Toast bg="light" className="toast-container"animation={true}  onClose={() => setShowToast(false)}  show={showToast} delay={3000} autohide >
+<Toast bg={toastColor} className="toast-container"animation={true}  onClose={() => setShowToast(false)}  show={showToast} delay={3000} autohide >
             <Toast.Body>
-            Saved.
+            {toastMessage}
             </Toast.Body>
           </Toast>
-        
-        
-        
-        {searchResults.map(({task, sharing_with}) => (
+
+        {searchResults.map(({ task, sharing_with }) => (
           <div className="tasks-container" key={task.task_id}>
-           
             <Card
               className="task-card"
               border={cardBorder[task.task_priority]}
               style={{ width: "22rem" }}
             >
-              
-              <Card.Header>{task.task_name}</Card.Header>
+              <Card.Header>Sharing {task.task_name} with {sharing_with.user_display_name}</Card.Header>
               <Card.Body>
-                Sharing with {sharing_with.user_display_name}
+  
+                
                 <Card.Text>{task.task_description}</Card.Text>
-
                 <ButtonGroup>
                   
-                <DropdownButton
-                
-                size="med"
-                variant="info"
-                id="dropdown-basic-button"
-                title="Share"
-                  >
-                    Share
-                  </DropdownButton>
                   <div className="card-buttons">
-                  <Button
-                    variant="primary"
-                    size="med"
-                    value={task.task_id}
-                    onClick={(e) => handleComplete(e.target.value)}
-                  >
-                    Complete
-                  </Button>
+                    <Button
+                      variant="primary"
+                      size="med"
+                      value={task.task_id}
+                      onClick={(e) => handleComplete(e.target.value)}
+                    >
+                      Complete
+                    </Button>
                   </div>
                   <div className="card-buttons">
-                  <Button
-                    variant="warning"
-                    onClick={(e) => handleSendEditData(e.target.value)}
-                    size="med"
-                    value={[
-                      props.userID,
-                      task.task_priority,
-                      task.task_name,
-                      task.task_id,
-                      task.task_description,
-                      task.task_date_time,
-                    ]}
-                  >
-                    Edit
-                  </Button>
+                    <Button
+                      variant="warning"
+                      onClick={(e) => handleSendEditData(e.target.value)}
+                      size="med"
+                      value={[
+                        props.userID,
+                        task.task_priority,
+                        task.task_name,
+                        task.task_id,
+                        task.task_description,
+                        task.task_date_time,
+                      ]}
+                    >
+                      Edit
+                    </Button>
                   </div>
                   <div className="card-buttons">
-                  <Button
-                    value={task.task_id}
-                    variant="danger"
-                    onClick={(e) => handleDeleteOffCanvas(e.target.value)}
-                    size="med"
-                  >
-                    Delete
-                  </Button>
+                    <Button
+                      value={task.task_id}
+                      variant="danger"
+                      onClick={(e) => handleDeleteOffCanvas(e.target.value)}
+                      size="med"
+                    >
+                      Delete
+                    </Button>
                   </div>
                 </ButtonGroup>
               </Card.Body>
@@ -458,9 +474,8 @@ useEffect(
             </Card>
           </div>
         ))}
-        
 
-         {/* <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
+        {/* <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
           
           <Button
             // className="create-button"
@@ -474,7 +489,6 @@ useEffect(
           
         </Navbar>  */}
       </div>
-      
     );
   else return null;
 }
