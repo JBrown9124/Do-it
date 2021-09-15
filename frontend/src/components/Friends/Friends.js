@@ -16,8 +16,8 @@ import {
   Tabs,
   Tab,
   Row,
-  Column,
-  Badge
+  Col,
+  Badge,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -47,83 +47,82 @@ function Friends(props) {
   const [animationType, setAnimationType] = useState("");
 
   const [showDeleteAllPopOver, setShowDeleteAllPopOver] = useState(false);
-  
+
   const [deleteTaskID, setDeleteTaskID] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [deleteFriendID, setDeleteFriendID] = useState("");
-  const [showDeletePopOver, setShowDeletePopOver]=useState(false);
+  const [showDeletePopOver, setShowDeletePopOver] = useState(false);
   const handleClose = () => props.hideFriends(false);
   const handleShow = () => setShow(true);
-  
 
   const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
     useState([]);
-  
-    useEffect(
-      () => setSearchResults(props.allFriendsData),
-      [props.allFriendsData.length]
+
+  useEffect(
+    () => setSearchResults(props.allFriendsData),
+    [props.allFriendsData.length]
+  );
+
+  useEffect(() => {
+    setAnimationType("sort");
+    const results = props.allFriendsData.filter((friend) =>
+      friend.user_display_name.toLowerCase().includes(searchItem)
     );
-  
-    useEffect(() => {
-      setAnimationType("sort");
-      const results = props.allFriendsData.filter(
-        (friend) =>
-          friend.user_display_name.toLowerCase().includes(searchItem) 
-      );
-      setSearchResults(results);
-    }, [searchItem]);
-  
-  
-  
+    setSearchResults(results);
+  }, [searchItem]);
+
   const handleRemoveFriendRequest = (fromUserID) => {
-    const remainingRequests = props.allReceivedFriendRequestsData.filter(function(value, index, arr){
-      
-      return value.user_id !== fromUserID
-    });
+    const remainingRequests = props.allReceivedFriendRequestsData.filter(
+      function (value, index, arr) {
+        return value.user_id !== fromUserID;
+      }
+    );
 
     console.log(remainingRequests);
 
     props.updateAllReceivedFriendRequestsData(remainingRequests);
   };
-  const handleRemoveFriend = (friendID) =>{
-    const remainingFriends = props.allFriendsData.filter(function(value, index, arr){
-      
-      return value.user_id !== friendID
+  const handleRemoveFriend = (friendID) => {
+    const remainingFriends = props.allFriendsData.filter(function (
+      value,
+      index,
+      arr
+    ) {
+      return value.user_id !== friendID;
     });
 
-    console.log(remainingFriends)
+    console.log(remainingFriends);
 
     props.updateAllFriendsData(remainingFriends);
     const data = { to_user_id: friendID };
     axios
-      .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/remove-friend`, data)
+      .post(
+        `http://127.0.0.1:8000/to_do_list/${props.userID}/remove-friend`,
+        data
+      )
       .then((response) => {
-        
-
         // props.allFriendsData.push(user); request pending data
-
         // isLoaded(true);
       });
-  }
-  const handleReject =(fromUserID)=>{
+  };
+  const handleReject = (fromUserID) => {
     const findUserByID = props.allReceivedFriendRequestsData.find(
       ({ user_id }) => user_id === fromUserID
     );
     console.log(findUserByID);
-    
+
     handleRemoveFriendRequest(fromUserID);
     const data = { from_user_id: fromUserID };
-    axios.post(
-      `http://127.0.0.1:8000/to_do_list/${props.userID}/reject-friend`,
-      data
-    )
-    .then((res) => {
-      
-    })
-    .catch((err) => {});
-};
-  
+    axios
+      .post(
+        `http://127.0.0.1:8000/to_do_list/${props.userID}/reject-friend`,
+        data
+      )
+      .then((res) => {})
+      .catch((err) => {});
+  };
+
   const handleAccept = (fromUserID) => {
     // setSearchResults(remainingTasks);
 
@@ -139,10 +138,19 @@ function Friends(props) {
         `http://127.0.0.1:8000/to_do_list/${props.userID}/accept-friend`,
         data
       )
-      .then((res) => {
-        
-      })
+      .then((res) => {})
       .catch((err) => {});
+  };
+  const handleFriendSharedTasksCount = (friendID) => {
+    const friendTasksCount = props.incompletedSharedTasksData.filter(function (
+      value,
+      index,
+      arr
+    ) {
+      return value.sharing_with.user_id === friendID;
+    });
+
+    return friendTasksCount.length;
   };
   const handleDeletePopOver = (e) => {
     setShowDeletePopOver(true);
@@ -151,9 +159,17 @@ function Friends(props) {
   const deletePopOver = (
     <Popover className="tasks-container" id="popover-basic">
       <Popover.Header as="h3">Are you sure?</Popover.Header>
-      <Popover.Body> “I don’t know half of you half as well as I should like; and I like less than half of you half as well as you deserve.”— Bilbo Baggins of the Shire</Popover.Body>
+      <Popover.Body>
+        {" "}
+        “I don’t know half of you half as well as I should like; and I like less
+        than half of you half as well as you deserve.”— Bilbo Baggins of the
+        Shire
+      </Popover.Body>
       <ButtonGroup aria-label="Basic example">
-        <Button onClick={() => handleRemoveFriend(deleteFriendID)} variant="danger">
+        <Button
+          onClick={() => handleRemoveFriend(deleteFriendID)}
+          variant="danger"
+        >
           Yes
         </Button>
 
@@ -163,25 +179,24 @@ function Friends(props) {
       </ButtonGroup>
     </Popover>
   );
-  
-  
+
   // if (props.show === true && props.completedTasksData !== null) {
-    // const handleRemove = (friendID) => {
-    //   console.log(friendID)
-    //   // const filterFriendsHelper = (user) => {
-    //   //   return friendID !== user.user_id;
-    //   // };
-    //   // filterFriendsHelper(props.allFriendsData);
-    //   const remainingFriends = props.allFriendsData.filter(function(value, index, arr){
-    //     console.log(value.user_id)
-    //     return value.user_id !== friendID
-    //   });
-  
-    //   console.log(remainingFriends);
-  
-    //   props.updateAllFriendsData(remainingFriends);
-    // };
-    
+  // const handleRemove = (friendID) => {
+  //   console.log(friendID)
+  //   // const filterFriendsHelper = (user) => {
+  //   //   return friendID !== user.user_id;
+  //   // };
+  //   // filterFriendsHelper(props.allFriendsData);
+  //   const remainingFriends = props.allFriendsData.filter(function(value, index, arr){
+  //     console.log(value.user_id)
+  //     return value.user_id !== friendID
+  //   });
+
+  //   console.log(remainingFriends);
+
+  //   props.updateAllFriendsData(remainingFriends);
+  // };
+
   return (
     <>
       <Offcanvas show={props.show} onHide={handleClose} placement="top">
@@ -194,16 +209,14 @@ function Friends(props) {
         </Offcanvas.Header>
 
         <Offcanvas.Body>
-        
           <Tabs
             defaultActiveKey="Friends"
-            fill variant="tabs" 
+            fill
+            variant="tabs"
             id="noanim-tab-example"
             className="friend-tabs-container"
           >
-            
             <Tab eventKey="Friends" title="Friends">
-              
               <div className="d-grid gap-2">
                 <Button
                   // className="completed-clear"
@@ -216,8 +229,10 @@ function Friends(props) {
                 </Button>
 
                 <AddFriendModal
-                allReceivedFriendRequestsData={props.allReceivedFriendRequestsData}
-                allSentFriendRequestsData={props.allSentFriendRequestsData}
+                  allReceivedFriendRequestsData={
+                    props.allReceivedFriendRequestsData
+                  }
+                  allSentFriendRequestsData={props.allSentFriendRequestsData}
                   allFriendsData={props.allFriendsData}
                   userID={props.userID}
                   show={showAddFriendModal}
@@ -225,23 +240,22 @@ function Friends(props) {
                 />
               </div>
 
-             
-                <Form >
-                  <FormControl
-                    onKeyPress={(e) => {
-                      e.key === "Enter" && e.preventDefault();
-                    }}
-                    type="search"
-                    placeholder="Friend filter"
-                    className="friend-search-container"
-                    aria-label="Search"
-                    variant="primary"
-                    value={searchItem}
-                    onChange={(e) => setSearchItem(e.target.value)}
-                  />
-                </Form>
-               
-                {/* <Button
+              <Form>
+                <FormControl
+                  onKeyPress={(e) => {
+                    e.key === "Enter" && e.preventDefault();
+                  }}
+                  type="search"
+                  placeholder="Friend filter"
+                  className="friend-search-container"
+                  aria-label="Search"
+                  variant="primary"
+                  value={searchItem}
+                  onChange={(e) => setSearchItem(e.target.value)}
+                />
+              </Form>
+
+              {/* <Button
                       
                       onClick={() => handledeleteAll()}
                       variant="danger"
@@ -249,82 +263,110 @@ function Friends(props) {
                     >
                       Delete All
                     </Button> */}
-              
 
               {searchResults.map((friend) => (
                 <div key={friend.user_id}>
                   <ListGroup className="friend-list-container" horizontal="xxl">
-                    <ListGroup.Item className="friend-list-seperator">
-                      {friend.user_display_name}
+                    <ListGroup.Item
+                      variant="info"
+                      className="friend-list-seperator"
+                    >
+                      <Row>
+                        <Col>
+                      <small >
+                        Sharing{" "}
+                        {handleFriendSharedTasksCount(parseInt(friend.user_id))}{" "}
+                        tasks with
+                      </small>{" "}
+                      <strong >
+                        {friend.user_display_name}
+                      </strong>
+                      </Col>
+                      <Col>
                       <OverlayTrigger
                         trigger="focus"
                         placement="bottom"
                         overlay={deletePopOver}
                       >
-                      <Button
-                        className="remove-friend-button"
-                        variant="danger"
-                        size="med"
-                        value={friend.user_id}
-                        onClick={(e) => handleDeletePopOver(parseInt(e.target.value))}
-                      >
-                        Remove friend
-                      </Button>
-                     </OverlayTrigger>
+                        <Button
+                          className="remove-friend-button"
+                          variant="danger"
+                          size="sm"
+                          value={friend.user_id}
+                          onClick={(e) =>
+                            handleDeletePopOver(parseInt(e.target.value))
+                          }
+                        >
+                          Remove friend
+                        </Button>
+                      </OverlayTrigger>
+                      </Col>
+                      </Row>
                     </ListGroup.Item>
                   </ListGroup>
                 </div>
               ))}
             </Tab>
-            <Tab eventKey="Received Requests" title="Received Requests"
+
+            <Tab eventKey="Received Requests" title="Received Requests" 
+            
             >
-            
-            {props.allReceivedFriendRequestsData.map((receivedRequest) => (
-        <div key={receivedRequest.user_id}>
-          <ListGroup className="friend-list-container" horizontal="xxl">
-            <ListGroup.Item className="friend-list-seperator">
-              {receivedRequest.user_display_name}{" "}
-              <ButtonGroup className="remove-friend-button">
-                <Button
-                  // className="completed-clear"
-                  variant="success"
-                  size="med"
-                  value={receivedRequest.user_id}
-                  onClick={(e) => handleAccept(parseInt(e.target.value))}
-                >
-                  Accept
-                </Button>
-                <Button
-                  // className="completed-clear"
-                  variant="danger"
-                  size="med"
-                  value={receivedRequest.user_id}
-                  onClick={(e)=>handleReject(parseInt(e.target.value))}
-                >
-                  Decline
-                </Button>
-              </ButtonGroup>
-            </ListGroup.Item >
-          </ListGroup>
-        </div>
-      ))}
+              {props.allReceivedFriendRequestsData.map((receivedRequest) => (
+                <div key={receivedRequest.user_id}>
+                  <ListGroup className="friend-list-container" horizontal="xxl">
+                    <ListGroup.Item
+                      variant="light"
+                      className="friend-list-seperator"
+                    >
+                      <strong>{receivedRequest.user_display_name} </strong>{" "}
+                     
+                        <Button
+                          // className="completed-clear"
+                          className="accept-decline-seperator"
+                          variant="success"
+                          size="med"
+                          value={receivedRequest.user_id}
+                          onClick={(e) =>
+                            handleAccept(parseInt(e.target.value))
+                          }
+                        >
+                          Accept
+                        </Button>
+                        <Button
+                          
+                          
+                          variant="danger"
+                          size="med"
+                          value={receivedRequest.user_id}
+                          onClick={(e) =>
+                            handleReject(parseInt(e.target.value))
+                          }
+                        >
+                          Decline
+                        </Button>
+                    
+                    </ListGroup.Item>
+                  </ListGroup>
+                </div>
+              ))}
             </Tab>
-            
+
             <Tab eventKey="Sent Requests" title="Sent Requests">
-            {props.allSentFriendRequestsData.map((sentRequest) => (
-        <div key={sentRequest.user_id}>
-          <ListGroup className="friend-list-container" horizontal="xxl">
-            <ListGroup.Item className="friend-list-seperator">
-              {sentRequest.user_display_name}'s request is pending...
-              
-            </ListGroup.Item>
-          </ListGroup>
-        </div>
-      ))}
+              {props.allSentFriendRequestsData.map((sentRequest) => (
+                <div key={sentRequest.user_id}>
+                  <ListGroup className="friend-list-container" horizontal="xxl">
+                    <ListGroup.Item
+                      variant="secondary"
+                      className="friend-list-seperator"
+                    >
+                      <strong>{sentRequest.user_display_name}'s</strong> request is pending...
+                    </ListGroup.Item>
+                  </ListGroup>
+                </div>
+              ))}
             </Tab>
-            
           </Tabs>
-        
+
           {/* </FlipMove> */}
         </Offcanvas.Body>
       </Offcanvas>

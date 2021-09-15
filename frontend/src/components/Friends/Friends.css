@@ -24,6 +24,11 @@
     text-align:center;
     
 }
+.friend-info{
+    text-align: left;
+    justify-content: left;
+    margin-right:60px
+}
 .friend-tabs-container{
     margin-bottom:10px;
     font-size: 12px;
@@ -35,15 +40,20 @@
 .friend-search-container{
     width:50%;
     margin:auto;
-    margin-bottom: 15px;
+    margin-top:9px;
+    margin-bottom: 10px;
     justify-content: center;
     
     position:relative;
 }
 .remove-friend-button{
-    margin-left:60px
+    margin-left:20px
 }
 .friend-list-seperator{
     margin-top:20px
     
+}
+.accept-decline-seperator{
+    margin-right: 15px;
+    margin-left:40px
 }

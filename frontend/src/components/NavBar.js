@@ -37,7 +37,7 @@ const Navigation = (props) => {
     <>
       <Navbar expand="lg" fixed="top" bg="light" collapseOnSelect>
         <Container>
-          <Navbar.Brand>Do-it</Navbar.Brand>
+          <Navbar.Brand>Do or Do Not</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
@@ -56,7 +56,7 @@ const Navigation = (props) => {
               
               <Nav.Link onClick={() => props.showFriends(true)}>
               <Badge className="completed-badge" bg="secondary">
-                  {props.receivedCount}
+                  {props.receivedCount===0? null:`${props.receivedCount} friend request received!`}
                 </Badge>
                 Friends
               </Nav.Link>
@@ -75,9 +75,11 @@ const Navigation = (props) => {
                 </Nav.Link>
                 
               </OverlayTrigger> */}
-              <Nav.Link>
-                {props.userDisplayName===undefined? "Welcome!":props.userDisplayName}
-                </Nav.Link>
+                <Navbar.Text>
+         {props.userDisplayName===undefined? "Welcome!":`Signed in as ${props.userDisplayName}`}
+      </Navbar.Text>
+                
+                
             </Nav>
           </Navbar.Collapse>
         </Container>

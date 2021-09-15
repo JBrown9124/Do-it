@@ -25,7 +25,7 @@ import {
   Alert,
   Carousel,
   Tabs,
-  Tab
+  Tab,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -46,7 +46,7 @@ import { Transition } from "react-transition-group";
 import { motion } from "framer-motion";
 import Draggable from "react-draggable";
 
-import {FaArrowCircleUp} from 'react-icons/fa';
+import { FaArrowCircleUp } from "react-icons/fa";
 function Tasks(props) {
   const [deleteTaskID, setDeleteTaskID] = useState(null);
   const [deleteTaskName, setDeleteTaskName] = useState(null);
@@ -61,32 +61,30 @@ function Tasks(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [flipDisabled, setFlipDisabled] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("Saved.")
-  const [toastColor, setToastColor] = useState("Light")
-  const [showScroll, setShowScroll] = useState(false)
-  const [tabKey, setTabKey] =useState("Solo")
-const handleTabSelect=(key)=>{
-  setTabKey(key);
-  if (key === "Shared"){
-    setTabKey("Solo")
-    return props.handleSharedSelected()
-  }
+  const [toastMessage, setToastMessage] = useState("Saved.");
+  const [toastColor, setToastColor] = useState("Light");
+  const [showScroll, setShowScroll] = useState(false);
+  const [tabKey, setTabKey] = useState("Solo");
+  const handleTabSelect = (key) => {
+    setTabKey(key);
+    if (key === "Shared") {
+      setTabKey("Solo");
+      return props.handleSharedSelected();
+    }
+  };
 
-}
-
-  
-const checkScrollTop = () => {    
-   if (!showScroll && window.pageYOffset > 400){
-      setShowScroll(true)    
-   } else if (showScroll && window.pageYOffset <= 400){
-      setShowScroll(false)    
-   }  
-};
-window.addEventListener('scroll', checkScrollTop)
-const scrollTop = () =>{
-  window.scrollTo({top: 0, behavior: 'smooth'});
-};  
-useEffect(
+  const checkScrollTop = () => {
+    if (!showScroll && window.pageYOffset > 400) {
+      setShowScroll(true);
+    } else if (showScroll && window.pageYOffset <= 400) {
+      setShowScroll(false);
+    }
+  };
+  window.addEventListener("scroll", checkScrollTop);
+  const scrollTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+  useEffect(
     () => setSearchResults(props.incompletedTasksData),
     [props.incompletedTasksData.length]
   );
@@ -134,7 +132,9 @@ useEffect(
         `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
         data
       )
-      .then((resp) => {setShowToast(true)});
+      .then((resp) => {
+        setShowToast(true);
+      });
     const filterTasksHelper = (task) => {
       return e !== task.task_id;
     };
@@ -161,7 +161,9 @@ useEffect(
       .delete(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, {
         data: data,
       })
-      .then((resp) => {setShowToast(true)});
+      .then((resp) => {
+        setShowToast(true);
+      });
   };
   const handleDeleteOffCanvas = (e) => {
     setDeleteTaskID(e);
@@ -184,7 +186,9 @@ useEffect(
     setToastColor("warning");
     axios
       .put(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
-      .then((res) => {setShowToast(true)});
+      .then((res) => {
+        setShowToast(true);
+      });
   };
 
   const handleSendEditData = (e) => {
@@ -195,7 +199,7 @@ useEffect(
 
   const sortByHighestPriority = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort((a, b) =>
       a.task_priority.localeCompare(b.task_priority)
     );
@@ -203,7 +207,7 @@ useEffect(
   };
   const sortByLowestPriority = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort((a, b) =>
       b.task_priority.localeCompare(a.task_priority)
     );
@@ -211,7 +215,7 @@ useEffect(
   };
   const sortByFarthestDate = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort(
       (a, b) => new Date(b.task_date_time) - new Date(a.task_date_time)
     );
@@ -219,7 +223,7 @@ useEffect(
   };
   const sortByClosestDate = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort(
       (a, b) => new Date(a.task_date_time) - new Date(b.task_date_time)
     );
@@ -227,13 +231,13 @@ useEffect(
   };
   const sortByTaskName = () => {
     setAnimationType("sort");
-    
+
     const sortedSearch = [...searchResults].sort((a, b) =>
       a.task_name.toLowerCase().localeCompare(b.task_name.toLowerCase())
     );
     return setSearchResults(sortedSearch);
   };
-  
+
   const cardBorder = {
     A: "danger",
     B: "warning",
@@ -249,28 +253,25 @@ useEffect(
 
   if (props.show === true && props.incompletedTasksData !== null)
     return (
-      <div >
-     
-     <FaArrowCircleUp 
-   className="scrollTop" 
-   onClick={scrollTop} 
-   style={{height: 40, display: showScroll ? 'flex' : 'none'}}
-/>
-<div className="create-task">
-<div className="d-grid gap-2">
-       
-<Button
-            // className="create-button"\
-            
-            variant="success"
-            size="lg"
-            onClick={(e) => setcreateModalShow(true)}
-          >
-            {createModalShow ? "Creating...": "Create"}
-          </Button>
-        
+      <div>
+        <FaArrowCircleUp
+          className="scrollTop"
+          onClick={scrollTop}
+          style={{ height: 40, display: showScroll ? "flex" : "none" }}
+        />
+        <div className="create-task">
+          <div className="d-grid gap-2">
+            <Button
+              // className="create-button"\
+
+              variant="success"
+              size="lg"
+              onClick={(e) => setcreateModalShow(true)}
+            >
+              {createModalShow ? "Creating..." : "Create"}
+            </Button>
           </div>
-          </div>
+        </div>
         <CreateTaskModal
           show={createModalShow}
           onHide={() => setcreateModalShow(false)}
@@ -315,7 +316,7 @@ useEffect(
             </ButtonGroup>
           </Offcanvas.Body>
         </Offcanvas>
-       
+
         {/* <div className="sticky-top">  */}
         {/* <Button
           // className="create-button"
@@ -342,26 +343,32 @@ useEffect(
           aria-label="Toolbar with button groups"
         >
           <ButtonGroup className="me-2" aria-label="Second group">
-          <OverlayTrigger trigger="hover" placement="bottom" overlay={<Tooltip id="tooltip-disabled">Search by task name or date/time!</Tooltip>}>
-  <span className="d-inline-block">
-   
- 
-            <Form className="d-flex">
-              <FormControl
-                onKeyPress={(e) => {
-                  e.key === "Enter" && e.preventDefault();
-                }}
-                type="search"
-                placeholder="Search"
-                className="mr-2"
-                aria-label="Search"
-                variant="primary"
-                value={searchItem}
-                onChange={(e) => setSearchItem(e.target.value)}
-              />
-            </Form>
-            </span>
-</OverlayTrigger>
+            <OverlayTrigger
+              trigger="hover"
+              placement="bottom"
+              overlay={
+                <Tooltip id="tooltip-disabled">
+                  Search by task name or date/time.
+                </Tooltip>
+              }
+            >
+              <span className="d-inline-block">
+                <Form className="d-flex">
+                  <FormControl
+                    onKeyPress={(e) => {
+                      e.key === "Enter" && e.preventDefault();
+                    }}
+                    type="search"
+                    placeholder="Search"
+                    className="mr-2"
+                    aria-label="Search"
+                    variant="primary"
+                    value={searchItem}
+                    onChange={(e) => setSearchItem(e.target.value)}
+                  />
+                </Form>
+              </span>
+            </OverlayTrigger>
           </ButtonGroup>
 
           <ButtonGroup aria-label="Third group">
@@ -398,80 +405,78 @@ useEffect(
 
 </Alert>  */}
 
-       
-          <Toast bg={toastColor} className="toast-container"animation={true}  onClose={() => setShowToast(false)}  show={showToast} delay={3000} autohide >
-            <Toast.Body>
-            {toastMessage}
-            </Toast.Body>
-          </Toast>
-        
-        
-        
-        {searchResults.map((task) => (
-          <div className="tasks-container" key={task.task_id}>
-           
-            <Card
-              className="task-card"
-              border={cardBorder[task.task_priority]}
-              style={{ width: "22rem" }}
-            >
-              
-              <Card.Header>{task.task_name}</Card.Header>
-              <Card.Body>
-                <Card.Text>{task.task_description}</Card.Text>
-
-                <ButtonGroup>
-                  
-               
-                  <div className="card-buttons">
-                  <Button
-                    variant="primary"
-                    size="med"
-                    value={task.task_id}
-                    onClick={(e) => handleComplete(e.target.value)}
-                  >
-                    Complete
-                  </Button>
-                  </div>
-                  <div className="card-buttons">
-                  <Button
-                    variant="warning"
-                    onClick={(e) => handleSendEditData(e.target.value)}
-                    size="med"
-                    value={[
-                      props.userID,
-                      task.task_priority,
-                      task.task_name,
-                      task.task_id,
-                      task.task_description,
-                      task.task_date_time,
-                    ]}
-                  >
-                    Edit
-                  </Button>
-                  </div>
-                  <div className="card-buttons">
-                  <Button
-                    value={task.task_id}
-                    variant="danger"
-                    onClick={(e) => handleDeleteOffCanvas(e.target.value)}
-                    size="med"
-                  >
-                    Delete
-                  </Button>
-                  </div>
-                </ButtonGroup>
-              </Card.Body>
-              <Card.Footer>
-                {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
-              </Card.Footer>
-            </Card>
-          </div>
-        ))}
-        
+        <Toast
+          bg={toastColor}
+          className="toast-container"
+          animation={true}
+          onClose={() => setShowToast(false)}
+          show={showToast}
+          delay={3000}
+          autohide
+        >
+          <Toast.Body>{toastMessage}</Toast.Body>
+        </Toast>
 
         
-        
+          {searchResults.map((task) => (
+            <div className="tasks-container" key={task.task_id}>
+              <Card
+                className="task-card"
+                border={cardBorder[task.task_priority]}
+                style={{ width: "22rem" }}
+              >
+                <Card.Header>{task.task_name}</Card.Header>
+                <Card.Body>
+                  <Card.Text>{task.task_description}</Card.Text>
+
+                  <ButtonGroup>
+                    <div className="card-buttons">
+                      <Button
+                        variant="primary"
+                        size="med"
+                        value={task.task_id}
+                        onClick={(e) => handleComplete(e.target.value)}
+                      >
+                        Complete
+                      </Button>
+                    </div>
+                    <div className="card-buttons">
+                      <Button
+                        variant="warning"
+                        onClick={(e) => handleSendEditData(e.target.value)}
+                        size="med"
+                        value={[
+                          props.userID,
+                          task.task_priority,
+                          task.task_name,
+                          task.task_id,
+                          task.task_description,
+                          task.task_date_time,
+                        ]}
+                      >
+                        Edit
+                      </Button>
+                    </div>
+                    <div className="card-buttons">
+                      <Button
+                        value={task.task_id}
+                        variant="danger"
+                        onClick={(e) => handleDeleteOffCanvas(e.target.value)}
+                        size="med"
+                      >
+                        Delete
+                      </Button>
+                    </div>
+                  </ButtonGroup>
+                </Card.Body>
+                <Card.Footer>
+                  {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
+                </Card.Footer>
+              </Card>
+            </div>
+          ))}
+     
+
         {/* <Navbar fixed="bottom" >
           
           <Button
@@ -486,7 +491,6 @@ useEffect(
           
         </Navbar>  */}
       </div>
-      
     );
   else return null;
 }

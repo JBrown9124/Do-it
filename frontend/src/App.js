@@ -177,7 +177,7 @@ function App() {
         showLoginHideTasks={() => handleShowLoginHideTasks()}
         showComplete={(props) => setShowCompletedTasks(props)}
         userID={userID}
-        receivedCount={tasksShow ? Object.keys(allReceivedFriendRequestsData).length : null}
+        receivedCount={Object.keys(allReceivedFriendRequestsData).length}
       />
      <Navbar fixed="bottom" bg="light">
       <Nav navbar={false} fill variant="pills" className="tasks-tab" activeKey={tasksTabKey}
@@ -224,6 +224,7 @@ function App() {
         activeIndex={tasksCarouselIndex}
       >
         <Carousel.Item>
+          
           <Tasks
             handleSharedSelected={() => setTasksCarouselIndex(1)}
             updateTasks={(props) => setIncompletedData(props)}
@@ -312,6 +313,7 @@ function App() {
         </Offcanvas.Body>
       </Offcanvas>
       <Friends
+      incompletedSharedTasksData={incompletedSharedTasksData}
         allReceivedFriendRequestsData={allReceivedFriendRequestsData}
         allSentFriendRequestsData={allSentFriendRequestsData}
         allFriendsData={allFriendsData}

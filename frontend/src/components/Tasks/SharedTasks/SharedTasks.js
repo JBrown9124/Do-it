@@ -31,14 +31,11 @@ import axios from "axios";
 import History from "../../../services/History";
 import Routes from "../../../services/Routes";
 import { Link } from "react-router-dom";
-
+import FlipMove from "react-flip-move";
 import moment from "moment";
 import SharedCreateModal from "./SharedCreateModal";
 
 import EditTaskModal from "../SoloTasks/EditTaskModal";
-
-
-
 
 import { FaArrowCircleUp } from "react-icons/fa";
 function SharedTasks(props) {
@@ -55,8 +52,8 @@ function SharedTasks(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [flipDisabled, setFlipDisabled] = useState(true);
   const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState("Saved.")
-  const [toastColor, setToastColor] = useState("Light")
+  const [toastMessage, setToastMessage] = useState("Saved.");
+  const [toastColor, setToastColor] = useState("Light");
   const [showScroll, setShowScroll] = useState(false);
   const [tabKey, setTabKey] = useState("Shared");
   const handleTabSelect = (key) => {
@@ -91,7 +88,10 @@ function SharedTasks(props) {
         moment(task_name.task.task_date_time)
           .format("MMMM DD YYYY hh:mm A")
           .toLowerCase()
-          .includes(searchItem) || task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem)
+          .includes(searchItem) ||
+        task_name.sharing_with.user_display_name
+          .toLowerCase()
+          .includes(searchItem)
     );
     setSearchResults(results);
   }, [searchItem]);
@@ -129,7 +129,9 @@ function SharedTasks(props) {
         `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
         data
       )
-      .then((resp) => {setShowToast(true)});
+      .then((resp) => {
+        setShowToast(true);
+      });
     const remainingTasks = props.incompletedSharedTasksData.filter(function (
       value,
       index,
@@ -160,14 +162,16 @@ function SharedTasks(props) {
       .delete(`http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`, {
         data: data,
       })
-      .then((resp) => {setShowToast(true)});
+      .then((resp) => {
+        setShowToast(true);
+      });
   };
   const handleDeleteOffCanvas = (e) => {
     setDeleteTaskID(e);
     const findTaskByID = props.incompletedSharedTasksData.find(
       ({ task }) => task.task_id === e
     );
-    setDeleteTaskName(findTaskByID.task_name);
+    setDeleteTaskName(findTaskByID.task.task_name);
     setShowOffCanvas(true);
   };
   const handleRetrieveEditData = (data) => {
@@ -186,7 +190,9 @@ function SharedTasks(props) {
         `http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`,
         data
       )
-      .then((res) => {setShowToast(true)});
+      .then((res) => {
+        setShowToast(true);
+      });
   };
 
   const handleSendEditData = (e) => {
@@ -309,6 +315,7 @@ function SharedTasks(props) {
           </Offcanvas.Header>
           <div className="text-center">This will be permanent!</div>
           <Offcanvas.Body className="tasks-container">
+            <div></div>
             <ButtonGroup aria-label="Basic example">
               <Button
                 onClick={(e) => handleDelete(deleteTaskID)}
@@ -355,25 +362,32 @@ function SharedTasks(props) {
           aria-label="Toolbar with button groups"
         >
           <ButtonGroup className="me-2" aria-label="Second group">
-          <OverlayTrigger trigger="hover" placement="bottom" overlay={<Tooltip id="tooltip-disabled">Search by task name, friend username, or date/time!</Tooltip>}>
-  <span className="d-inline-block">
-            <Form className="d-flex">
-              <FormControl
-                onKeyPress={(e) => {
-                  e.key === "Enter" && e.preventDefault();
-                }}
-                type="search"
-                placeholder="Search"
-                className="mr-2"
-                aria-label="Search"
-                variant="primary"
-                value={searchItem}
-                onChange={(e) => setSearchItem(e.target.value)}
-              />
-            </Form>
-            </span>
+            <OverlayTrigger
+              trigger="hover"
+              placement="bottom"
+              overlay={
+                <Tooltip id="tooltip-disabled">
+                  Search by task name, friend username, or date/time.
+                </Tooltip>
+              }
+            >
+              <span className="d-inline-block">
+                <Form className="d-flex">
+                  <FormControl
+                    onKeyPress={(e) => {
+                      e.key === "Enter" && e.preventDefault();
+                    }}
+                    type="search"
+                    placeholder="Search"
+                    className="mr-2"
+                    aria-label="Search"
+                    variant="primary"
+                    value={searchItem}
+                    onChange={(e) => setSearchItem(e.target.value)}
+                  />
+                </Form>
+              </span>
             </OverlayTrigger>
-
           </ButtonGroup>
 
           <ButtonGroup aria-label="Third group">
@@ -402,7 +416,6 @@ function SharedTasks(props) {
               <Dropdown.Item onClick={() => sortByFriendName()}>
                 Friend name
               </Dropdown.Item>
-
             </DropdownButton>
           </ButtonGroup>
         </ButtonToolbar>
@@ -414,11 +427,17 @@ function SharedTasks(props) {
 
 </Alert>  */}
 
-<Toast bg={toastColor} className="toast-container"animation={true}  onClose={() => setShowToast(false)}  show={showToast} delay={3000} autohide >
-            <Toast.Body>
-            {toastMessage}
-            </Toast.Body>
-          </Toast>
+        <Toast
+          bg={toastColor}
+          className="toast-container"
+          animation={true}
+          onClose={() => setShowToast(false)}
+          show={showToast}
+          delay={3000}
+          autohide
+        >
+          <Toast.Body>{toastMessage}</Toast.Body>
+        </Toast>
 
         {searchResults.map(({ task, sharing_with }) => (
           <div className="tasks-container" key={task.task_id}>
@@ -427,13 +446,12 @@ function SharedTasks(props) {
               border={cardBorder[task.task_priority]}
               style={{ width: "22rem" }}
             >
-              <Card.Header>Sharing {task.task_name} with {sharing_with.user_display_name}</Card.Header>
+              <Card.Header>
+                Sharing {task.task_name} with {sharing_with.user_display_name}
+              </Card.Header>
               <Card.Body>
-  
-                
                 <Card.Text>{task.task_description}</Card.Text>
                 <ButtonGroup>
-                  
                   <div className="card-buttons">
                     <Button
                       variant="primary"

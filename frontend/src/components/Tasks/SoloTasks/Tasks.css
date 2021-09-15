@@ -33,7 +33,7 @@
 .create-task {
 
   margin-top:70px;
-  margin-bottom: 20px;
+  margin-bottom: 40px;
   
 
 }
@@ -86,7 +86,7 @@
   top: 10%;
   left: 50%;
   -ms-transform: translate(-10%, -50%);
-  transform: translate(-50%, 735%);
+  transform: translate(-50%, 777%);
   z-index: 9999;
 
 
