@@ -224,13 +224,13 @@ function SharedCreateModal(props) {
               /> */}
               <DateTimePicker onChange={setdateTime} value={dateTime} />
             </div>
-
+              <div>
             {isError && (
               <small className="mt-3 d-inline-block text-danger">
                 {errorMessage}
               </small>
             )}
-
+</div>
             <button
               type="submit"
               className="btn btn-primary mt-3"
