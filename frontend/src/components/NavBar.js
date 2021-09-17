@@ -76,7 +76,7 @@ const Navigation = (props) => {
                 
               </OverlayTrigger> */}
                 <Navbar.Text>
-         {props.userDisplayName===undefined? "Welcome!":`Signed in as ${props.userDisplayName}`}
+         {props.userDisplayName===undefined? "Welcome!":`Signed in as: ${props.userDisplayName}`}
       </Navbar.Text>
                 
                 

@@ -29,22 +29,21 @@ import {
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import History from "../../../services/History";
-import Routes from "../../../services/Routes";
+
 import { Link } from "react-router-dom";
 
 import Example from "./TaskDeletePopOver";
 import moment from "moment";
 import CreateTaskModal from "./CreateTaskModal";
 import EditTaskModal from "./EditTaskModal";
-import useWindowSize from "react-use/lib/useWindowSize";
-import Confetti from "react-confetti";
+
 import CompletedTasks from "./CompletedTasks/CompletedTasks";
-import ReactTransitionGroup from "react-transition-group";
-import FlipMove from "react-flip-move";
-import { Transition } from "react-transition-group";
-import { motion } from "framer-motion";
-import Draggable from "react-draggable";
+
+
+
+
+
+import url from "../../../services/URL"
 
 import { FaArrowCircleUp } from "react-icons/fa";
 function Tasks(props) {
@@ -112,7 +111,7 @@ function Tasks(props) {
     setToastMessage("Saved.");
     setToastColor("light");
     axios
-      .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
+      .post(`${url}${props.userID}/tasks`, data)
       .then((res) => {
         setShowToast(true);
       });
@@ -129,7 +128,7 @@ function Tasks(props) {
     setToastMessage("Completed!");
     axios
       .put(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
+        `${url}${props.userID}/completed-tasks`,
         data
       )
       .then((resp) => {
@@ -158,7 +157,7 @@ function Tasks(props) {
     setToastColor("danger");
     const data = { task_id: e };
     axios
-      .delete(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, {
+      .delete(`${url}${props.userID}/tasks`, {
         data: data,
       })
       .then((resp) => {
@@ -185,7 +184,7 @@ function Tasks(props) {
     setToastMessage("Saved.");
     setToastColor("warning");
     axios
-      .put(`http://127.0.0.1:8000/to_do_list/${props.userID}/tasks`, data)
+      .put(`${url}${props.userID}/tasks`, data)
       .then((res) => {
         setShowToast(true);
       });
@@ -298,6 +297,7 @@ function Tasks(props) {
           <div className="text-center">This will be permanent!</div>
           <Offcanvas.Body className="tasks-container">
             <ButtonGroup aria-label="Basic example">
+              <div>
               <Button
                 onClick={(e) => handleDelete(deleteTaskID)}
                 variant="danger"
@@ -305,7 +305,8 @@ function Tasks(props) {
               >
                 Yes
               </Button>
-
+              </div>
+              <div className="card-buttons">
               <Button
                 variant="primary"
                 size="lg"
@@ -313,6 +314,7 @@ function Tasks(props) {
               >
                 No
               </Button>
+              </div>
             </ButtonGroup>
           </Offcanvas.Body>
         </Offcanvas>
@@ -345,7 +347,7 @@ function Tasks(props) {
           <ButtonGroup className="me-2" aria-label="Second group">
             <OverlayTrigger
               trigger="hover"
-              placement="bottom"
+              placement="top"
               overlay={
                 <Tooltip id="tooltip-disabled">
                   Search by task name or date/time.
@@ -373,6 +375,7 @@ function Tasks(props) {
 
           <ButtonGroup aria-label="Third group">
             <DropdownButton
+            disabled = {Object.keys(searchResults).length>0?false:true}
               size="med"
               variant="secondary"
               id="dropdown-basic-button"
@@ -430,7 +433,7 @@ function Tasks(props) {
                   <Card.Text>{task.task_description}</Card.Text>
 
                   <ButtonGroup>
-                    <div className="card-buttons">
+                    <div >
                       <Button
                         variant="primary"
                         size="med"
@@ -475,7 +478,7 @@ function Tasks(props) {
               </Card>
             </div>
           ))}
-     
+ 
 
         {/* <Navbar fixed="bottom" >
           

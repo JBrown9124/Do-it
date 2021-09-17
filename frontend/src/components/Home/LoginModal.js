@@ -2,6 +2,7 @@ import { Modal, Button, Form, ButtonGroup } from "react-bootstrap";
 import React, { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import url from "../../services/URL"
 function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -27,7 +28,7 @@ function Login(props) {
     };
 
     axios
-      .post("http://127.0.0.1:8000/to_do_list/log-in/", data)
+      .post(`${url}log-in/`, data)
       .then((res) => {
         setData(res.data);
 
@@ -92,7 +93,7 @@ function Login(props) {
               />
 
               
-                <div key={`default-checkbox`}  >
+                <div className="register-login-password" key={`default-checkbox`}  >
                   <Form.Check
                   className="log-modal-pw"
                     onClick={togglePassword}
@@ -120,7 +121,7 @@ function Login(props) {
             
 
            
-            <Button onClick={() => props.showRegister()} variant="link">
+            <Button onClick={() => props.showRegister()} className="sign-in-register-link" variant="link">
               Create account
             </Button>
            

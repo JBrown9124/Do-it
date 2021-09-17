@@ -40,6 +40,7 @@ function SharedCreateModal(props) {
   
   
   const isUserFriend = (userName) => {
+    setLoading(true);
     const foundUserFriend = props.allFriendsData.find(
       ({ user_display_name }) => user_display_name === userName
     );
@@ -129,7 +130,7 @@ function SharedCreateModal(props) {
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            Create your Task
+            Share a Task
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -237,7 +238,7 @@ function SharedCreateModal(props) {
               onClick={(e)=>isUserFriend(friendID)}
               disabled={loading}
             >
-              {loading ? "Loading..." : "Create"}
+              {loading ? "Loading..." : "Share"}
             </button>
             {/* {data && (
               <div className="mt-3">

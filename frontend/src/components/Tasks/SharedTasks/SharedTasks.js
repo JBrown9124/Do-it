@@ -28,16 +28,17 @@ import {
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import History from "../../../services/History";
-import Routes from "../../../services/Routes";
+
+
 import { Link } from "react-router-dom";
-import FlipMove from "react-flip-move";
+
 import moment from "moment";
 import SharedCreateModal from "./SharedCreateModal";
-
+import url from "../../../services/URL"
 import EditTaskModal from "../SoloTasks/EditTaskModal";
 
 import { FaArrowCircleUp } from "react-icons/fa";
+
 function SharedTasks(props) {
   const [deleteTaskID, setDeleteTaskID] = useState(null);
   const [deleteTaskName, setDeleteTaskName] = useState(null);
@@ -56,6 +57,8 @@ function SharedTasks(props) {
   const [toastColor, setToastColor] = useState("Light");
   const [showScroll, setShowScroll] = useState(false);
   const [tabKey, setTabKey] = useState("Shared");
+  
+  
   const handleTabSelect = (key) => {
     setTabKey(key);
     if (key === "Solo") {
@@ -107,7 +110,7 @@ function SharedTasks(props) {
     setToastColor("light");
     axios
       .post(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`,
+        `${url}${props.userID}/shared-tasks`,
         data
       )
       .then((res) => {
@@ -126,7 +129,7 @@ function SharedTasks(props) {
     setToastMessage("Completed!");
     axios
       .put(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
+        `${url}${props.userID}/completed-tasks`,
         data
       )
       .then((resp) => {
@@ -159,7 +162,7 @@ function SharedTasks(props) {
     setToastColor("danger");
     const data = { task_id: e };
     axios
-      .delete(`http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`, {
+      .delete(`${url}${props.userID}/shared-tasks`, {
         data: data,
       })
       .then((resp) => {
@@ -187,7 +190,7 @@ function SharedTasks(props) {
     setToastColor("warning");
     axios
       .put(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/shared-tasks`,
+        `${url}${props.userID}/shared-tasks`,
         data
       )
       .then((res) => {
@@ -285,7 +288,7 @@ function SharedTasks(props) {
               size="lg"
               onClick={(e) => setcreateModalShow(true)}
             >
-              {createModalShow ? "Creating..." : "Create"}
+              {createModalShow ? "Sharing..." : "Share"}
             </Button>
           </div>
         </div>
@@ -315,8 +318,9 @@ function SharedTasks(props) {
           </Offcanvas.Header>
           <div className="text-center">This will be permanent!</div>
           <Offcanvas.Body className="tasks-container">
-            <div></div>
+            
             <ButtonGroup aria-label="Basic example">
+              <div  >
               <Button
                 onClick={(e) => handleDelete(deleteTaskID)}
                 variant="danger"
@@ -324,14 +328,18 @@ function SharedTasks(props) {
               >
                 Yes
               </Button>
-
+              </div>
+              <div className="card-buttons">
+              
               <Button
+             
                 variant="primary"
                 size="lg"
                 onClick={() => setShowOffCanvas(false)}
               >
                 No
               </Button>
+              </div>
             </ButtonGroup>
           </Offcanvas.Body>
         </Offcanvas>
@@ -364,7 +372,7 @@ function SharedTasks(props) {
           <ButtonGroup className="me-2" aria-label="Second group">
             <OverlayTrigger
               trigger="hover"
-              placement="bottom"
+              placement="top"
               overlay={
                 <Tooltip id="tooltip-disabled">
                   Search by task name, friend username, or date/time.
@@ -392,6 +400,7 @@ function SharedTasks(props) {
 
           <ButtonGroup aria-label="Third group">
             <DropdownButton
+            disabled = {Object.keys(searchResults).length>0?false:true}
               size="med"
               variant="secondary"
               id="dropdown-basic-button"
@@ -452,7 +461,7 @@ function SharedTasks(props) {
               <Card.Body>
                 <Card.Text>{task.task_description}</Card.Text>
                 <ButtonGroup>
-                  <div className="card-buttons">
+                  <div>
                     <Button
                       variant="primary"
                       size="med"

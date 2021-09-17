@@ -21,12 +21,11 @@ import {
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import History from "../../services/History";
-import Routes from "../../services/Routes";
+
 import { Link } from "react-router-dom";
 import AddFriendModal from "./AddFriendModal";
 import Requests from "./RecievedRequests";
-
+import url from "../../services/URL"
 // import "./Tasks.css";
 
 import moment from "moment";
@@ -98,7 +97,7 @@ function Friends(props) {
     const data = { to_user_id: friendID };
     axios
       .post(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/remove-friend`,
+        `${url}${props.userID}/remove-friend`,
         data
       )
       .then((response) => {
@@ -116,7 +115,7 @@ function Friends(props) {
     const data = { from_user_id: fromUserID };
     axios
       .post(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/reject-friend`,
+        `${url}${props.userID}/reject-friend`,
         data
       )
       .then((res) => {})
@@ -135,7 +134,7 @@ function Friends(props) {
     const data = { from_user_id: fromUserID };
     axios
       .post(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/accept-friend`,
+        `${url}${props.userID}/accept-friend`,
         data
       )
       .then((res) => {})
@@ -160,22 +159,22 @@ function Friends(props) {
     <Popover className="tasks-container" id="popover-basic">
       <Popover.Header as="h3">Are you sure?</Popover.Header>
       <Popover.Body>
-        {" "}
-        “I don’t know half of you half as well as I should like; and I like less
-        than half of you half as well as you deserve.”— Bilbo Baggins of the
-        Shire
+        This will be permanent!
       </Popover.Body>
       <ButtonGroup aria-label="Basic example">
+        <div>
         <Button
           onClick={() => handleRemoveFriend(deleteFriendID)}
           variant="danger"
         >
           Yes
         </Button>
-
+        </div>
+        <div className="card-buttons">
         <Button variant="primary" onClick={() => setShowDeletePopOver(false)}>
           No
         </Button>
+        </div>
       </ButtonGroup>
     </Popover>
   );

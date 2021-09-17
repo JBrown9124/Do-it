@@ -34,6 +34,7 @@ import Tasks from "./components/Tasks/SoloTasks/Tasks.js";
 import CompletedTasks from "./components/Tasks/SoloTasks/CompletedTasks/CompletedTasks";
 import Friends from "./components/Friends/Friends.js";
 import SharedCompletedTasks from "./components/Tasks/SharedTasks/SharedCompletedTasks/SharedCompletedTasks";
+import url from "./services/URL"
 function App() {
   const [loginmodalShow, setloginmodalShow] = useState(true);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
@@ -110,7 +111,7 @@ function App() {
   const handleSharedTasksData = () =>{
     axios
       .get(
-        `http://127.0.0.1:8000/to_do_list/${userID}/shared-tasks`
+        `${url}${userID}/shared-tasks`
       )
       .then((response) => {
         setCompletedSharedTasksData(response.data.completed_shared_tasks);
@@ -127,7 +128,7 @@ function App() {
   const handleReceivedFriendRequestsData = () => {
     axios
       .get(
-        `http://127.0.0.1:8000/to_do_list/${userID}/user-received-friend-requests`
+        `${url}${userID}/user-received-friend-requests`
       )
       .then((response) => {
         setAllReceivedFriendRequestsData(response.data.user_friend_requests);
@@ -137,7 +138,7 @@ function App() {
   const handleSentFriendRequestsData = () => {
     axios
       .get(
-        `http://127.0.0.1:8000/to_do_list/${userID}/user-sent-friend-requests`
+        `${url}${userID}/user-sent-friend-requests`
       )
       .then((response) => {
         setAllSentFriendRequestsData(response.data.user_sent_friend_requests);
@@ -147,7 +148,7 @@ function App() {
   
   const handleTasksData = () => {
     axios
-      .get(`http://127.0.0.1:8000/to_do_list/${userID}/tasks`)
+      .get(`${url}${userID}/tasks`)
       .then((response) => {
         setCompletedData(response.data.complete);
         setIncompletedData(response.data.incomplete);
@@ -156,7 +157,7 @@ function App() {
   };
   const handleFriendsData = () => {
     axios
-      .get(`http://127.0.0.1:8000/to_do_list/${userID}/user-friends`)
+      .get(`${url}${userID}/user-friends`)
       .then((response) => {
         handleReceivedFriendRequestsData(userID);
         setAllFriendsData(response.data.user_friends);
@@ -188,14 +189,14 @@ function App() {
               <Nav.Item className="solo-shared-buttons">
               <Nav.Link eventKey="Solo">Solo
               <Badge className="completed-badge" bg="info">
-                  {Object.keys(incompletedData).length}
+                  {tasksShow ? Object.keys(incompletedData).length:null}
                 </Badge>
               </Nav.Link>
               </Nav.Item>
               <Nav.Item>
               <Nav.Link eventKey="Shared"> Shared
               <Badge className="completed-badge" bg="info">
-                  {Object.keys(incompletedSharedTasksData).length}
+                  {tasksShow ? Object.keys(incompletedSharedTasksData).length:null}
                 </Badge>
               </Nav.Link>
        </Nav.Item>
@@ -216,7 +217,7 @@ function App() {
       </Tabs> */}
 
       <Carousel
-        touch={false}
+        
         keyboard={false}
         interval={null}
         indicators={false}
@@ -264,6 +265,7 @@ function App() {
         </Offcanvas.Header>
 
         <Offcanvas.Body>
+          
           <Tabs
          
           fill variant="pills" 
@@ -273,13 +275,13 @@ function App() {
             id="noanim-tab-example"
             className="completed-tabs"
           >
-            <Tab eventKey="SoloCompleted" title="Solo"></Tab>
+            <Tab eventKey="SoloCompleted" title="Solo">  </Tab>
 
             <Tab eventKey="SharedCompleted" title="Shared"></Tab>
           </Tabs>
           
           <Carousel
-            touch={false}
+            
             keyboard={false}
             interval={null}
             indicators={false}
@@ -336,7 +338,7 @@ function App() {
         <Modal.Title className="app-modal" id="contained-modal-title-vcenter">
           {loginRegisterCarouselIndex === 1 ? "Create an account" : "Sign in"}
         </Modal.Title>
-        <p className="text-center"> to continue to Do or Do not</p>
+        <p className="text-center"> to continue to Do or Do Not</p>
 
         <Carousel
           touch={false}

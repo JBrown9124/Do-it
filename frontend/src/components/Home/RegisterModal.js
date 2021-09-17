@@ -1,10 +1,9 @@
 import { Modal, Button, Form } from "react-bootstrap";
 import React, { useState } from "react";
 import axios from "axios";
-import History from "../../services/History"
-import Routes from "../../services/Routes"
-import {Link} from 'react-router-dom';
 
+import {Link} from 'react-router-dom';
+import url from '../../services/URL'
 function Register(props) {
   const [name, setName] = useState("");
 
@@ -33,7 +32,7 @@ function Register(props) {
     };
     if (password === password2) {
       axios
-        .post("http://127.0.0.1:8000/to_do_list/register/", data)
+        .post(`${url}register/`, data)
         .then((res) => {
           // setData(res.data);
           setName("");
@@ -75,12 +74,12 @@ function Register(props) {
           
           <div style={{ maxWidth: 350 }}>
             <div className="form-group">
-              <label htmlFor="name">Display name</label>
+              <label htmlFor="name">Username</label>
               <input
                 type="text"
                 className="form-control"
                 id="name"
-                placeholder="Enter display name"
+                placeholder="Enter username"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
               />
@@ -114,7 +113,7 @@ function Register(props) {
              onChange={(e) => setPassword(e.target.value)}
               />
             
-            <div className="form-group">
+            <div >
               <label htmlFor="password" className="mt-2">
                 Confirm password
               </label>
@@ -129,7 +128,7 @@ function Register(props) {
               />
             </div>
 
-            <div key={`default-checkbox`}  >
+            <div className="register-login-password" key={`default-checkbox`}  >
                   <Form.Check
                     className="reg-modal-pw"
                     onClick={togglePassword}
@@ -158,7 +157,7 @@ function Register(props) {
             >
               {loading ? "Loading..." : "Create"}
             </button>
-            <Button onClick={()=>props.showLogin()} variant ='link'>
+            <Button  onClick={()=>props.showLogin()} className="sign-in-register-link" variant ="link" >
   Sign in instead
 </Button>
             

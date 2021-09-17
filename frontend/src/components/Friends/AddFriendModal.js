@@ -19,8 +19,7 @@ import {
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import History from "../../services/History";
-import Routes from "../../services/Routes";
+
 import { Link } from "react-router-dom";
 // import "./Tasks.css";
 
@@ -28,7 +27,7 @@ import moment from "moment";
 import CreateTaskModal from "../Tasks/SoloTasks/CreateTaskModal";
 import EditTaskModal from "../Tasks/SoloTasks/EditTaskModal";
 import useWindowSize from "react-use/lib/useWindowSize";
-
+import url from "../../services/URL"
 import FlipMove from "react-flip-move";
 import { v4 as uuidv4 } from "uuid";
 import { FaArrowCircleUp } from "react-icons/fa";
@@ -63,7 +62,7 @@ function AddFriendModal(props) {
   };
   const handleUsers = () => {
     axios
-      .get(`http://127.0.0.1:8000/to_do_list/${props.userID}/users`)
+      .get(`${url}${props.userID}/users`)
       .then((response) => {
         setAllUsersData(response.data.all_users);
 
@@ -144,7 +143,7 @@ function AddFriendModal(props) {
   const handleFriendRequest = (user) => {
     const data = { to_user_id: user.user_id };
     axios
-      .post(`http://127.0.0.1:8000/to_do_list/${props.userID}/add-friend`, data)
+      .post(`${url}${props.userID}/add-friend`, data)
       .then((response) => {
         setShowSuccessToast(true);
         

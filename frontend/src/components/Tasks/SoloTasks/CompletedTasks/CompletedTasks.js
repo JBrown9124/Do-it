@@ -17,6 +17,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 
+
 import { Link } from "react-router-dom";
 // import "./Tasks.css";
 
@@ -27,7 +28,7 @@ import ReuseTaskModal from "./ReuseTaskModal";
 import FlipMove from "react-flip-move";
 import { v4 as uuidv4 } from "uuid";
 import { FaArrowCircleUp } from "react-icons/fa";
-
+import url from "../../../../services/URL"
 function CompletedTasks(props) {
   const [show, setShow] = useState(false);
   const [reusemodalShow, setreusemodalShow] = useState(false);
@@ -78,7 +79,7 @@ function CompletedTasks(props) {
     const data = { undo_completed_task_id: e };
     axios
       .put(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
+        `${url}${props.userID}/completed-tasks`,
         data
       )
       .then((response) => {});
@@ -99,7 +100,7 @@ function CompletedTasks(props) {
     const data = { task_id: e };
     axios
       .delete(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
+        `${url}${props.userID}/completed-tasks`,
         { data: data }
       )
       .then((response) => {});
@@ -111,7 +112,7 @@ function CompletedTasks(props) {
     const data = { task_id: "all" };
     axios
       .delete(
-        `http://127.0.0.1:8000/to_do_list/${props.userID}/completed-tasks`,
+        `${url}${props.userID}/completed-tasks`,
         { data: data }
       )
       .then((response) => {});
@@ -166,16 +167,19 @@ function CompletedTasks(props) {
       <Popover.Header as="h3">Are you sure?</Popover.Header>
       <Popover.Body>This will be permanent!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
+        <div>
         <Button onClick={(e) => handleDeleteAll()} variant="danger">
           Yes
         </Button>
-
+        </div>
+        <div className="card-buttons">
         <Button
           variant="primary"
           onClick={() => setShowDeleteAllPopOver(false)}
         >
           No
         </Button>
+        </div>
       </ButtonGroup>
     </Popover>
   );
@@ -184,13 +188,16 @@ function CompletedTasks(props) {
       <Popover.Header as="h3">Are you sure?</Popover.Header>
       <Popover.Body> This will be permanent!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
+        <div>
         <Button onClick={() => handleDelete(deleteTaskID)} variant="danger">
           Yes
         </Button>
-
+        </div>
+        <div className="card-buttons">
         <Button variant="primary" onClick={() => setShowDeletePopOver(false)}>
           No
         </Button>
+        </div>
       </ButtonGroup>
     </Popover>
   );
@@ -247,6 +254,7 @@ function CompletedTasks(props) {
               />
             </Form>
             <DropdownButton
+            disabled = {Object.keys(searchResults).length>0?false:true}
               className="completed-sort-by"
               size="med"
               variant="secondary"
