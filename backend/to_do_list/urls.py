@@ -1,17 +1,16 @@
 from django.urls import path
 from . import views
-
+from .views import index
 urlpatterns = [
     
-    path('', views.index, name='index'),
+    path('', index, name='index'),
     path('<int:user>/', views.user_id),
     
     path('register/', views.register),
     path('log-in/', views.log_in),
     
     path('<int:user>/tasks', views.tasks),
-    path('<int:user>/shared-tasks', views.shared_tasks),
-    path('<int:user>/completed-shared-tasks', views.completed_shared_tasks),
+    
     path('<int:user>/users', views.users),
     
     path('<int:user>/completed-tasks', views.completed_tasks),
