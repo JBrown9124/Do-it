@@ -23,8 +23,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 // import "./Tasks.css";
 
-
-import url from "../../services/URL"
+import url from "../../services/URL";
 import FlipMove from "react-flip-move";
 import { v4 as uuidv4 } from "uuid";
 import { FaArrowCircleUp } from "react-icons/fa";
@@ -40,31 +39,25 @@ function AddFriendModal(props) {
   function simulateNetworkRequest() {
     return new Promise((resolve) => setTimeout(resolve, 100));
   }
-  
-  
-    
-  
-    useEffect(() => {
-      if (loading) {
-        simulateNetworkRequest().then(() => {
-          setLoading(false);
-        });
-      }
-    }, [loading]);
 
+  useEffect(() => {
+    if (loading) {
+      simulateNetworkRequest().then(() => {
+        setLoading(false);
+      });
+    }
+  }, [loading]);
 
   const handleClearInput = () => {
     setSearchItem("");
     setIsError(false);
   };
   const handleUsers = () => {
-    axios
-      .get(`${url}${props.userID}/users`)
-      .then((response) => {
-        setAllUsersData(response.data.all_users);
+    axios.get(`${url}${props.userID}/users`).then((response) => {
+      setAllUsersData(response.data.all_users);
 
-        // isLoaded(true);
-      });
+      // isLoaded(true);
+    });
   };
   const MINUTE_MS = 30000;
   useEffect(() => {
@@ -79,31 +72,27 @@ function AddFriendModal(props) {
     setIsError(false);
     const findUser = allUsersData.filter(
       (user) =>
-        user.user_display_name === searchItem ||
-        user.user_email === searchItem
+        user.user_display_name === searchItem || user.user_email === searchItem
     );
 
     if (findUser.length === 0) {
       setIsError(true);
-      
+
       setErrorMessage("User does not exist");
       return false;
     } else {
-     
-
       setIsError(false);
       return isUserFriend(findUser[0]);
     }
   };
 
   const isUserFriend = (user) => {
-
     const isUserFriend = props.allFriendsData.filter(
       (friend) => friend.user_id === user.user_id
     );
     if (isUserFriend.length > 0) {
       setIsError(true);
-      
+
       return setErrorMessage("User is already a friend");
     } else {
       isUserInReceived(user);
@@ -116,7 +105,7 @@ function AddFriendModal(props) {
 
     if (userInReceived.length > 0) {
       setIsError(true);
-      
+
       return setErrorMessage("User's friend request is in your recieved inbox");
     } else {
       isUserInSent(user);
@@ -129,7 +118,7 @@ function AddFriendModal(props) {
 
     if (userInSent.length > 0) {
       setIsError(true);
-      
+
       return setErrorMessage("User's friend request is sent and pending");
     } else {
       handleFriendRequest(user);
@@ -139,18 +128,16 @@ function AddFriendModal(props) {
 
   const handleFriendRequest = (user) => {
     const data = { to_user_id: user.user_id };
-    axios
-      .post(`${url}${props.userID}/add-friend`, data)
-      .then((response) => {
-        setShowSuccessToast(true);
-        
-        setIsError(false);
-        setErrorMessage("");
+    axios.post(`${url}${props.userID}/add-friend`, data).then((response) => {
+      setShowSuccessToast(true);
 
-        // props.allFriendsData.push(user); request pending data
+      setIsError(false);
+      setErrorMessage("");
 
-        // isLoaded(true);
-      });
+      // props.allFriendsData.push(user); request pending data
+
+      // isLoaded(true);
+    });
   };
 
   // .catch((err) => {
@@ -202,7 +189,6 @@ function AddFriendModal(props) {
                   className="friend-request-button"
                 >
                   {loading ? "Sending..." : "Send request"}
-                 
                 </Button>
               </Col>
             </Row>

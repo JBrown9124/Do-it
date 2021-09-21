@@ -36,33 +36,34 @@ import { FaArrowCircleUp } from "react-icons/fa";
 function Requests(props) {
   const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
     useState([]);
-  const [setUserID, userID] = useState(null)
+  const [setUserID, userID] = useState(null);
   const handleReceivedFriendRequestsData = () => {
     axios
       .get(
         `http://127.0.0.1:8000/to_do_list/${props.userID}/user-friend-requests`
       )
       .then((response) => {
-        setAllReceivedFriendRequestsData(response.data.user_friend_requests); 
+        setAllReceivedFriendRequestsData(response.data.user_friend_requests);
         // isLoaded(true);
       });
   };
   const MINUTE_MS = 60000;
-  
-useEffect(() => {
-  const interval = setInterval(() => {
-   handleReceivedFriendRequestsData();
-  }, MINUTE_MS);
 
-  return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
-}, [])
-  
-  
-  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleReceivedFriendRequestsData();
+    }, MINUTE_MS);
+
+    return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
+  }, []);
+
   const handleRemove = (fromUserID) => {
-    const remainingRequests = allReceivedFriendRequestsData.filter(function(value, index, arr){
-      
-      return value.user_id !== fromUserID
+    const remainingRequests = allReceivedFriendRequestsData.filter(function (
+      value,
+      index,
+      arr
+    ) {
+      return value.user_id !== fromUserID;
     });
 
     console.log(remainingRequests);
@@ -79,7 +80,8 @@ useEffect(() => {
     console.log(findUserByID);
     props.allFriendsData.push(findUserByID);
     handleRemove(fromUserID);
-    const data = { from_user_id: fromUserID };}
+    const data = { from_user_id: fromUserID };
+  };
   //   axios
   //     .post(
   //       `http://127.0.0.1:8000/to_do_list/${props.userID}/accept-friend`,

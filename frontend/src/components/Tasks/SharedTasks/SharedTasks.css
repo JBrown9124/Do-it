@@ -1,58 +1,62 @@
-.delete-button-group{
-    margin-top:30px;
+.delete-button-group {
+    margin-top: 30px;
 
 }
-.delete-button-group{
-    margin-top:30px;
+
+.delete-button-group {
+    margin-top: 30px;
 
 }
+
 .tasks-container {
 
     justify-content: center;
     text-align: center;
-  }
-  
-  .task-card {
+}
+
+.task-card {
     text-align: center;
-  
-  
-  
-  
+
+
+
+
     margin: auto;
     margin-bottom: 40px;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  }
-  
-  .top-tasks-buttons {
+}
+
+.top-tasks-buttons {
     justify-content: center;
     margin-bottom: 21px;
-    margin-top:70px;
-    
-    
-  
-  
-  }
-  .check-box-filter{
+    margin-top: 70px;
+
+
+
+
+}
+
+.check-box-filter {
     justify-content: center;
     margin: auto;
     text-align: center;
-  }
-  .card-buttons{
-    margin-left:7px
-  
-  }
-  
-  
-  
-  .create-task {
-  
-    margin-top:70px;
+}
+
+.card-buttons {
+    margin-left: 7px
+}
+
+
+
+.create-task {
+
+    margin-top: 70px;
     margin-bottom: 40px;
-    
-  
-  }
-  .scrollTop {
-    position: fixed; 
+
+
+}
+
+.scrollTop {
+    position: fixed;
     width: 100%;
     bottom: 60px;
     align-items: center;
@@ -63,64 +67,74 @@
     animation: fadeIn 0.3s;
     transition: opacity 0.4s;
     opacity: 0.5;
-    
-  left: 30%;
-  
-  }
-  
-  .scrollTop:hover{
+
+    left: 30%;
+
+}
+
+.scrollTop:hover {
     opacity: 1;
-  }
-  .create-icon{
+}
+
+.create-icon {
     position: fixed;
-  
+
     width: 500px;
     height: 200px;
     top: 100%;
     left: 50%;
-    margin-top: -100px; /* Negative half of height. */
-    margin-left: -250px; /* Negative half of width. */ /* Negative half of width. */
+    margin-top: -100px;
+    /* Negative half of height. */
+    margin-left: -250px;
+    /* Negative half of width. */
+    /* Negative half of width. */
     z-index: 1000;
     cursor: pointer;
-    
-    
-  }
-  @keyframes fadeIn {
+
+
+}
+
+@keyframes fadeIn {
     0% {
-      opacity: 0;
+        opacity: 0;
     }
+
     100% {
-      opacity: 0.5;
+        opacity: 0.5;
     }
-  }
-  
-  .task-card-icon-size{
+}
+
+.task-card-icon-size {
     width: 30px;
     height: 30px;
-  }
-  .task-page-container{
-    overflow:hidden;
-  }
-  .create-task-nav {
-    
-    
+}
+
+.task-page-container {
+    overflow: hidden;
+}
+
+.create-task-nav {
+
+
     width: 200%;
     top: 10%;
     left: 50%;
     -ms-transform: translate(-10%, -50%);
     transform: translate(0%, 20%);
-    
-  }
-  
-  .nav-bar-fix {
-    position:fixed;
-      
-  }
-.card-social-icon{
-   
+
+}
+
+.nav-bar-fix {
+    position: fixed;
+
+}
+
+.card-social-icon {
+
     text-align: right;
 }
-  /* 
+
+/* 
   .task-card-seperator {
     margin: 8px;
   
@@ -130,38 +144,35 @@
     text-align: center;
   
   } */
-  
-  
-  
-  
-  
-  /* .completed-sort-by{
+
+
+
+
+
+/* .completed-sort-by{
     margin-left:10px
     
   
   } */
-  .title {
+.title {
     font-family: "Galano Grotesque", sans-serif;
     text-align: center;
     margin-top: 80px;
     margin-bottom: 20px
-  }
-  
-  
-  .toast-container {
+}
+
+
+.toast-container {
     position: fixed;
-  
+
     top: 10%;
     left: 50%;
     -ms-transform: translate(-10%, -50%);
     transform: translate(-50%, 777%);
     z-index: 9999;
-  
-  
-  
-  
-  
-  }
-  
-  
-  
+
+
+
+
+
+}

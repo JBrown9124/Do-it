@@ -8,12 +8,11 @@ import Datetime from "react-datetime";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import randomWords from "random-words";
-import {SketchField, Tools} from 'react-sketch2';
-import {CgGoogleTasks} from "react-icons/cg"
-import {GiPaintBrush} from "react-icons/gi"
-import {FcCollaboration} from "react-icons/fc"
-import {GrAdd} from "react-icons/gr"
-
+import { SketchField, Tools } from "react-sketch2";
+import { CgGoogleTasks } from "react-icons/cg";
+import { GiPaintBrush } from "react-icons/gi";
+import { FcCollaboration } from "react-icons/fc";
+import { GrAdd } from "react-icons/gr";
 
 function SharedCreateModal(props) {
   const [name, setName] = useState("");
@@ -22,94 +21,86 @@ function SharedCreateModal(props) {
   const [attendees, setAttendees] = useState("");
   const [dateTime, setdateTime] = useState(new Date());
   const [friend, setFriend] = useState(NaN);
-  const [drawnImage, setDrawnImage] = useState()
+  const [drawnImage, setDrawnImage] = useState();
 
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  
 
   const [data, setData] = useState(null);
-  
+
   function simulateNetworkRequest() {
     return new Promise((resolve) => setTimeout(resolve, 100));
   }
-  
-  
-    
-  
-    useEffect(() => {
-      if (loading) {
-        simulateNetworkRequest().then(() => {
-          setLoading(false);
-        });
-      }
-    }, [loading]);
-  
-  
+
+  useEffect(() => {
+    if (loading) {
+      simulateNetworkRequest().then(() => {
+        setLoading(false);
+      });
+    }
+  }, [loading]);
+
   // const isUserFriend = (userName) => {
   //   setLoading(true);
   //   const foundUserFriend = props.allFriendsData.find(
   //     ({ user_display_name }) => user_display_name === userName
   //   );
-    
+
   //   if (foundUserFriend === undefined || foundUserFriend.length === 0) {
   //     setIsError(true);
-      
+
   //     return setErrorMessage("User is not on your friends list");
   //   } else {
   //     handleSubmit(foundUserFriend);
-      
-      
+
   //   }
   // };
 
   const handleSubmit = () => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
-    
+
     const findFriendByID = props.allFriendsData.find(
-      ( user ) => user.user_id === friend
+      (user) => user.user_id === friend
     );
-    
-      const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
 
-      setLoading(true);
+    const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
 
-      const makeID = uuidv4();
-      const convertedImage = drawnImage.toDataURL()
-      const data = {
-        task: {
-          task_name: name === "" ? randomWords() : name,
-          task_priority: priority === "" ? "A" : priority,
-          task_description:
-            description === ""
-              ? randomWords({ exactly: 5, join: " " })
-              : description,
-          // attendees: attendees,
-          task_date_time: dateTimeStr,
-          task_completed: false,
-          task_drawing:convertedImage,
-          task_id: makeID,
-        },
-        sharing_with: isNaN(friend)?{user_id:null, user_display_name:null, user_email:null}:findFriendByID,
-      };
-      
-      props.createData(data);
-      
-    
-      
+    setLoading(true);
 
-      props.onHide();
-      
-      setErrorMessage("");
-      setName("");
-      setPriority("");
-      setDescription("");
-      setAttendees("");
-      setFriend(NaN);
-      setdateTime(new Date());
+    const makeID = uuidv4();
+    const convertedImage = drawnImage.toDataURL();
+    const data = {
+      task: {
+        task_name: name === "" ? randomWords() : name,
+        task_priority: priority === "" ? "A" : priority,
+        task_description:
+          description === ""
+            ? randomWords({ exactly: 5, join: " " })
+            : description,
+        // attendees: attendees,
+        task_date_time: dateTimeStr,
+        task_completed: false,
+        task_drawing: convertedImage,
+        task_id: makeID,
+      },
+      sharing_with: isNaN(friend)
+        ? { user_id: null, user_display_name: null, user_email: null }
+        : findFriendByID,
     };
- 
+
+    props.createData(data);
+
+    props.onHide();
+
+    setErrorMessage("");
+    setName("");
+    setPriority("");
+    setDescription("");
+    setAttendees("");
+    setFriend(NaN);
+    setdateTime(new Date());
+  };
 
   //   axios
   //     .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
@@ -142,7 +133,7 @@ function SharedCreateModal(props) {
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            Create <CgGoogleTasks/>
+            Create <CgGoogleTasks />
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
@@ -162,7 +153,7 @@ function SharedCreateModal(props) {
             </div>
             <div className="form-group">
               <label htmlFor="friend" className="mt-2">
-                Collaborator (optional) <FcCollaboration/>
+                Collaborator (optional) <FcCollaboration />
               </label>
               <select
                 type="text"
@@ -171,16 +162,14 @@ function SharedCreateModal(props) {
                 placeholder="Enter priority"
                 value={friend}
                 onChange={(e) => setFriend(parseInt(e.target.value))}
-                
-              > 
-              <option>Select friend </option>
-              {props.allFriendsData.map((friendData)=> (
-               
-             
-              <option key={friendData.user_id}value={friendData.user_id}>{friendData.user_display_name}</option>
-             
-              ))}
-            </select>
+              >
+                <option>Select friend </option>
+                {props.allFriendsData.map((friendData) => (
+                  <option key={friendData.user_id} value={friendData.user_id}>
+                    {friendData.user_display_name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="form-group">
@@ -233,19 +222,21 @@ function SharedCreateModal(props) {
               />
             </div> */}
             <label htmlFor="Description" className="mt-2">
-                Draw <GiPaintBrush/>
-              </label>
-            <SketchField width='350px' 
-                         height='200px' 
-                         tool={Tools.Pencil} 
-                         lineColor='black'
-                         lineWidth={2}
-                         
-                        onChange={(e)=>{setDrawnImage(e.target.value)}}
-                        ref={(view) => {
-                          setDrawnImage(view)
-                        }}
-                         />
+              Draw <GiPaintBrush />
+            </label>
+            <SketchField
+              width="350px"
+              height="200px"
+              tool={Tools.Pencil}
+              lineColor="black"
+              lineWidth={2}
+              onChange={(e) => {
+                setDrawnImage(e.target.value);
+              }}
+              ref={(view) => {
+                setDrawnImage(view);
+              }}
+            />
             <div className="form-group">
               <label htmlFor="dateTime" className="mt-2">
                 Date/time you are planning on completing this task?
@@ -260,17 +251,17 @@ function SharedCreateModal(props) {
               /> */}
               <DateTimePicker onChange={setdateTime} value={dateTime} />
             </div>
-              <div>
-            {isError && (
-              <small className="mt-3 d-inline-block text-danger">
-                {errorMessage}
-              </small>
-            )}
-</div>
+            <div>
+              {isError && (
+                <small className="mt-3 d-inline-block text-danger">
+                  {errorMessage}
+                </small>
+              )}
+            </div>
             <button
               type="submit"
               className="btn btn-success mt-3"
-              onClick={(e)=>handleSubmit()}
+              onClick={(e) => handleSubmit()}
               disabled={loading}
             >
               {loading ? "Creating..." : "Create"}

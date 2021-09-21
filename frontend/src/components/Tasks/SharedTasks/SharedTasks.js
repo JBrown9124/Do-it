@@ -26,7 +26,7 @@ import {
   Tabs,
   Tab,
   Spinner,
-  ToggleButton
+  ToggleButton,
 } from "react-bootstrap";
 
 import { FaUserAlt, FaUserFriends } from "react-icons/fa";
@@ -39,14 +39,14 @@ import { FiEdit } from "react-icons/fi";
 
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
-import {CgGoogleTasks} from "react-icons/cg"
+import { CgGoogleTasks } from "react-icons/cg";
 import moment from "moment";
 import SharedCreateModal from "./SharedCreateModal";
 import url from "../../../services/URL";
 import EditTaskModal from "./EditTaskModal";
 import FlipMove from "react-flip-move";
 import { FaArrowCircleUp } from "react-icons/fa";
-import FriendShareModal from "../../Friends/FriendShareModal"
+import FriendShareModal from "../../Friends/FriendShareModal";
 
 function SharedTasks(props) {
   const [deleteTaskID, setDeleteTaskID] = useState(null);
@@ -67,7 +67,7 @@ function SharedTasks(props) {
   const [toastColor, setToastColor] = useState("Light");
   const [showScroll, setShowScroll] = useState(false);
   const [tabKey, setTabKey] = useState("Shared");
-  const [sharedTaskData, setSharedTaskData] = useState([])
+  const [sharedTaskData, setSharedTaskData] = useState([]);
 
   const handleTabSelect = (key) => {
     setTabKey(key);
@@ -108,12 +108,12 @@ function SharedTasks(props) {
     );
     setSearchResults(results);
   }, [searchItem]);
-  const handleSoloCheck = () =>{
+  const handleSoloCheck = () => {
     const results = props.incompletedSharedTasksData.filter(
-      (user) =>
-        user.sharing_with.user_display_name === null );
+      (user) => user.sharing_with.user_display_name === null
+    );
     setSearchResults(results);
-  }
+  };
 
   // const handleClose = () => setShowOffCanvas(false);
   // const handleOffCanvasShow = (e) => {
@@ -203,7 +203,6 @@ function SharedTasks(props) {
   };
 
   const handleSendEditData = (data) => {
-    
     setSendEditData(data);
     setEditModalShow(true);
   };
@@ -252,10 +251,10 @@ function SharedTasks(props) {
     );
     return setSearchResults(sortedSearch);
   };
-  const handleShare = (e) =>{
+  const handleShare = (e) => {
     setShowFriendShareModal(true);
-    setSharedTaskData(e)
-  }
+    setSharedTaskData(e);
+  };
   // const sortByFriendName = () => {
   //   setAnimationType("sort");
 
@@ -318,18 +317,15 @@ function SharedTasks(props) {
           show={editModalShow}
           onHide={() => setEditModalShow(false)}
           editData={sendEditData}
-          
           retrieveEditData={(data) => handleRetrieveEditData(data)}
         />
         <FriendShareModal
-        createData = {(data)=>handleCreate(data)}
-        show = {showFriendShareModal}
-        allFriendsData={props.allFriendsData}
-        onHide={()=>setShowFriendShareModal(false)}
-        sharedTaskData = {sharedTaskData}
-
-
-/>
+          createData={(data) => handleCreate(data)}
+          show={showFriendShareModal}
+          allFriendsData={props.allFriendsData}
+          onHide={() => setShowFriendShareModal(false)}
+          sharedTaskData={sharedTaskData}
+        />
         <Offcanvas
           show={showOffCanvas}
           onHide={() => setShowOffCanvas(false)}
@@ -512,103 +508,111 @@ function SharedTasks(props) {
         >
           <Toast.Body>Saved.</Toast.Body>
         </Toast>
-        <FlipMove leaveAnimation={cardAnimation[animationType]} staggerDelayBy={150}>
-        {searchResults.map(({ task, sharing_with }) => (
-         
-          <div className="tasks-container" key={task.task_id}>
-            <Card
-              className="task-card"
-              border={cardBorder[task.task_priority]}
-              style={{ width: "22rem" }}
-            >
-              <Card.Header>
-              
-              {sharing_with.user_display_name === null ? (<div  className="card-social-icon"><FaUserAlt /></div>) : (
-                  <div  className="card-social-icon">{sharing_with.user_display_name}{" "}<FaUserFriends  className="card-social-icon"/></div>
-                )}
-                {task.task_name}
-              </Card.Header>
+        <FlipMove
+          leaveAnimation={cardAnimation[animationType]}
+          staggerDelayBy={150}
+        >
+          {searchResults.map(({ task, sharing_with }) => (
+            <div className="tasks-container" key={task.task_id}>
+              <Card
+                className="task-card"
+                border={cardBorder[task.task_priority]}
+                style={{ width: "22rem" }}
+              >
+                <Card.Header>
+                  {sharing_with.user_display_name === null ? (
+                    <div className="card-social-icon">
+                      <FaUserAlt />
+                    </div>
+                  ) : (
+                    <div className="card-social-icon">
+                      {sharing_with.user_display_name}{" "}
+                      <FaUserFriends className="card-social-icon" />
+                    </div>
+                  )}
+                  {task.task_name}
+                </Card.Header>
 
-              <Card.Body>
-                <Card.Text>{task.task_description}</Card.Text>
-                <Card.Img variant="bottom" src={task.task_drawing} />
-                <ButtonGroup>
-                  <div>
-                    <Button variant="info" size="med"
-                    onClick={()=>handleShare({
-                      user_id:props.userID,
-                      task_priority:task.task_priority,
-                      task_name:task.task_name,
-                      
-                      task_description:task.task_description,
-                      task_date_time: task.task_date_time,
-                      task_drawing: task.task_drawing,
-                    })}
-                   
-                    
-                    >
-                      <ImShare2 className="task-card-icon-size" />
-                    </Button>
-                  </div>
-                  <div className="card-buttons">
-                    <Button
-                      variant="primary"
-                      size="med"
-                      value={task.task_id}
-                      onClick={(e) => handleComplete(task.task_id)}
-                    >
-                      <ImCheckmark className="task-card-icon-size" />
-                    </Button>
-                  </div>
-                  <div className="card-buttons">
-                    <Button
-                      variant="warning"
-                      onClick={(e) =>
-                        handleSendEditData({
-                          user_id:props.userID,
-                          task_priority:task.task_priority,
-                          task_name:task.task_name,
-                          task_id:task.task_id,
-                          task_description:task.task_description,
-                          task_date_time: task.task_date_time,
-                          task_drawing: task.task_drawing,
+                <Card.Body>
+                  <Card.Text>{task.task_description}</Card.Text>
+                  <Card.Img variant="bottom" src={task.task_drawing} />
+                  <ButtonGroup>
+                    <div>
+                      <Button
+                        variant="info"
+                        size="med"
+                        onClick={() =>
+                          handleShare({
+                            user_id: props.userID,
+                            task_priority: task.task_priority,
+                            task_name: task.task_name,
+
+                            task_description: task.task_description,
+                            task_date_time: task.task_date_time,
+                            task_drawing: task.task_drawing,
+                          })
                         }
-                      )}
-                      size="med"
-                      value={[
-                        props.userID,
-                        task.task_priority,
-                        task.task_name,
-                        task.task_id,
-                        task.task_description,
-                        task.task_date_time,
-                      ]}
-                    >
-                      <FiEdit className="task-card-icon-size" />
-                    </Button>
-                  </div>
-                  <div className="card-buttons">
-                    <Button
-                      value={task.task_id}
-                      variant="danger"
-                      onClick={(e) => handleDeleteOffCanvas(task.task_id)}
-                      size="med"
-                    >
-                      <RiDeleteBin2Line className="task-card-icon-size" />
-                    </Button>
-                  </div>
-                </ButtonGroup>
-              </Card.Body>
-              <Card.Footer>
-                {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
-              </Card.Footer>
-            </Card>
-          </div>
-        
-        ))}
+                      >
+                        <ImShare2 className="task-card-icon-size" />
+                      </Button>
+                    </div>
+                    <div className="card-buttons">
+                      <Button
+                        variant="primary"
+                        size="med"
+                        value={task.task_id}
+                        onClick={(e) => handleComplete(task.task_id)}
+                      >
+                        <ImCheckmark className="task-card-icon-size" />
+                      </Button>
+                    </div>
+                    <div className="card-buttons">
+                      <Button
+                        variant="warning"
+                        onClick={(e) =>
+                          handleSendEditData({
+                            user_id: props.userID,
+                            task_priority: task.task_priority,
+                            task_name: task.task_name,
+                            task_id: task.task_id,
+                            task_description: task.task_description,
+                            task_date_time: task.task_date_time,
+                            task_drawing: task.task_drawing,
+                          })
+                        }
+                        size="med"
+                        value={[
+                          props.userID,
+                          task.task_priority,
+                          task.task_name,
+                          task.task_id,
+                          task.task_description,
+                          task.task_date_time,
+                        ]}
+                      >
+                        <FiEdit className="task-card-icon-size" />
+                      </Button>
+                    </div>
+                    <div className="card-buttons">
+                      <Button
+                        value={task.task_id}
+                        variant="danger"
+                        onClick={(e) => handleDeleteOffCanvas(task.task_id)}
+                        size="med"
+                      >
+                        <RiDeleteBin2Line className="task-card-icon-size" />
+                      </Button>
+                    </div>
+                  </ButtonGroup>
+                </Card.Body>
+                <Card.Footer>
+                  {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
+                </Card.Footer>
+              </Card>
+            </div>
+          ))}
         </FlipMove>
         <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
-          
           <Button
             // className="create-button"
             className="create-task-nav"
@@ -616,12 +620,11 @@ function SharedTasks(props) {
             size="lg"
             onClick={(e) => setcreateModalShow(true)}
           >
-            {createModalShow ? "Creating...": "Create"} {" "}<CgGoogleTasks/>
+            {createModalShow ? "Creating..." : "Create"} <CgGoogleTasks />
           </Button>
-          
-        </Navbar> 
+        </Navbar>
       </div>
     );
-  else return (null);
+  else return null;
 }
 export default SharedTasks;

@@ -21,14 +21,12 @@ import {
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {FiUserPlus, FiUserMinus} from "react-icons/fi"
+import { FiUserPlus, FiUserMinus } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import AddFriendModal from "./AddFriendModal";
 
-import url from "../../services/URL"
+import url from "../../services/URL";
 // import "./Tasks.css";
-
-
 
 function Friends(props) {
   const [show, setShow] = useState(false);
@@ -71,8 +69,6 @@ function Friends(props) {
       }
     );
 
-    
-
     props.updateAllReceivedFriendRequestsData(remainingRequests);
   };
   const handleRemoveFriend = (friendID) => {
@@ -84,33 +80,22 @@ function Friends(props) {
       return value.user_id !== friendID;
     });
 
-    
-
     props.updateAllFriendsData(remainingFriends);
     const data = { to_user_id: friendID };
-    axios
-      .post(
-        `${url}${props.userID}/remove-friend`,
-        data
-      )
-      .then((response) => {
-        // props.allFriendsData.push(user); request pending data
-        // isLoaded(true);
-      });
+    axios.post(`${url}${props.userID}/remove-friend`, data).then((response) => {
+      // props.allFriendsData.push(user); request pending data
+      // isLoaded(true);
+    });
   };
   const handleReject = (fromUserID) => {
     const findUserByID = props.allReceivedFriendRequestsData.find(
       ({ user_id }) => user_id === fromUserID
     );
-   
 
     handleRemoveFriendRequest(fromUserID);
     const data = { from_user_id: fromUserID };
     axios
-      .post(
-        `${url}${props.userID}/reject-friend`,
-        data
-      )
+      .post(`${url}${props.userID}/reject-friend`, data)
       .then((res) => {})
       .catch((err) => {});
   };
@@ -126,10 +111,7 @@ function Friends(props) {
     handleRemoveFriendRequest(fromUserID);
     const data = { from_user_id: fromUserID };
     axios
-      .post(
-        `${url}${props.userID}/accept-friend`,
-        data
-      )
+      .post(`${url}${props.userID}/accept-friend`, data)
       .then((res) => {})
       .catch((err) => {});
   };
@@ -151,22 +133,20 @@ function Friends(props) {
   const deletePopOver = (
     <Popover className="tasks-container" id="popover-basic">
       <Popover.Header as="h3">Are you sure?</Popover.Header>
-      <Popover.Body>
-        This will be permanent!
-      </Popover.Body>
+      <Popover.Body>This will be permanent!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
         <div>
-        <Button
-          onClick={() => handleRemoveFriend(deleteFriendID)}
-          variant="danger"
-        >
-          Yes
-        </Button>
+          <Button
+            onClick={() => handleRemoveFriend(deleteFriendID)}
+            variant="danger"
+          >
+            Yes
+          </Button>
         </div>
         <div className="card-buttons">
-        <Button variant="primary" onClick={() => setShowDeletePopOver(false)}>
-          No
-        </Button>
+          <Button variant="primary" onClick={() => setShowDeletePopOver(false)}>
+            No
+          </Button>
         </div>
       </ButtonGroup>
     </Popover>
@@ -209,31 +189,27 @@ function Friends(props) {
             className="friend-tabs-container"
           >
             <Tab eventKey="Friends" title="Friends">
-           
-              <div  className="add-friend-title" >
+              <div className="add-friend-title">
                 <Button
                   // className="completed-clear"
                   variant="success"
                   size="lg"
                   onClick={() => setShowAddFriendModal(true)}
                 >
-                  
-                  {showAddFriendModal?"Adding...":"Add a friend"}{" "}
-                  <FiUserPlus/>
+                  {showAddFriendModal ? "Adding..." : "Add a friend"}{" "}
+                  <FiUserPlus />
                 </Button>
-                
-</div>
-                <AddFriendModal
-                  allReceivedFriendRequestsData={
-                    props.allReceivedFriendRequestsData
-                  }
-                  allSentFriendRequestsData={props.allSentFriendRequestsData}
-                  allFriendsData={props.allFriendsData}
-                  userID={props.userID}
-                  show={showAddFriendModal}
-                  onHide={() => setShowAddFriendModal(false)}
-                />
-              
+              </div>
+              <AddFriendModal
+                allReceivedFriendRequestsData={
+                  props.allReceivedFriendRequestsData
+                }
+                allSentFriendRequestsData={props.allSentFriendRequestsData}
+                allFriendsData={props.allFriendsData}
+                userID={props.userID}
+                show={showAddFriendModal}
+                onHide={() => setShowAddFriendModal(false)}
+              />
 
               <Form>
                 <FormControl
@@ -263,53 +239,53 @@ function Friends(props) {
                 <div key={friend.user_id}>
                   <ListGroup className="friend-list-container" horizontal="xxl">
                     <Col>
-                    <Row>
-                    <ListGroup.Item
-                      variant="info"
-                      className="friend-list-seperator"
-                    >
                       <Row>
-                        <Col>
-                      <small >
-                        Sharing{" "}
-                        {handleFriendSharedTasksCount(parseInt(friend.user_id))}{" "}
-                        tasks with
-                      </small>{" "}
-                      <strong >
-                        {friend.user_display_name}
-                      </strong>
-                      </Col>
-                      <Col>
-                      <OverlayTrigger
-                        trigger="focus"
-                        placement="bottom"
-                        overlay={deletePopOver}
-                      >
-                        <Button
-                          className="remove-friend-button"
-                          variant="danger"
-                          size="sm"
-                          value={friend.user_id}
-                          onClick={(e) =>
-                            handleDeletePopOver(parseInt(e.target.value))
-                          }
+                        <ListGroup.Item
+                          variant="info"
+                          className="friend-list-seperator"
                         >
-                          Remove{" "}<FiUserMinus/>
-                        </Button>
-                      </OverlayTrigger>
-                      </Col>
+                          <Row>
+                            <Col>
+                              <small>
+                                Sharing{" "}
+                                {handleFriendSharedTasksCount(
+                                  parseInt(friend.user_id)
+                                )}{" "}
+                                tasks with
+                              </small>{" "}
+                              <strong>{friend.user_display_name}</strong>
+                            </Col>
+                            <Col>
+                              <OverlayTrigger
+                                trigger="focus"
+                                placement="bottom"
+                                overlay={deletePopOver}
+                              >
+                                <Button
+                                  className="remove-friend-button"
+                                  variant="danger"
+                                  size="sm"
+                                  value={friend.user_id}
+                                  onClick={(e) =>
+                                    handleDeletePopOver(
+                                      parseInt(e.target.value)
+                                    )
+                                  }
+                                >
+                                  Remove <FiUserMinus />
+                                </Button>
+                              </OverlayTrigger>
+                            </Col>
+                          </Row>
+                        </ListGroup.Item>
                       </Row>
-                    </ListGroup.Item>
-                    </Row>
                     </Col>
                   </ListGroup>
                 </div>
               ))}
             </Tab>
 
-            <Tab eventKey="Received Requests" title="Received Requests" 
-            
-            >
+            <Tab eventKey="Received Requests" title="Received Requests">
               {props.allReceivedFriendRequestsData.map((receivedRequest) => (
                 <div key={receivedRequest.user_id}>
                   <ListGroup className="friend-list-container" horizontal="xxl">
@@ -318,32 +294,24 @@ function Friends(props) {
                       className="friend-list-seperator"
                     >
                       <strong>{receivedRequest.user_display_name} </strong>{" "}
-                     
-                        <Button
-                          // className="completed-clear"
-                          className="accept-decline-seperator"
-                          variant="success"
-                          size="med"
-                          value={receivedRequest.user_id}
-                          onClick={(e) =>
-                            handleAccept(parseInt(e.target.value))
-                          }
-                        >
-                          Accept
-                        </Button>
-                        <Button
-                          
-                          
-                          variant="danger"
-                          size="med"
-                          value={receivedRequest.user_id}
-                          onClick={(e) =>
-                            handleReject(parseInt(e.target.value))
-                          }
-                        >
-                          Decline
-                        </Button>
-                    
+                      <Button
+                        // className="completed-clear"
+                        className="accept-decline-seperator"
+                        variant="success"
+                        size="med"
+                        value={receivedRequest.user_id}
+                        onClick={(e) => handleAccept(parseInt(e.target.value))}
+                      >
+                        Accept
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="med"
+                        value={receivedRequest.user_id}
+                        onClick={(e) => handleReject(parseInt(e.target.value))}
+                      >
+                        Decline
+                      </Button>
                     </ListGroup.Item>
                   </ListGroup>
                 </div>
@@ -358,7 +326,8 @@ function Friends(props) {
                       variant="secondary"
                       className="friend-list-seperator"
                     >
-                      <strong>{sentRequest.user_display_name}'s</strong> request is pending...
+                      <strong>{sentRequest.user_display_name}'s</strong> request
+                      is pending...
                     </ListGroup.Item>
                   </ListGroup>
                 </div>

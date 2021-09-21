@@ -7,20 +7,26 @@ import "react-datetime/css/react-datetime.css";
 import Datetime from "react-datetime";
 import moment from "moment";
 function EditTaskModal(props) {
-  
-  const [taskData, settaskData]=useState(null)
+  const [taskData, settaskData] = useState(null);
   const [name, setName] = useState("");
   const [priority, setPriority] = useState("");
   const [description, setDescription] = useState("");
-  const [taskID, settaskID] = useState(null)
+  const [taskID, settaskID] = useState(null);
   // const [attendees, setAttendees] = useState(taskData.task_attendees);
   const [dateTime, setdateTime] = useState("");
-  const [drawing, setDrawing] = useState("")
+  const [drawing, setDrawing] = useState("");
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const handleseteditData=()=>{settaskID(props.editData.task_id);setName(props.editData.task_name); setPriority(props.editData.task_priority); setDrawing(props.editData.task_drawing); setDescription(props.editData.task_description); setdateTime(props.editData.task_date_time)}
-  useEffect(() => handleseteditData(), [props.show])
+  const handleseteditData = () => {
+    settaskID(props.editData.task_id);
+    setName(props.editData.task_name);
+    setPriority(props.editData.task_priority);
+    setDrawing(props.editData.task_drawing);
+    setDescription(props.editData.task_description);
+    setdateTime(props.editData.task_date_time);
+  };
+  useEffect(() => handleseteditData(), [props.show]);
 
   const handleSubmit = () => {
     // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
@@ -34,18 +40,18 @@ function EditTaskModal(props) {
       // attendees: attendees,
       task_date_time: dateTimeStr,
       task_id: taskID,
-      task_drawing: drawing
+      task_drawing: drawing,
     };
-    props.retrieveEditData(data)
+    props.retrieveEditData(data);
     setLoading(false);
-           setName("");
-        setPriority("");
-        setDescription("");
-        // setAttendees("");
-        setdateTime("");
-        settaskID(null)
+    setName("");
+    setPriority("");
+    setDescription("");
+    // setAttendees("");
+    setdateTime("");
+    settaskID(null);
     props.onHide();
-  }
+  };
 
   //   axios
   //     .put(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
@@ -67,24 +73,20 @@ function EditTaskModal(props) {
   //       setIsError(true);
   //     });
   // };
-  
+
   if (props.show === true) {
     return (
-      <div >
-      <Modal
-      
-        {...props}
-        size="med"
-        aria-labelledby="contained-modal-title-vcenter"
-        centered
-      >
-        <Modal.Header>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Edit
-          </Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          
+      <div>
+        <Modal
+          {...props}
+          size="med"
+          aria-labelledby="contained-modal-title-vcenter"
+          centered
+        >
+          <Modal.Header>
+            <Modal.Title id="contained-modal-title-vcenter">Edit</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
             <div style={{ maxWidth: 350 }}>
               <div className="form-group">
                 <label htmlFor="name" className="mt-2">
@@ -110,16 +112,13 @@ function EditTaskModal(props) {
                   placeholder="Enter priority"
                   value={priority}
                   onChange={(e) => setPriority(e.target.value)}
-                  
                 >
                   <option selected>Select level</option>
-                <option value="A">High</option>
-                <option value="B">Above Normal</option>
-                <option value="C">Normal</option>
-                <option value="D">Below Normal</option>
-                <option value="F">Low</option>
-                  
-
+                  <option value="A">High</option>
+                  <option value="B">Above Normal</option>
+                  <option value="C">Normal</option>
+                  <option value="D">Below Normal</option>
+                  <option value="F">Low</option>
                 </select>
               </div>
               <div className="form-group">
@@ -131,7 +130,7 @@ function EditTaskModal(props) {
                   className="form-control"
                   rows="3"
                   id="Description"
-                  height = "23rem"
+                  height="23rem"
                   placeholder="Enter description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -187,12 +186,11 @@ function EditTaskModal(props) {
               </div>
             )} */}
             </div>
-          
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={props.onHide}>Close</Button>
-        </Modal.Footer>
-      </Modal>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={props.onHide}>Close</Button>
+          </Modal.Footer>
+        </Modal>
       </div>
     );
   } else return null;
