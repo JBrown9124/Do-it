@@ -14,8 +14,12 @@ import {
   Nav,
   Offcanvas,
   Navbar,
-  Badge
+  Badge,
+  Spinner
+  
 } from "react-bootstrap";
+import {FaUserFriends} from "react-icons/fa"
+import {FaUserAlt} from "react-icons/fa"
 import React, { useEffect, useState } from "react";
 import Register from "./components/Home/RegisterModal";
 // import Routes from "./services/Routes";
@@ -29,29 +33,29 @@ import Login from "./components/Home/LoginModal";
 import "./components/Home/Home.css";
 import "./components/NavBar.css";
 import "./components/Tasks/SoloTasks/CompletedTasks/CompletedTasks.css";
+import "./components/Tasks/SharedTasks/SharedTasks.css";
 import SharedTasks from "./components/Tasks/SharedTasks/SharedTasks.js";
-import Tasks from "./components/Tasks/SoloTasks/Tasks.js";
-import CompletedTasks from "./components/Tasks/SoloTasks/CompletedTasks/CompletedTasks";
+
 import Friends from "./components/Friends/Friends.js";
 import SharedCompletedTasks from "./components/Tasks/SharedTasks/SharedCompletedTasks/SharedCompletedTasks";
 import url from "./services/URL"
+import {GiFinishLine} from "react-icons/gi"
 function App() {
-  const [loginmodalShow, setloginmodalShow] = useState(true);
-  const [showRegisterModal, setShowRegisterModal] = useState(false);
+  // const [loginmodalShow, setloginmodalShow] = useState(true);
+  // const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [tasksShow, settasksShow] = useState(false);
   const [handleTasks, sethandleTasks] = useState(false);
-  const [allData, setallData] = useState(null);
+ 
   const [userDisplayName, setUserDisplayName] = useState();
   const [userID, setUserID] = useState();
   const [showFriends, setShowFriends] = useState(false);
   const [showCompletedTasks, setShowCompletedTasks] = useState(null);
-  const [showSharedTasks, setShowSharedTasks] = useState(false);
+  
 
   const [allFriendsData, setAllFriendsData] = useState([]);
-  const [completedSharedTasksData, setCompletedSharedTasksData] = useState([])
-  const[incompletedSharedTasksData,setIncompletedSharedTasksData]= useState([])
-  const [completedData, setCompletedData] = useState([]);
-  const [incompletedData, setIncompletedData] = useState([]);
+  const [allCompletedData, setAllCompletedData] = useState([]);
+  const [allIncompletedData, setAllIncompletedData] = useState([]);
+
   const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
     useState([]);
   const [allSentFriendRequestsData, setAllSentFriendRequestsData] = useState(
@@ -60,65 +64,23 @@ function App() {
 
   const [loginRegisterCarouselIndex, setloginRegisterCarouselIndex] =
     useState(0);
-  const [tasksCarouselIndex, setTasksCarouselIndex] = useState(0);
-  const [completedTasksCarouselIndex, setcompletedTasksCarouselIndex] =
-    useState(0);
+  
 
   const [modalShow, setModalShow] = useState(true);
-  const [logOutSuccessful, setLogOutSuccessful] = useState(false);
-  const [tasksTabKey, setTasksTabKey] = useState("Solo");
-  const [completedTasksTabKey, setCompletedTasksTabKey] =
-    useState("SoloCompleted");
-  const handleTasksTabSelect = (key) => {
-    setTasksTabKey(key);
-    if (key === "Solo") {
-      return setTasksCarouselIndex(0);
-    }
-    if (key === "Shared") {
-      return setTasksCarouselIndex(1);
-    }
-  };
-  const handleCompletedTasksTabSelect = (key) => {
-    setCompletedTasksTabKey(key);
-    if (key === "SoloCompleted") {
-      return setcompletedTasksCarouselIndex(0);
-    }
-    if (key === "SharedCompleted") {
-      return setcompletedTasksCarouselIndex(1);
-    }
-  };
+
   useEffect(() => handleFriendsData(), [userID]);
   useEffect(() => handleSentFriendRequestsData(), [userID]);
   useEffect(() => handleTasksData(), [userID]);
-  useEffect(() => handleSharedTasksData(), [userID]);
+
   const MINUTE_MS = 30000;
-  // useEffect(() => handleReceivedFriendRequestsData(userID), [userID]);
   useEffect(() => {
     const interval = setInterval(() => {
-      handleReceivedFriendRequestsData(); handleSharedTasksData();
+     handleTasksData(); handleFriendsData(); handleSentFriendRequestsData(); handleReceivedFriendRequestsData(userID);
     }, MINUTE_MS);
 
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
   }, [userID]);
-  // const [completedTask, setCompletedTask] = React.useState(null)
 
-  // if (loginmodalShow===true && registermodalShow===true){
-  //   setregistermodalShow(false)
-  // }
-  // if (loginmodalShow===false && registermodalShow===true){
-  //   setloginmodalShow(false)
-  // }
-  const handleSharedTasksData = () =>{
-    axios
-      .get(
-        `${url}${userID}/shared-tasks`
-      )
-      .then((response) => {
-        setCompletedSharedTasksData(response.data.completed_shared_tasks);
-        setIncompletedSharedTasksData(response.data.incompleted_shared_tasks);
-        // isLoaded(true);
-      });
-  };
 
   
   const handleShowLoginHideTasks = () => {
@@ -150,8 +112,9 @@ function App() {
     axios
       .get(`${url}${userID}/tasks`)
       .then((response) => {
-        setCompletedData(response.data.complete);
-        setIncompletedData(response.data.incomplete);
+        setAllCompletedData(response.data.complete);
+        setAllIncompletedData(response.data.incomplete);
+  
         // isLoaded(true);
       });
   };
@@ -159,7 +122,7 @@ function App() {
     axios
       .get(`${url}${userID}/user-friends`)
       .then((response) => {
-        handleReceivedFriendRequestsData(userID);
+        
         setAllFriendsData(response.data.user_friends);
         // isLoaded(true);
       });
@@ -168,91 +131,35 @@ function App() {
   if (modalShow === false && tasksShow === false) {
     settasksShow(true);
   }
+ 
   return (
     <div>
       <Navigation
         userDisplayName={userDisplayName}
         showFriends={() => setShowFriends(true)}
-        showShared={() => setShowSharedTasks(true)}
-        completeCount={tasksShow ? Object.keys(completedData).length+Object.keys(completedSharedTasksData).length : null}
+        
+        completeCount={tasksShow ? Object.keys(allCompletedData).length : null}
         showLoginHideTasks={() => handleShowLoginHideTasks()}
         showComplete={(props) => setShowCompletedTasks(props)}
         userID={userID}
         receivedCount={Object.keys(allReceivedFriendRequestsData).length}
       />
-     <Navbar fixed="bottom" bg="light">
-      <Nav navbar={false} fill variant="pills" className="tasks-tab" activeKey={tasksTabKey}
-  onSelect={(k)=>handleTasksTabSelect(k)}
- 
-  >
       
-              <Nav.Item className="solo-shared-buttons">
-              <Nav.Link eventKey="Solo">Solo
-              <Badge className="completed-badge" bg="info">
-                  {tasksShow ? Object.keys(incompletedData).length:null}
-                </Badge>
-              </Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-              <Nav.Link eventKey="Shared"> Shared
-              <Badge className="completed-badge" bg="info">
-                  {tasksShow ? Object.keys(incompletedSharedTasksData).length:null}
-                </Badge>
-              </Nav.Link>
-       </Nav.Item>
-      
-       </Nav>
-       </Navbar>
-       
-      {/* <Tabs
-        variant="pills"
-        activeKey={tasksTabKey}
-        onSelect={(k) => handleTasksTabSelect(k)}
-        id="noanim-tab-example"
-        className="tasks-tab"
-      >
-        <Tab eventKey="Solo" title="Solo"></Tab>
-
-        <Tab eventKey="Shared" title="Shared"></Tab>
-      </Tabs> */}
-
-      <Carousel
-        
-        keyboard={false}
-        interval={null}
-        indicators={false}
-        controls={false}
-        activeIndex={tasksCarouselIndex}
-      >
-        <Carousel.Item>
-          
-          <Tasks
-            handleSharedSelected={() => setTasksCarouselIndex(1)}
-            updateTasks={(props) => setIncompletedData(props)}
-            incompletedTasksData={incompletedData}
-            completedTasksData={completedData}
-            userID={userID}
-            show={tasksShow}
-            completedhandleTasks={handleTasks}
-            handledcompletedTasks={() => sethandleTasks(false)}
-          />
-        </Carousel.Item>
-
-        <Carousel.Item>
           <SharedTasks
-            handleSoloSelected={() => setTasksCarouselIndex(0)}
-            updateTasks={(props) => setIncompletedSharedTasksData(props)}
-            incompletedSharedTasksData={incompletedSharedTasksData}
-            completedSharedTasksData={completedSharedTasksData}
+            // handleSoloSelected={() => setTasksCarouselIndex(0)}
+            updateTasks={(props) => setAllIncompletedData(props)}
+            incompletedSharedTasksData={allIncompletedData}
+            completedSharedTasksData={allCompletedData}
             allFriendsData = {allFriendsData}
             userID={userID}
             show={tasksShow}
             completedhandleTasks={handleTasks}
             handledcompletedTasks={() => sethandleTasks(false)}
           />
-        </Carousel.Item>
+          
+        {/* </Carousel.Item>
         
-      </Carousel>
+      </Carousel> */}
       <Offcanvas
         show={showCompletedTasks}
         onHide={() => setShowCompletedTasks(false)}
@@ -261,61 +168,25 @@ function App() {
           closeButton
           onClick={() => setShowCompletedTasks(false)}
         >
-          <Offcanvas.Title className="completed-title">Completed</Offcanvas.Title>
+          <Offcanvas.Title className="completed-title">Completed <GiFinishLine/></Offcanvas.Title>
         </Offcanvas.Header>
 
         <Offcanvas.Body>
-          
-          <Tabs
-         
-          fill variant="pills" 
-            
-            activeKey={completedTasksTabKey}
-            onSelect={(k) => handleCompletedTasksTabSelect(k)}
-            id="noanim-tab-example"
-            className="completed-tabs"
-          >
-            <Tab eventKey="SoloCompleted" title="Solo">  </Tab>
-
-            <Tab eventKey="SharedCompleted" title="Shared"></Tab>
-          </Tabs>
-          
-          <Carousel
-            
-            keyboard={false}
-            interval={null}
-            indicators={false}
-            controls={false}
-            activeIndex={completedTasksCarouselIndex}
-          >
-            <Carousel.Item>
-              <CompletedTasks
-                updateTasks={(props) => setCompletedData(props)}
-                
-                incompletedTasksData={incompletedData}
-                completedTasksData={completedData}
-                userID={userID}
-                show={showCompletedTasks}
-                hideCompletedTasks={(props) => setShowCompletedTasks(false)}
-                // handleTasks={(props) => sethandleTasks(true)}
-              
-              />
-            </Carousel.Item>
-            <Carousel.Item>
+      
               <SharedCompletedTasks
-                updateTasks={(props) => setCompletedSharedTasksData(props)}
-                completedSharedTasksData = {completedSharedTasksData}
-                incompletedSharedTasksData = {incompletedSharedTasksData}
+                updateTasks={(props) => setAllCompletedData(props)}
+                completedSharedTasksData = {allCompletedData}
+                incompletedSharedTasksData = {allIncompletedData}
                 userID={userID}
                 show={showCompletedTasks}
                 hideCompletedTasks={(props) => setShowCompletedTasks(false)}
               />
-            </Carousel.Item>
-          </Carousel>
+            {/* </Carousel.Item>
+          </Carousel> */}
         </Offcanvas.Body>
       </Offcanvas>
       <Friends
-      incompletedSharedTasksData={incompletedSharedTasksData}
+      incompletedSharedTasksData={allIncompletedData}
         allReceivedFriendRequestsData={allReceivedFriendRequestsData}
         allSentFriendRequestsData={allSentFriendRequestsData}
         allFriendsData={allFriendsData}
@@ -341,8 +212,8 @@ function App() {
         <p className="text-center"> to continue to Do or Do Not</p>
 
         <Carousel
-          touch={false}
-          keyboard={false}
+          touch={true}
+          keyboard={true}
           interval={null}
           indicators={false}
           controls={false}
@@ -350,10 +221,7 @@ function App() {
         >
           <Carousel.Item>
             <Login
-              // show={loginmodalShow}
-              // onHide={() => setloginmodalShow(false)}
-              // backdrop="static"
-              // keyboard={false}
+           
               hideModal={() => setModalShow(false)}
               userDisplayName={(props)=>setUserDisplayName(props)}
               userID={(props) => setUserID(props)}
@@ -362,10 +230,7 @@ function App() {
           </Carousel.Item>
           <Carousel.Item>
             <Register
-              //  show={showRegisterModal}
-              // onHide={() => setregistermodalShow(false)}
-              // backdrop="static"
-              // keyboard={false}
+          
               hideModal={() => setModalShow(false)}
               userDisplayName={(props)=>setUserDisplayName(props)}
               userID={(props) => setUserID(props)}

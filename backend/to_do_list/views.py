@@ -11,13 +11,15 @@ from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from .ResponseModels.tasks import TasksResponseModel
-from .ResponseModels.users import UsersResponseModel
+from .ResponseModels.SharerTask import SharerTask
+from .ResponseModels.Sharer import Sharer
 from friendship.models import Block, Follow, Friend, FriendshipRequest
 from itertools import chain
-
+from django.views.generic import TemplateView
+from django.views.decorators.cache import never_cache
 from django.core.exceptions import ValidationError
 import hashlib
+import jsonpickle
 import uuid
 
 # Create your views here.
@@ -54,7 +56,7 @@ def completed_tasks(request, user):
     elif request.method == 'DELETE':
         json_data = json.loads(request.body)
         if json_data['task_id'] == "all":
-            t = Tasks.objects.filter(user=u, task_completed=True, sharedtasks=None)
+            t = Tasks.objects.filter(user=u, task_completed=True)
             t.delete()
             return HttpResponse("completed tasks deleted")
         else:
@@ -67,13 +69,120 @@ def completed_tasks(request, user):
 def tasks(request, user):
     u = User.objects.get(pk=user)
     if request.method == 'GET':
-
-        Incompleted = list(Tasks.objects.filter(
+         
+        no_sharing_incompleted_data = []
+        no_sharing_completed_data = []
+        sharing_with = {'user_id':None, 'user_display_name':None, 'user_email':None}
+        incompleted = list(Tasks.objects.filter(
             user=u, task_completed=False, sharedtasks=None).order_by('task_priority').values())
-        Completed = list(Tasks.objects.filter(
+        for task in incompleted:
+            no_sharing_incompleted_data.append({"task":task, 'sharing_with':sharing_with})
+        completed = list(Tasks.objects.filter(
             user=u, task_completed=True, sharedtasks=None).order_by('task_priority').values())
-        data = {"incomplete": Incompleted, "complete": Completed}
-        return JsonResponse(data, safe=False)
+        for task in completed:
+            no_sharing_completed_data.append({"task":task, 'sharing_with':sharing_with})
+        
+        
+        received_data = []
+        
+        received_shared_tasks = SharedTasks.objects.filter(recipient=u)
+        for task in received_shared_tasks:
+            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
+            if task_info[0]["task_completed"] == False:
+                continue
+            sent_from = list(User.objects.filter(user_id=task.sender_id).values(
+                "user_email", "user_display_name", "user_id"))
+
+            merged_data = task_info + sent_from
+            json_friendly = {
+                "task": merged_data[0], "sharing_with": merged_data[1]}
+            received_data.append(json_friendly)
+        sent_data = []
+        sent_shared_tasks = SharedTasks.objects.filter(sender=u)
+        for task in sent_shared_tasks:
+            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
+            if task_info[0]["task_completed"] == False:
+                continue
+            received_from = list(User.objects.filter(user_id=task.recipient_id).values(
+                "user_email", "user_display_name", "user_id"))
+
+            merged_data = task_info + received_from
+            json_friendly = {
+                "task": merged_data[0], "sharing_with": merged_data[1]}
+            sent_data.append(json_friendly)
+
+        completed_data = received_data + sent_data + no_sharing_completed_data
+        
+        
+        received_data = []
+        
+        received_shared_tasks = SharedTasks.objects.filter(recipient=u)
+        for task in received_shared_tasks:
+            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
+            if task_info[0]["task_completed"] == True:
+                continue
+            sent_from = list(User.objects.filter(user_id=task.sender_id).values(
+                "user_email", "user_display_name", "user_id"))
+
+            merged_data = task_info + sent_from
+            json_friendly = {
+                "task": merged_data[0], "sharing_with": merged_data[1]}
+            received_data.append(json_friendly)
+        sent_data = []
+        sent_shared_tasks = SharedTasks.objects.filter(sender=u)
+        for task in sent_shared_tasks:
+            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
+            if task_info[0]["task_completed"] == True:
+                continue
+            received_from = list(User.objects.filter(user_id=task.recipient_id).values(
+                "user_email", "user_display_name", "user_id"))
+
+            merged_data = task_info + received_from
+            json_friendly = {
+                "task": merged_data[0], "sharing_with": merged_data[1]}
+            sent_data.append(json_friendly)
+
+        incompleted_data = received_data + sent_data + no_sharing_incompleted_data
+
+        return JsonResponse({"complete": completed_data, "incomplete": incompleted_data})
+        # incompleted_data = []
+        # completed_data = []
+        # sharing_with = {'user_id':None, 'user_display_name':None, 'user_email':None}
+        # incompleted = list(Tasks.objects.filter(
+        #     user=u, task_completed=False, sharedtasks=None).order_by('task_priority').values())
+        # for task in incompleted:
+        #     incompleted_data.append({"task":task, 'sharing_with':sharing_with})
+        # completed = list(Tasks.objects.filter(
+        #     user=u, task_completed=True, sharedtasks=None).order_by('task_priority').values())
+        # for task in completed:
+        #     completed_data.append({"task":task, 'sharing_with':sharing_with})
+        # data = {"incomplete": incompleted_data, "complete": completed_data}
+        # return JsonResponse(data, safe=False)
+        # completed_data = []
+        # incompleted_data = []
+        
+        # incompleted = Tasks.objects.filter(
+        #     user=u, task_completed=False, sharedtasks=None).order_by('task_priority')
+        # for task in incompleted:
+        #     sharer = Sharer()
+        #     sharer_task = SharerTask()
+        #     sharer_task.task = task
+        #     sharer_task.shared_with = sharer
+        #     incompleted_data.append(sharer_task)
+        # completed = Tasks.objects.filter(
+        #     user=u, task_completed=True, sharedtasks=None).order_by('task_priority')
+        # for task in completed:
+        #     sharer = Sharer()
+        #     sharer.user_id = None
+        #     sharer.email = None
+        #     sharer.user_display_name = None
+        #     sharer_task = SharerTask()
+        #     sharer_task.task = task
+        #     sharer_task.shared_with = sharer
+        #     completed_data.append(sharer_task)
+        
+        # data = incompleted_data+completed_data
+        # return JsonResponse(completed_data, safe=False, encoder=jsonpickle.encode(completed_data,unpicklable=False))
     if request.method == 'DELETE':
         json_data = json.loads(request.body)
 
@@ -83,22 +192,34 @@ def tasks(request, user):
         return HttpResponse(f"{user} tasks deleted")
     if request.method == 'POST':
         json_data = json.loads(request.body)
-        try:
-            d = datetime.datetime.strptime(
-                json_data["task_date_time"], '%d. %B %Y %H:%M')
+        sharing_with = json_data["sharing_with"]["user_id"]
+        task = json_data['task']
+        if sharing_with == None:
+            try:
+                d = datetime.datetime.strptime(
+                    task["task_date_time"], '%d. %B %Y %H:%M')
 
-            t = Tasks(user=u, task_id=json_data['task_id'], task_name=json_data['task_name'], task_priority=json_data['task_priority'],
-                      task_description=json_data['task_description'], task_date_time=d)
-            t.save()
-            return HttpResponse(f"{user} tasks saved")
-        except:
-            return HttpResponseError("Invalid input format")
+                t = Tasks(task_id=task['task_id'], user=u, task_name=task['task_name'], task_description=task['task_description'], task_drawing=task['task_drawing'], task_date_time=d, task_priority=task['task_priority'])
+                t.save()
+                return HttpResponse(f"{user} tasks saved")
+            except:
+                return HttpResponseError("Invalid input format")
+        else:    
+            recipient = User.objects.get(pk=sharing_with)
+            d = datetime.datetime.strptime(
+                    task["task_date_time"], '%d. %B %Y %H:%M')
+            task_created = Tasks(task_id=task['task_id'], user=u, task_name=task['task_name'], task_description=task['task_description'], task_drawing=task['task_drawing'], task_date_time=d, task_priority=task['task_priority'])
+            task_created.save()
+            shared_task_created = SharedTasks(sender=u, recipient=recipient, task=task_created)
+            shared_task_created.save()
+            return HttpResponse("shared task created")
+        
+       
     if request.method == 'PUT':
         json_data = json.loads(request.body)
         d = datetime.datetime.strptime(
             json_data["task_date_time"], '%d. %B %Y %H:%M')
-        t = Tasks(pk=json_data['task_id'], user=u, task_name=json_data['task_name'], task_priority=json_data['task_priority'],
-                  task_description=json_data['task_description'], task_date_time=d)
+        t = Tasks(pk=json_data['task_id'], user=u, task_name=json_data['task_name'], task_priority=json_data['task_priority'], task_drawing=json_data['task_drawing'],task_description=json_data['task_description'], task_date_time=d)
         t.save()
         return HttpResponse("nice")
 # def shared_tasks(request, user):
@@ -136,143 +257,26 @@ def tasks(request, user):
 #         completed_sharing = received_data + sent_data
 
 #         return JsonResponse({"shared_tasks": completed_sharing})
+# @csrf_exempt
+# def shared_tasks(request, user):
+#     u = User.objects.get(pk=user)
+    
+#     if request.method == 'POST':
+#         json_data = json.loads(request.body)
+#         task = json_data['task']
+#         recipient = User.objects.get(pk=json_data['sharing_with']['user_id'])
+#         d = datetime.datetime.strptime(
+#                 task["task_date_time"], '%d. %B %Y %H:%M')
+#         task_created = Tasks(task_id=task['task_id'], user=u, task_name=task['task_name'], task_description=task['task_description'], task_drawing=task['task_drawing'], task_date_time=d, task_priority=task['task_priority'])
+#         task_created.save()
+#         shared_task_created = SharedTasks(sender=u, recipient=recipient, task=task_created)
+#         shared_task_created.save()
+#         return HttpResponse("shared task created")
+  
 @csrf_exempt
-def shared_tasks(request, user):
-    u = User.objects.get(pk=user)
-    if request.method == 'GET':
-        
-        received_data = []
-        task = None
-        sent_from = None
-        received_shared_tasks = SharedTasks.objects.filter(recipient=u)
-        for task in received_shared_tasks:
-            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
-            if task_info[0]["task_completed"] == False:
-                continue
-            sent_from = list(User.objects.filter(user_id=task.sender_id).values(
-                "user_email", "user_display_name", "user_id"))
-
-            merged_data = task_info + sent_from
-            json_friendly = {
-                "task": merged_data[0], "sharing_with": merged_data[1]}
-            received_data.append(json_friendly)
-        sent_data = []
-        sent_shared_tasks = SharedTasks.objects.filter(sender=u)
-        for task in sent_shared_tasks:
-            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
-            if task_info[0]["task_completed"] == False:
-                continue
-            received_from = list(User.objects.filter(user_id=task.recipient_id).values(
-                "user_email", "user_display_name", "user_id"))
-
-            merged_data = task_info + received_from
-            json_friendly = {
-                "task": merged_data[0], "sharing_with": merged_data[1]}
-            sent_data.append(json_friendly)
-
-        completed_sharing = received_data + sent_data
-        
-        
-        received_data = []
-        
-        received_shared_tasks = SharedTasks.objects.filter(recipient=u)
-        for task in received_shared_tasks:
-            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
-            if task_info[0]["task_completed"] == True:
-                continue
-            sent_from = list(User.objects.filter(user_id=task.sender_id).values(
-                "user_email", "user_display_name", "user_id"))
-
-            merged_data = task_info + sent_from
-            json_friendly = {
-                "task": merged_data[0], "sharing_with": merged_data[1]}
-            received_data.append(json_friendly)
-        sent_data = []
-        sent_shared_tasks = SharedTasks.objects.filter(sender=u)
-        for task in sent_shared_tasks:
-            task_info = list(Tasks.objects.filter(pk=task.task_id).values())
-            if task_info[0]["task_completed"] == True:
-                continue
-            received_from = list(User.objects.filter(user_id=task.recipient_id).values(
-                "user_email", "user_display_name", "user_id"))
-
-            merged_data = task_info + received_from
-            json_friendly = {
-                "task": merged_data[0], "sharing_with": merged_data[1]}
-            sent_data.append(json_friendly)
-
-        incompleted_sharing = received_data + sent_data
-
-        return JsonResponse({"completed_shared_tasks": completed_sharing, "incompleted_shared_tasks": incompleted_sharing})
-    if request.method == 'POST':
-        json_data = json.loads(request.body)
-        task = json_data['task']
-        recipient = User.objects.get(pk=json_data['sharing_with']['user_id'])
-        d = datetime.datetime.strptime(
-                task["task_date_time"], '%d. %B %Y %H:%M')
-        task_created = Tasks(task_id=task['task_id'], user=u, task_name=task['task_name'], task_description=task['task_description'], task_date_time=d, task_priority=task['task_priority'])
-        task_created.save()
-        shared_task_created = SharedTasks(sender=u, recipient=recipient, task=task_created)
-        shared_task_created.save()
-        return HttpResponse("shared task created")
-    if request.method == 'DELETE':
-        json_data = json.loads(request.body)
-
-        t = Tasks.objects.filter(pk=json_data['task_id'])
-        t.delete()
-
-        return HttpResponse(f"{user} tasks deleted")
-    if request.method == 'PUT':
-        json_data = json.loads(request.body)
-        d = datetime.datetime.strptime(
-            json_data["task_date_time"], '%d. %B %Y %H:%M')
-        t = Tasks(pk=json_data['task_id'], user=u, task_name=json_data['task_name'], task_priority=json_data['task_priority'],
-                  task_description=json_data['task_description'], task_date_time=d)
-        t.save()
-        return HttpResponse("nice")
-
-@csrf_exempt
-def completed_shared_tasks(request,user):
-    u= User.objects.get(pk=user)
-    if request.method == "PUT":
-
-        json_data = json.loads(request.body)
-        json_key = {}
-        for key, value in json_data.items():
-            json_key = key
-        if json_key == 'undo_completed_task_id':
-            t = Tasks.objects.get(pk=json_data['undo_completed_task_id'])
-            t.task_completed = False
-            t.save()
-            return HttpResponse("undo complete successful")
-        elif json_key == 'completed_task_id':
-            t = Tasks.objects.get(pk=json_data['completed_task_id'])
-            t.task_completed = True
-            t.save()
-            return HttpResponse("marked complete successful")
-    elif request.method == 'DELETE':
-        json_data = json.loads(request.body)
-        
-        for task in json_data:
-            t=Tasks.objects.filter(pk=task['task']['task_id'])
-            t.delete()
-
-
-           
-            
-            
-        return HttpResponse("completed tasks deleted")    
-
 def users(request, user):
     if request.method == 'GET':
-        # safe_user_data = []
-        # all_users_info = Users.objects.all()
-        # for user in all_users_info:
-        #     user_response_model = UsersResponseModel()
-        #     user_response_model.user_id = user.user_id
-        #     user_response_model.user_email = user.user_email
-        #     user_response_model.user_display_name = user.user_display_name
-        #     safe_user_data.append(user_response_model)
+       
         safe_user_query = User.objects.exclude(user_id=user).values(
             "user_email", "user_display_name", "user_id")
         safe_user_data = list(safe_user_query)
@@ -327,11 +331,9 @@ def register(request):
             u.save()
             
             return JsonResponse({"user_id":u.user_id, "user_display_name":u.user_display_name})
-
-
-def index(request):
-    return HttpResponse("Hello, world. You're at the polls index.")
-
+# def index(request):
+#     return HttpResponse("Hello, world. You're at the polls index.")
+index = never_cache(TemplateView.as_view(template_name='index.html'))
 
 @csrf_exempt
 def add_friend(request, user):
@@ -382,7 +384,7 @@ def reject_friend(request, user):
         friend_request.reject()
         return HttpResponse("friend successfully added")
 
-
+@csrf_exempt
 def list_received_friend_requests(request, user):
     u = User.objects.get(pk=user)
     if request.method == "GET":
@@ -390,10 +392,10 @@ def list_received_friend_requests(request, user):
         user_friend_requests = Friend.objects.unrejected_requests(user=u)
         for request in user_friend_requests:
             data.append({"user_display_name": request.from_user.user_display_name,
-                        "user_id": request.from_user.user_id})
+                        "user_id": request.from_user.user_id,"user_email":friend.user_email})
         return JsonResponse({"user_friend_requests": data})
 
-
+@csrf_exempt
 def list_sent_friend_requests(request, user):
     u = User.objects.get(pk=user)
     if request.method == 'GET':
@@ -401,10 +403,10 @@ def list_sent_friend_requests(request, user):
         user_sent_friend_requests = Friend.objects.sent_requests(user=u)
         for friend_request in user_sent_friend_requests:
             data.append({"user_display_name": friend_request.to_user.user_display_name,
-                        "user_id": friend_request.to_user.user_id})
+                        "user_id": friend_request.to_user.user_id, "user_email":friend.user_email})
         return JsonResponse({"user_sent_friend_requests": data})
 
-
+@csrf_exempt
 def list_users_friends(request, user):
     u = User.objects.get(pk=user)
     if request.method == 'GET':
@@ -412,6 +414,6 @@ def list_users_friends(request, user):
         users_friends = Friend.objects.friends(u)
         for friend in users_friends:
             data.append(
-                {"user_display_name": friend.user_display_name, "user_id": friend.user_id})
+                {"user_display_name": friend.user_display_name, "user_id": friend.user_id, "user_email":friend.user_email})
 
         return JsonResponse({"user_friends": data}, safe=False)

@@ -6,8 +6,9 @@
     
 }
 .add-friend-title{
-   
-    margin:auto;
+   justify-content: center;
+   position:relative;
+    
     text-align:center;
 }
 

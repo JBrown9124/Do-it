@@ -15,22 +15,24 @@ import {
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import FlipMove from "react-flip-move";
 import { Link } from "react-router-dom";
 // import "./Tasks.css";
-
+import { RiDeleteBin2Line } from "react-icons/ri";
+import { FaUserAlt, FaUserFriends } from "react-icons/fa";
+import { IoIosNuclear } from "react-icons/io";
+import { FaUndo } from "react-icons/fa";
 import moment from "moment";
 
 import url from "../../../../services/URL"
 
 function SharedCompletedTasks(props) {
-  const [show, setShow] = useState(false);
-  const [reusemodalShow, setreusemodalShow] = useState(false);
+
 
   const [reuseData, setreuseData] = useState("");
   const [animationType, setAnimationType] = useState("");
   
-  const handleShow = () => setShow(true);
+ 
   const [showDeleteAllPopOver, setShowDeleteAllPopOver] = useState(false);
   const [showDeletePopOver, setShowDeletePopOver] = useState(false);
   const [deleteTaskID, setDeleteTaskID] = useState(false);
@@ -55,12 +57,12 @@ function SharedCompletedTasks(props) {
   }, [searchItem]);
   const handleUndo = (e) => {
     setAnimationType("undo");
-    console.log(e);
+    
 
     const findTaskByID = props.completedSharedTasksData.find(
       ({ task }) => task.task_id === e
     );
-    console.log(findTaskByID);
+    
 
     props.incompletedSharedTasksData.unshift(findTaskByID);
     const remainingTasks = props.completedSharedTasksData.filter(function (
@@ -104,17 +106,28 @@ function SharedCompletedTasks(props) {
       .then((response) => {});
   };
   const handleDeleteAll = () => {
-    setAnimationType("deleteAll");
-    setShowDeleteAllPopOver(false);
-    props.updateTasks([]);
-    const data = props.completedSharedTasksData;
-    axios
-      .delete(
-        `${url}${props.userID}/completed-shared-tasks`,
-        { data: data }
-      )
-      .then((response) => {});
-  };
+  //   setAnimationType("deleteAll");
+  //   setShowDeleteAllPopOver(false);
+  //   props.updateTasks([]);
+  //   const data = props.completedSharedTasksData;
+  //   axios
+  //     .delete(
+  //       `${url}${props.userID}/completed-tasks`,
+  //       { data: data }
+  //     )
+  //     .then((response) => {});
+  // };
+  setAnimationType("deleteAll");
+  setShowDeleteAllPopOver(false);
+  props.updateTasks([]);
+  const data = { task_id: "all" };
+  axios
+    .delete(
+      `${url}${props.userID}/completed-tasks`,
+      { data: data }
+    )
+    .then((response) => {});
+};
   const sortByHighestPriority = () => {
     const sortedSearch = [...searchResults].sort((a, b) =>
       a.task.task_priority.localeCompare(b.task.task_priority)
@@ -157,8 +170,8 @@ function SharedCompletedTasks(props) {
   };
   const cardAnimation = {
     undo: "accordionVertical",
-    delete: "elevator",
-    deleteAll: "elevator",
+    delete: "fade",
+    deleteAll: "fade",
   };
   const deleteAllPopover = (
     <Popover className="tasks-container" id="popover-basic">
@@ -204,17 +217,7 @@ function SharedCompletedTasks(props) {
 
   return (
     <>
-      {/* <Offcanvas show={props.show} onHide={handleClose}>
-        <Offcanvas.Header closeButton onClick={() => handleClose()}>
-          
-          <Offcanvas.Title >
-           
-            Completed
-          </Offcanvas.Title>
-          
-        </Offcanvas.Header>
-       
-        <Offcanvas.Body> */}
+      
          
         <div className="d-grid gap-2">
  
@@ -232,7 +235,7 @@ function SharedCompletedTasks(props) {
          onClick={() => setShowDeleteAllPopOver(true)}
          
        >
-         Clear
+         <IoIosNuclear className="task-card-icon-size"/>
        </Button>
      </OverlayTrigger>
      </div>
@@ -287,6 +290,7 @@ function SharedCompletedTasks(props) {
                   </Button> */}
           </ButtonGroup>
 </div>
+<FlipMove leaveAnimation={cardAnimation[animationType]} staggerDelayBy={150}>
           {searchResults.map(({task, sharing_with}) => (
             <div  className="tasks-container" key={task.task_id}>
               <Card
@@ -295,11 +299,14 @@ function SharedCompletedTasks(props) {
                 border={cardBorder[task.task_priority]}
                 style={{ width: "20rem" }}
               >
-                <Card.Header>Shared {task.task_name} with {sharing_with.user_display_name} </Card.Header>
+                <Card.Header>{sharing_with.user_display_name === null ? (<div  className="card-social-icon"><FaUserAlt /></div>) : (
+                <div  className="card-social-icon">{sharing_with.user_display_name}{" "}<FaUserFriends  className="card-social-icon"/></div>
+              )}
+              {task.task_name} </Card.Header>
                 <Card.Body>
                   
                   <Card.Text>{task.task_description}</Card.Text>
-
+                  <Card.Img variant="bottom" src={task.task_drawing} />
                   <ButtonGroup aria-label="Basic example">
                     {/* <Button
                         variant="primary"
@@ -316,11 +323,27 @@ function SharedCompletedTasks(props) {
                       variant="warning"
                       size="med"
                       value={task.task_id}
-                      onClick={(e) => handleUndo(e.target.value)}
+                      onClick={(e) => handleUndo(task.task_id)}
                     >
-                      Undo
+                      <FaUndo className="task-card-icon-size" />
                     </Button>
                     </div>
+                    <div className="card-buttons">
+                    <OverlayTrigger
+                      trigger="focus"
+                      placement="left"
+                      overlay={deletePopOver}
+                    >
+                  <Button
+                    value={task.task_id}
+                    // onClick={(e) => handleDelete(e.target.value)}
+                    onClick={(e) => handleDeletePopOver(task.task_id)}
+                    variant="danger"
+                    size="med"
+                  >
+                    <RiDeleteBin2Line className="task-card-icon-size" />
+                   </Button>
+                {/* </div>
                     <div className="card-buttons">
                     <OverlayTrigger
                       trigger="focus"
@@ -335,7 +358,7 @@ function SharedCompletedTasks(props) {
                         size="med"
                       >
                         Delete
-                      </Button>
+                      </Button>  */}
                     </OverlayTrigger>
                     </div>
                   </ButtonGroup>
@@ -346,12 +369,8 @@ function SharedCompletedTasks(props) {
               </Card>
             </div>
           ))}
-
-          {/* </FlipMove> */}
+</FlipMove>
           
-        {/* </Offcanvas.Body>
-        
-      </Offcanvas> */}
     </>
   );
   // } else {

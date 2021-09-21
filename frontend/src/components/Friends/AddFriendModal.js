@@ -23,10 +23,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 // import "./Tasks.css";
 
-import moment from "moment";
-import CreateTaskModal from "../Tasks/SoloTasks/CreateTaskModal";
-import EditTaskModal from "../Tasks/SoloTasks/EditTaskModal";
-import useWindowSize from "react-use/lib/useWindowSize";
+
 import url from "../../services/URL"
 import FlipMove from "react-flip-move";
 import { v4 as uuidv4 } from "uuid";

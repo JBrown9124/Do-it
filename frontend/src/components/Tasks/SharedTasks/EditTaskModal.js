@@ -15,11 +15,11 @@ function EditTaskModal(props) {
   const [taskID, settaskID] = useState(null)
   // const [attendees, setAttendees] = useState(taskData.task_attendees);
   const [dateTime, setdateTime] = useState("");
-
+  const [drawing, setDrawing] = useState("")
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const handleseteditData=()=>{settaskID(props.targeteditData[3]);setName(props.targeteditData[2]); setPriority(props.targeteditData[1]); setDescription(props.targeteditData[4]); setdateTime(props.targeteditData[5])}
+  const handleseteditData=()=>{settaskID(props.editData.task_id);setName(props.editData.task_name); setPriority(props.editData.task_priority); setDrawing(props.editData.task_drawing); setDescription(props.editData.task_description); setdateTime(props.editData.task_date_time)}
   useEffect(() => handleseteditData(), [props.show])
 
   const handleSubmit = () => {
@@ -33,7 +33,8 @@ function EditTaskModal(props) {
       task_description: description,
       // attendees: attendees,
       task_date_time: dateTimeStr,
-      task_id: props.targeteditData[3],
+      task_id: taskID,
+      task_drawing: drawing
     };
     props.retrieveEditData(data)
     setLoading(false);
@@ -79,7 +80,7 @@ function EditTaskModal(props) {
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
-            Edit your Task
+            Edit
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>

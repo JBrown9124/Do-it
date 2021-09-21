@@ -21,21 +21,14 @@ import {
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import {FiUserPlus, FiUserMinus} from "react-icons/fi"
 import { Link } from "react-router-dom";
 import AddFriendModal from "./AddFriendModal";
-import Requests from "./RecievedRequests";
+
 import url from "../../services/URL"
 // import "./Tasks.css";
 
-import moment from "moment";
-import CreateTaskModal from "../Tasks/SoloTasks/CreateTaskModal";
-import EditTaskModal from "../Tasks/SoloTasks/EditTaskModal";
-import useWindowSize from "react-use/lib/useWindowSize";
 
-import FlipMove from "react-flip-move";
-import { v4 as uuidv4 } from "uuid";
-import { FaArrowCircleUp } from "react-icons/fa";
 
 function Friends(props) {
   const [show, setShow] = useState(false);
@@ -78,7 +71,7 @@ function Friends(props) {
       }
     );
 
-    console.log(remainingRequests);
+    
 
     props.updateAllReceivedFriendRequestsData(remainingRequests);
   };
@@ -91,7 +84,7 @@ function Friends(props) {
       return value.user_id !== friendID;
     });
 
-    console.log(remainingFriends);
+    
 
     props.updateAllFriendsData(remainingFriends);
     const data = { to_user_id: friendID };
@@ -109,7 +102,7 @@ function Friends(props) {
     const findUserByID = props.allReceivedFriendRequestsData.find(
       ({ user_id }) => user_id === fromUserID
     );
-    console.log(findUserByID);
+   
 
     handleRemoveFriendRequest(fromUserID);
     const data = { from_user_id: fromUserID };
@@ -216,17 +209,20 @@ function Friends(props) {
             className="friend-tabs-container"
           >
             <Tab eventKey="Friends" title="Friends">
-              <div className="d-grid gap-2">
+           
+              <div  className="add-friend-title" >
                 <Button
                   // className="completed-clear"
                   variant="success"
-                  size="med"
-                  className="completed-clear"
+                  size="lg"
                   onClick={() => setShowAddFriendModal(true)}
                 >
-                  Add Friend
+                  
+                  {showAddFriendModal?"Adding...":"Add a friend"}{" "}
+                  <FiUserPlus/>
                 </Button>
-
+                
+</div>
                 <AddFriendModal
                   allReceivedFriendRequestsData={
                     props.allReceivedFriendRequestsData
@@ -237,7 +233,7 @@ function Friends(props) {
                   show={showAddFriendModal}
                   onHide={() => setShowAddFriendModal(false)}
                 />
-              </div>
+              
 
               <Form>
                 <FormControl
@@ -266,6 +262,8 @@ function Friends(props) {
               {searchResults.map((friend) => (
                 <div key={friend.user_id}>
                   <ListGroup className="friend-list-container" horizontal="xxl">
+                    <Col>
+                    <Row>
                     <ListGroup.Item
                       variant="info"
                       className="friend-list-seperator"
@@ -296,12 +294,14 @@ function Friends(props) {
                             handleDeletePopOver(parseInt(e.target.value))
                           }
                         >
-                          Remove friend
+                          Remove{" "}<FiUserMinus/>
                         </Button>
                       </OverlayTrigger>
                       </Col>
                       </Row>
                     </ListGroup.Item>
+                    </Row>
+                    </Col>
                   </ListGroup>
                 </div>
               ))}

@@ -14,6 +14,7 @@ import {
   Container,
 } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
+import {CgProfile} from "react-icons/cg"
 
 const Navigation = (props) => {
   const [showLogOutPopOver, setShowLogOutPopOver] = useState(false);
@@ -51,15 +52,16 @@ const Navigation = (props) => {
                   {props.completeCount}
                 </Badge>
               </Nav.Link>
-            </Nav>
-            <Nav>
-              
               <Nav.Link onClick={() => props.showFriends(true)}>
               <Badge className="completed-badge" bg="secondary">
                   {props.receivedCount===0? null:`${props.receivedCount} friend request received!`}
                 </Badge>
                 Friends
               </Nav.Link>
+            </Nav>
+            <Nav>
+              
+              
               {/* <OverlayTrigger
                 trigger="focus"
                 placement="bottom"
@@ -75,11 +77,12 @@ const Navigation = (props) => {
                 </Nav.Link>
                 
               </OverlayTrigger> */}
+              <div>
                 <Navbar.Text>
-         {props.userDisplayName===undefined? "Welcome!":`Signed in as: ${props.userDisplayName}`}
-      </Navbar.Text>
-                
-                
+         {props.userDisplayName===undefined? "Welcome!":`${props.userDisplayName}`}
+      </Navbar.Text>{" "}
+      <CgProfile/>
+      </div>
             </Nav>
           </Navbar.Collapse>
         </Container>

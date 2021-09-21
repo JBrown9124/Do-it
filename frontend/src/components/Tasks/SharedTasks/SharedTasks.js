@@ -25,19 +25,28 @@ import {
   Alert,
   Tabs,
   Tab,
+  Spinner,
+  ToggleButton
 } from "react-bootstrap";
+
+import { FaUserAlt, FaUserFriends } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { VscAdd } from "react-icons/vsc";
 
+import { ImCheckmark, ImShare2 } from "react-icons/im";
+import { FiEdit } from "react-icons/fi";
 
+import { RiDeleteBin2Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
-
+import {CgGoogleTasks} from "react-icons/cg"
 import moment from "moment";
 import SharedCreateModal from "./SharedCreateModal";
-import url from "../../../services/URL"
-import EditTaskModal from "../SoloTasks/EditTaskModal";
-
+import url from "../../../services/URL";
+import EditTaskModal from "./EditTaskModal";
+import FlipMove from "react-flip-move";
 import { FaArrowCircleUp } from "react-icons/fa";
+import FriendShareModal from "../../Friends/FriendShareModal"
 
 function SharedTasks(props) {
   const [deleteTaskID, setDeleteTaskID] = useState(null);
@@ -53,12 +62,13 @@ function SharedTasks(props) {
   const [searchResults, setSearchResults] = useState([]);
   const [flipDisabled, setFlipDisabled] = useState(true);
   const [showToast, setShowToast] = useState(false);
+  const [showFriendShareModal, setShowFriendShareModal] = useState(false);
   const [toastMessage, setToastMessage] = useState("Saved.");
   const [toastColor, setToastColor] = useState("Light");
   const [showScroll, setShowScroll] = useState(false);
   const [tabKey, setTabKey] = useState("Shared");
-  
-  
+  const [sharedTaskData, setSharedTaskData] = useState([])
+
   const handleTabSelect = (key) => {
     setTabKey(key);
     if (key === "Solo") {
@@ -98,6 +108,12 @@ function SharedTasks(props) {
     );
     setSearchResults(results);
   }, [searchItem]);
+  const handleSoloCheck = () =>{
+    const results = props.incompletedSharedTasksData.filter(
+      (user) =>
+        user.sharing_with.user_display_name === null );
+    setSearchResults(results);
+  }
 
   // const handleClose = () => setShowOffCanvas(false);
   // const handleOffCanvasShow = (e) => {
@@ -107,34 +123,26 @@ function SharedTasks(props) {
   const handleCreate = (data) => {
     props.incompletedSharedTasksData.unshift(data);
     setToastMessage("Saved.");
-    setToastColor("light");
-    axios
-      .post(
-        `${url}${props.userID}/shared-tasks`,
-        data
-      )
-      .then((res) => {
-        setShowToast(true);
-      });
+    setToastColor("success");
+    axios.post(`${url}${props.userID}/tasks`, data).then((res) => {
+      setShowToast(true);
+    });
   };
   const handleComplete = (e) => {
+    console.log(e);
     setAnimationType("complete");
+
     const findTaskByID = props.incompletedSharedTasksData.find(
       ({ task }) => task.task_id === e
     );
-    console.log(findTaskByID);
+
     const data = { completed_task_id: e };
     props.completedSharedTasksData.unshift(findTaskByID);
-    setToastColor("info");
+    setToastColor("primary");
     setToastMessage("Completed!");
-    axios
-      .put(
-        `${url}${props.userID}/completed-tasks`,
-        data
-      )
-      .then((resp) => {
-        setShowToast(true);
-      });
+    axios.put(`${url}${props.userID}/completed-tasks`, data).then((resp) => {
+      setShowToast(true);
+    });
     const remainingTasks = props.incompletedSharedTasksData.filter(function (
       value,
       index,
@@ -162,7 +170,7 @@ function SharedTasks(props) {
     setToastColor("danger");
     const data = { task_id: e };
     axios
-      .delete(`${url}${props.userID}/shared-tasks`, {
+      .delete(`${url}${props.userID}/tasks`, {
         data: data,
       })
       .then((resp) => {
@@ -171,6 +179,7 @@ function SharedTasks(props) {
   };
   const handleDeleteOffCanvas = (e) => {
     setDeleteTaskID(e);
+
     const findTaskByID = props.incompletedSharedTasksData.find(
       ({ task }) => task.task_id === e
     );
@@ -181,25 +190,20 @@ function SharedTasks(props) {
     const taskByID = props.incompletedSharedTasksData.find(
       ({ task }) => task.task_id === data.task_id
     );
-    console.log(taskByID);
+    taskByID.task.task_drawing = data.task_drawing;
     taskByID.task.task_date_time = data.task_date_time;
     taskByID.task.task_priority = data.task_priority;
     taskByID.task.task_description = data.task_description;
     taskByID.task.task_name = data.task_name;
     setToastMessage("Saved.");
     setToastColor("warning");
-    axios
-      .put(
-        `${url}${props.userID}/shared-tasks`,
-        data
-      )
-      .then((res) => {
-        setShowToast(true);
-      });
+    axios.put(`${url}${props.userID}/tasks`, data).then((res) => {
+      setShowToast(true);
+    });
   };
 
-  const handleSendEditData = (e) => {
-    const data = e.split(",");
+  const handleSendEditData = (data) => {
+    
     setSendEditData(data);
     setEditModalShow(true);
   };
@@ -248,16 +252,20 @@ function SharedTasks(props) {
     );
     return setSearchResults(sortedSearch);
   };
-  const sortByFriendName = () => {
-    setAnimationType("sort");
+  const handleShare = (e) =>{
+    setShowFriendShareModal(true);
+    setSharedTaskData(e)
+  }
+  // const sortByFriendName = () => {
+  //   setAnimationType("sort");
 
-    const sortedSearch = [...searchResults].sort((a, b) =>
-      a.sharing_with.user_display_name
-        .toLowerCase()
-        .localeCompare(b.sharing_with.user_display_name.toLowerCase())
-    );
-    return setSearchResults(sortedSearch);
-  };
+  //   const sortedSearch = [...searchResults].sort((a, b) =>
+  //     a.sharing_with.user_display_name
+  //       .toLowerCase()
+  //       .localeCompare(b.sharing_with.user_display_name.toLowerCase())
+  //   );
+  //   return setSearchResults(sortedSearch);
+  // };
   const cardBorder = {
     A: "danger",
     B: "warning",
@@ -267,7 +275,7 @@ function SharedTasks(props) {
   };
   const cardAnimation = {
     complete: "accordionHorizontal",
-    delete: "elevator",
+    delete: "fade",
     sort: "accordionVertical",
   };
 
@@ -279,7 +287,7 @@ function SharedTasks(props) {
           onClick={scrollTop}
           style={{ height: 40, display: showScroll ? "flex" : "none" }}
         />
-        <div className="create-task">
+        {/* <div className="create-task">
           <div className="d-grid gap-2">
             <Button
               // className="create-button"\
@@ -291,7 +299,14 @@ function SharedTasks(props) {
               {createModalShow ? "Sharing..." : "Share"}
             </Button>
           </div>
-        </div>
+        </div> */}
+        {/* <VscAdd
+          style={{ color: "green", height: 40 }}
+          className="create-icon" // className="create-button"\
+          variant="success"
+          size="lg"
+          onClick={(e) => setcreateModalShow(true)}
+        /> */}
         <SharedCreateModal
           allFriendsData={props.allFriendsData}
           show={createModalShow}
@@ -302,10 +317,19 @@ function SharedTasks(props) {
         <EditTaskModal
           show={editModalShow}
           onHide={() => setEditModalShow(false)}
-          targeteditData={sendEditData}
-          userID={sendEditData[0]}
+          editData={sendEditData}
+          
           retrieveEditData={(data) => handleRetrieveEditData(data)}
         />
+        <FriendShareModal
+        createData = {(data)=>handleCreate(data)}
+        show = {showFriendShareModal}
+        allFriendsData={props.allFriendsData}
+        onHide={()=>setShowFriendShareModal(false)}
+        sharedTaskData = {sharedTaskData}
+
+
+/>
         <Offcanvas
           show={showOffCanvas}
           onHide={() => setShowOffCanvas(false)}
@@ -318,27 +342,24 @@ function SharedTasks(props) {
           </Offcanvas.Header>
           <div className="text-center">This will be permanent!</div>
           <Offcanvas.Body className="tasks-container">
-            
             <ButtonGroup aria-label="Basic example">
-              <div  >
-              <Button
-                onClick={(e) => handleDelete(deleteTaskID)}
-                variant="danger"
-                size="lg"
-              >
-                Yes
-              </Button>
+              <div>
+                <Button
+                  onClick={(e) => handleDelete(deleteTaskID)}
+                  variant="danger"
+                  size="lg"
+                >
+                  Yes
+                </Button>
               </div>
               <div className="card-buttons">
-              
-              <Button
-             
-                variant="primary"
-                size="lg"
-                onClick={() => setShowOffCanvas(false)}
-              >
-                No
-              </Button>
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={() => setShowOffCanvas(false)}
+                >
+                  No
+                </Button>
               </div>
             </ButtonGroup>
           </Offcanvas.Body>
@@ -400,7 +421,7 @@ function SharedTasks(props) {
 
           <ButtonGroup aria-label="Third group">
             <DropdownButton
-            disabled = {Object.keys(searchResults).length>0?false:true}
+              disabled={Object.keys(searchResults).length > 0 ? false : true}
               size="med"
               variant="secondary"
               id="dropdown-basic-button"
@@ -422,12 +443,56 @@ function SharedTasks(props) {
               <Dropdown.Item onClick={() => sortByTaskName()}>
                 Name
               </Dropdown.Item>
-              <Dropdown.Item onClick={() => sortByFriendName()}>
+              {/* <Dropdown.Item onClick={() => sortByFriendName()}>
                 Friend name
-              </Dropdown.Item>
+              </Dropdown.Item> */}
             </DropdownButton>
           </ButtonGroup>
         </ButtonToolbar>
+        {/* <div  className="check-box-filter">
+        <ButtonGroup>
+        
+          <ToggleButton
+            key="1"
+            id={`radio-1`}
+            type="radio"
+            variant={'outline-success'}
+            name="radio"
+            // value={radio.value}
+            // checked={radioValue === radio.value}
+            // onChange={(e) => setRadioValue(e.currentTarget.value)}
+          >
+            
+          </ToggleButton>
+          
+          <ToggleButton
+            key="1"
+            id={`radio-1`}
+            type="radio"
+            variant={'outline-success'}
+            name="radio"
+            // value={radio.value}
+            // checked={radioValue === radio.value}
+            // onChange={(e) => setRadioValue(e.currentTarget.value)}
+          >
+            
+          </ToggleButton>
+          
+          <ToggleButton
+            key="1"
+            id={`radio-1`}
+            type="radio"
+            variant={'outline-success'}
+            name="radio"
+            // value={radio.value}
+            // checked={radioValue === radio.value}
+            // onChange={(e) => setRadioValue(e.currentTarget.value)}
+          >
+            
+          </ToggleButton>
+          
+      </ButtonGroup>
+      </div> */}
         {/* <Alert  animation={true} variant="light"  className="toast-container" onClose={() => setShowToast(false)}  show={showToast} delay={3000}  autohide>
   
  
@@ -445,10 +510,11 @@ function SharedTasks(props) {
           delay={3000}
           autohide
         >
-          <Toast.Body>{toastMessage}</Toast.Body>
+          <Toast.Body>Saved.</Toast.Body>
         </Toast>
-
+        <FlipMove leaveAnimation={cardAnimation[animationType]} staggerDelayBy={150}>
         {searchResults.map(({ task, sharing_with }) => (
+         
           <div className="tasks-container" key={task.task_id}>
             <Card
               className="task-card"
@@ -456,25 +522,58 @@ function SharedTasks(props) {
               style={{ width: "22rem" }}
             >
               <Card.Header>
-                Sharing {task.task_name} with {sharing_with.user_display_name}
+              
+              {sharing_with.user_display_name === null ? (<div  className="card-social-icon"><FaUserAlt /></div>) : (
+                  <div  className="card-social-icon">{sharing_with.user_display_name}{" "}<FaUserFriends  className="card-social-icon"/></div>
+                )}
+                {task.task_name}
               </Card.Header>
+
               <Card.Body>
                 <Card.Text>{task.task_description}</Card.Text>
+                <Card.Img variant="bottom" src={task.task_drawing} />
                 <ButtonGroup>
                   <div>
+                    <Button variant="info" size="med"
+                    onClick={()=>handleShare({
+                      user_id:props.userID,
+                      task_priority:task.task_priority,
+                      task_name:task.task_name,
+                      
+                      task_description:task.task_description,
+                      task_date_time: task.task_date_time,
+                      task_drawing: task.task_drawing,
+                    })}
+                   
+                    
+                    >
+                      <ImShare2 className="task-card-icon-size" />
+                    </Button>
+                  </div>
+                  <div className="card-buttons">
                     <Button
                       variant="primary"
                       size="med"
                       value={task.task_id}
-                      onClick={(e) => handleComplete(e.target.value)}
+                      onClick={(e) => handleComplete(task.task_id)}
                     >
-                      Complete
+                      <ImCheckmark className="task-card-icon-size" />
                     </Button>
                   </div>
                   <div className="card-buttons">
                     <Button
                       variant="warning"
-                      onClick={(e) => handleSendEditData(e.target.value)}
+                      onClick={(e) =>
+                        handleSendEditData({
+                          user_id:props.userID,
+                          task_priority:task.task_priority,
+                          task_name:task.task_name,
+                          task_id:task.task_id,
+                          task_description:task.task_description,
+                          task_date_time: task.task_date_time,
+                          task_drawing: task.task_drawing,
+                        }
+                      )}
                       size="med"
                       value={[
                         props.userID,
@@ -485,17 +584,17 @@ function SharedTasks(props) {
                         task.task_date_time,
                       ]}
                     >
-                      Edit
+                      <FiEdit className="task-card-icon-size" />
                     </Button>
                   </div>
                   <div className="card-buttons">
                     <Button
                       value={task.task_id}
                       variant="danger"
-                      onClick={(e) => handleDeleteOffCanvas(e.target.value)}
+                      onClick={(e) => handleDeleteOffCanvas(task.task_id)}
                       size="med"
                     >
-                      Delete
+                      <RiDeleteBin2Line className="task-card-icon-size" />
                     </Button>
                   </div>
                 </ButtonGroup>
@@ -505,9 +604,10 @@ function SharedTasks(props) {
               </Card.Footer>
             </Card>
           </div>
+        
         ))}
-
-        {/* <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
+        </FlipMove>
+        <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
           
           <Button
             // className="create-button"
@@ -516,12 +616,12 @@ function SharedTasks(props) {
             size="lg"
             onClick={(e) => setcreateModalShow(true)}
           >
-            {createModalShow ? "Creating...": "Create"}
+            {createModalShow ? "Creating...": "Create"} {" "}<CgGoogleTasks/>
           </Button>
           
-        </Navbar>  */}
+        </Navbar> 
       </div>
     );
-  else return null;
+  else return (null);
 }
 export default SharedTasks;
