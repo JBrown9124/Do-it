@@ -53,12 +53,12 @@ const Navigation = (props) => {
                 </Badge>
               </Nav.Link>
               <Nav.Link onClick={() => props.showFriends(true)}>
+                Friends
                 <Badge className="completed-badge" bg="secondary">
                   {props.receivedCount === 0
                     ? null
                     : `${props.receivedCount} friend request received!`}
                 </Badge>
-                Friends
               </Nav.Link>
             </Nav>
             <Nav>

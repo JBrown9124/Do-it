@@ -1,108 +1,46 @@
- /* .App {
-  display: flex;
-align-items: center;
-justify-content: center;
-width: 100%;
-height: 100%
-  
-  
-  
-} */
 @import url("https://fonts.googleapis.com/css?family=Galano Grotesque");
-.app-modal{padding: 10px;
- 
- 
 
-  
-  
-    
-    text-align:center;
-    
-}
-.tasks-tab{
-  
-  justify-content: center;
-  /* margin-bottom: 20px;
-  margin-top:56px; */
+.app-modal {
+  padding: 10px;
   text-align: center;
-  
-  width:100%;
-  
- 
+
 }
-.spinner-log-in{
-  margin:auto;
+
+.tasks-tab {
+  justify-content: center;
+  text-align: center;
+  width: 100%;
+
+
+}
+
+.spinner-log-in {
+  margin: auto;
   text-align: center;
   justify-content: center;
 }
 
-.completed-tabs{
+.completed-tabs {
   justify-content: center;
   margin-bottom: 30px;
-  margin-top:0px;
+  margin-top: 0px;
 
 }
-.log-modal-pw{
+
+.log-modal-pw {
   padding: 5px;
-  
+
 }
-.reg-modal-pw{
+
+.reg-modal-pw {
   padding: 5px;
-  
-}
-.completed-badge{
-  
-  margin-left:1px
 
 }
-.tasks-nav{
-  position:fixed;
+
+.completed-badge {
+  margin-left: 1px
 }
 
-/* .App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.tasks-nav {
+  position: fixed;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: rgb(116, 36, 36);
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}  */
-/* 
-.Appcontainer {
-  background-color: #c8d8e4;
-  min-height: 100vh;
-  border: none !important;
-
-  font-size: calc(10px + 2vmin);
-  color: rgb(224, 224, 224);
-  font-family: "Fauna One";
-  margin-bottom: -25px;
-  
-
-} */

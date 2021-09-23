@@ -2,38 +2,21 @@ import {
   Modal,
   Button,
   Form,
-  ButtonGroup,
-  Dropdown,
-  Table,
-  Card,
-  Offcanvas,
-  OverlayTrigger,
-  Popover,
-  DropdownButton,
   FormControl,
-  Container,
-  ListGroup,
   Row,
   Col,
   Toast,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
-import { Link } from "react-router-dom";
-// import "./Tasks.css";
-
 import url from "../../services/URL";
-import FlipMove from "react-flip-move";
-import { v4 as uuidv4 } from "uuid";
-import { FaArrowCircleUp } from "react-icons/fa";
+
 function AddFriendModal(props) {
   const [allUsersData, setAllUsersData] = useState([]);
   const [searchItem, setSearchItem] = useState([]);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [requestSuccess, setRequestSuccess] = useState(false);
   const [showSuccessToast, setShowSuccessToast] = useState(false);
   useEffect(() => handleClearInput(), [props.show]);
   function simulateNetworkRequest() {
@@ -55,8 +38,6 @@ function AddFriendModal(props) {
   const handleUsers = () => {
     axios.get(`${url}${props.userID}/users`).then((response) => {
       setAllUsersData(response.data.all_users);
-
-      // isLoaded(true);
     });
   };
   const MINUTE_MS = 30000;
@@ -133,18 +114,8 @@ function AddFriendModal(props) {
 
       setIsError(false);
       setErrorMessage("");
-
-      // props.allFriendsData.push(user); request pending data
-
-      // isLoaded(true);
     });
   };
-
-  // .catch((err) => {
-  //   setErrorMessage(err.response.data);
-  //   setIsError(true);
-  //   setLoading(false);
-  // });
 
   if (props.show === true && allUsersData.length < 1) {
     handleUsers();

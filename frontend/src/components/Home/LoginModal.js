@@ -1,8 +1,9 @@
-import { Modal, Button, Form, ButtonGroup } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import React, { useState } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom";
+
 import url from "../../services/URL";
+
 function Login(props) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -47,16 +48,6 @@ function Login(props) {
   };
 
   return (
-    // <Modal
-    //   {...props}
-    //   size="med"
-    //   aria-labelledby="contained-modal-title-vcenter"
-    //   centered
-    // >
-    //   <Modal.Header>
-    //     <Modal.Title id="contained-modal-title-vcenter">Log In</Modal.Title>
-    //   </Modal.Header>
-    //   <Modal.Body>
     <>
       <div className="container p-3">
         <div style={{ maxWidth: 350 }}>

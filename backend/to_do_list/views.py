@@ -55,12 +55,14 @@ def completed_tasks(request, user):
             return HttpResponse("marked complete successful")
     elif request.method == 'DELETE':
         json_data = json.loads(request.body)
-        if json_data['task_id'] == "all":
-            t = Tasks.objects.filter(user=u, task_completed=True)
-            t.delete()
+        if len(json_data) > 1:
+            for task in json_data:
+                t = Tasks.objects.filter(pk=task['task']['task_id'])
+                t.delete()
+
             return HttpResponse("completed tasks deleted")
         else:
-            t = Tasks.objects.filter(pk=json_data['task_id'])
+            t = Tasks.objects.filter(pk=json_data[0]['task']['task_id'])
             t.delete()
             return HttpResponse("completed task deleted")
 
@@ -150,7 +152,7 @@ def tasks(request, user):
     if request.method == 'DELETE':
         json_data = json.loads(request.body)
 
-        t = Tasks.objects.filter(user=u, pk=json_data['task_id'])
+        t = Tasks.objects.filter(pk=json_data['task_id'])
         t.delete()
 
         return HttpResponse(f"{user} tasks deleted")
@@ -185,7 +187,7 @@ def tasks(request, user):
         json_data = json.loads(request.body)
         d = datetime.datetime.strptime(
             json_data["task_date_time"], '%d. %B %Y %H:%M')
-        t = Tasks(pk=json_data['task_id'], user=u, task_name=json_data['task_name'], task_priority=json_data['task_priority'],
+        t = Tasks(pk=json_data['task_id'], task_name=json_data['task_name'], task_priority=json_data['task_priority'],
                   task_drawing=json_data['task_drawing'], task_description=json_data['task_description'], task_date_time=d)
         t.save()
         return HttpResponse("nice")
@@ -247,6 +249,20 @@ def register(request):
             u = User(user_hash=hashed_password, user_salt=salt,
                      user_display_name=json_data['name'], user_email=json_data['email'], user_registered=True)
             u.save()
+            host = User.objects.get(pk=2)
+            Friend.objects.add_friend(host, u)
+            friend_request = FriendshipRequest.objects.get(
+                from_user=host, to_user=u)
+            friend_request.accept()
+            new_id = uuid.uuid4()
+            welcome_task = Tasks.objects.get(
+                pk="8e077573-817a-47fa-9be2-7e1020d4307a")
+            welcome_task_with_new_id = t = Tasks(task_id=new_id, user=host, task_name=welcome_task.task_name, task_description=welcome_task.task_description,
+                                                 task_drawing=welcome_task.task_drawing, task_date_time=welcome_task.task_date_time, task_priority=welcome_task.task_priority)
+            welcome_task_with_new_id.save()
+            shared_task_created = SharedTasks(
+                sender=host, recipient=u, task=welcome_task_with_new_id)
+            shared_task_created.save()
 
             return JsonResponse({"user_id": u.user_id, "user_display_name": u.user_display_name})
 
@@ -268,8 +284,6 @@ def add_friend(request, user):
         return HttpResponse("friend request sent")
     except:
         return HttpResponseServerError("User is already your friend")
-        # except:
-        #     return HTTPResponseServerError("You are already friends with this user")
 
 
 @csrf_exempt
@@ -312,9 +326,9 @@ def list_received_friend_requests(request, user):
     if request.method == "GET":
         data = []
         user_friend_requests = Friend.objects.unrejected_requests(user=u)
-        for request in user_friend_requests:
-            data.append({"user_display_name": request.from_user.user_display_name,
-                        "user_id": request.from_user.user_id, "user_email": friend.user_email})
+        for user_friend in user_friend_requests:
+            data.append({"user_display_name": user_friend.from_user.user_display_name,
+                        "user_id": user_friend.from_user.user_id, "user_email": user_friend.from_user.user_email})
         return JsonResponse({"user_friend_requests": data})
 
 
@@ -326,7 +340,7 @@ def list_sent_friend_requests(request, user):
         user_sent_friend_requests = Friend.objects.sent_requests(user=u)
         for friend_request in user_sent_friend_requests:
             data.append({"user_display_name": friend_request.to_user.user_display_name,
-                        "user_id": friend_request.to_user.user_id, "user_email": friend.user_email})
+                        "user_id": friend_request.to_user.user_id, "user_email": friend_request.to_user.user_email})
         return JsonResponse({"user_sent_friend_requests": data})
 
 

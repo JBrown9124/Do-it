@@ -1,18 +1,15 @@
-import { Modal, Button, Form } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
+import { FiEdit } from "react-icons/fi";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime/css/react-datetime.css";
-import Datetime from "react-datetime";
 import moment from "moment";
 function EditTaskModal(props) {
-  const [taskData, settaskData] = useState(null);
+  
   const [name, setName] = useState("");
   const [priority, setPriority] = useState("");
   const [description, setDescription] = useState("");
   const [taskID, settaskID] = useState(null);
-  // const [attendees, setAttendees] = useState(taskData.task_attendees);
   const [dateTime, setdateTime] = useState("");
   const [drawing, setDrawing] = useState("");
   const [loading, setLoading] = useState(false);
@@ -29,7 +26,7 @@ function EditTaskModal(props) {
   useEffect(() => handleseteditData(), [props.show]);
 
   const handleSubmit = () => {
-    // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
+    
     const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
     setLoading(true);
     setIsError(false);
@@ -47,32 +44,11 @@ function EditTaskModal(props) {
     setName("");
     setPriority("");
     setDescription("");
-    // setAttendees("");
+    
     setdateTime("");
     settaskID(null);
     props.onHide();
   };
-
-  //   axios
-  //     .put(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
-  //     .then((res) => {
-  //       // setData(res.data);
-
-  //       setName("");
-  //       setPriority("");
-  //       setDescription("");
-  //       // setAttendees("");
-  //       setdateTime("");
-
-  //       setLoading(false);
-  //       props.onHide();
-  //       return props.user();
-  //     })
-  //     .catch((err) => {
-  //       setLoading(false);
-  //       setIsError(true);
-  //     });
-  // };
 
   if (props.show === true) {
     return (
@@ -84,7 +60,9 @@ function EditTaskModal(props) {
           centered
         >
           <Modal.Header>
-            <Modal.Title id="contained-modal-title-vcenter">Edit</Modal.Title>
+            <Modal.Title id="contained-modal-title-vcenter">
+              Edit{" "}<FiEdit className="task-card-icon-size" />
+            </Modal.Title>
           </Modal.Header>
           <Modal.Body>
             <div style={{ maxWidth: 350 }}>
@@ -136,31 +114,12 @@ function EditTaskModal(props) {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-              {/* <div classNames="form-group">
-                <label htmlFor="Attendees" className="mt-2">
-                  Attendees
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="Attendees"
-                  placeholder="Enter amount of attendees"
-                  value={attendees}
-                  onChange={(e) => setAttendees(e.target.value)}
-                />
-              </div> */}
+
               <div className="form-group">
                 <label htmlFor="dateTime" className="mt-2">
                   What day and time are you planning on completing this task?
                 </label>
-                {/* <input
-                type="text"
-                className="form-control"
-                id="dateTime"
-                placeholder="Enter date and time"
-                value={dateTime}
-                onChange={(e) => setdateTime(e.target.value)}
-              /> */}
+
                 <DateTimePicker onChange={setdateTime} value={dateTime} />
               </div>
 
@@ -172,19 +131,12 @@ function EditTaskModal(props) {
 
               <button
                 type="submit"
-                className="btn btn-primary mt-3"
+                className="btn btn-warning mt-3"
                 onClick={handleSubmit}
                 disabled={loading}
               >
                 {loading ? "Loading..." : "Change"}
               </button>
-              {/* {data && (
-              <div className="mt-3">
-                <strong>Output:</strong>
-                <br />
-                <pre>{JSON.stringify(data, null, 2)}</pre>
-              </div>
-            )} */}
             </div>
           </Modal.Body>
           <Modal.Footer>

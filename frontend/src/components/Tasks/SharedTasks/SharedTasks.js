@@ -1,44 +1,25 @@
 import {
-  Modal,
   Button,
   Form,
   ButtonGroup,
   Dropdown,
-  Table,
   Card,
-  Container,
-  Row,
-  Col,
   DropdownButton,
-  Popover,
   OverlayTrigger,
   FormControl,
-  CardColumns,
-  Fade,
   Offcanvas,
   ButtonToolbar,
   Navbar,
-  Nav,
   Tooltip,
   Toast,
-  ToastContainer,
-  Alert,
-  Tabs,
-  Tab,
-  Spinner,
   ToggleButton,
 } from "react-bootstrap";
-
 import { FaUserAlt, FaUserFriends } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { VscAdd } from "react-icons/vsc";
-
 import { ImCheckmark, ImShare2 } from "react-icons/im";
 import { FiEdit } from "react-icons/fi";
-
 import { RiDeleteBin2Line } from "react-icons/ri";
-import { Link } from "react-router-dom";
 import { CgGoogleTasks } from "react-icons/cg";
 import moment from "moment";
 import SharedCreateModal from "./SharedCreateModal";
@@ -49,33 +30,22 @@ import { FaArrowCircleUp } from "react-icons/fa";
 import FriendShareModal from "../../Friends/FriendShareModal";
 
 function SharedTasks(props) {
+  const [radioValue, setRadioValue] = useState("Solo+Shared");
   const [deleteTaskID, setDeleteTaskID] = useState(null);
   const [deleteTaskName, setDeleteTaskName] = useState(null);
   const [sendEditData, setSendEditData] = useState("");
-
   const [createModalShow, setcreateModalShow] = useState(false);
-
   const [editModalShow, setEditModalShow] = useState(false);
-  const [animationType, setAnimationType] = useState("delete");
+  const [animationType, setAnimationType] = useState("sort");
   const [showOffCanvas, setShowOffCanvas] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const [flipDisabled, setFlipDisabled] = useState(true);
   const [showToast, setShowToast] = useState(false);
   const [showFriendShareModal, setShowFriendShareModal] = useState(false);
   const [toastMessage, setToastMessage] = useState("Saved.");
   const [toastColor, setToastColor] = useState("Light");
   const [showScroll, setShowScroll] = useState(false);
-  const [tabKey, setTabKey] = useState("Shared");
   const [sharedTaskData, setSharedTaskData] = useState([]);
-
-  const handleTabSelect = (key) => {
-    setTabKey(key);
-    if (key === "Solo") {
-      setTabKey("Shared");
-      return props.handleSoloSelected();
-    }
-  };
 
   const checkScrollTop = () => {
     if (!showScroll && window.pageYOffset > 400) {
@@ -88,32 +58,70 @@ function SharedTasks(props) {
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  useEffect(
-    () => setSearchResults(props.incompletedSharedTasksData),
-    [props.incompletedSharedTasksData.length]
-  );
+  // useEffect(
+  //   () => setSearchResults(props.incompletedSharedTasksData),
+  //   [props.incompletedSharedTasksData.length]
+  // );
 
   useEffect(() => {
-    setAnimationType("sort");
-    const results = props.incompletedSharedTasksData.filter(
-      (task_name) =>
+    if (radioValue === "Shared") {
+      const results = props.incompletedSharedTasksData.filter(
+        (task_name) =>
+          task_name.sharing_with.user_id !== null &&
+          (task_name.task.task_name.toLowerCase().includes(searchItem) ||
+            moment(task_name.task.task_date_time)
+              .format("MMMM DD YYYY hh:mm A")
+              .toLowerCase()
+              .includes(searchItem) ||
+            task_name.sharing_with.user_display_name
+              .toLowerCase()
+              .includes(searchItem))
+      );
+      setSearchResults(results);
+    } else if (radioValue === "Solo") {
+      const results = props.incompletedSharedTasksData.filter(
+        (task_name) =>
+          task_name.sharing_with.user_id === null &&
+          (task_name.task.task_name.toLowerCase().includes(searchItem) ||
+            moment(task_name.task.task_date_time)
+              .format("MMMM DD YYYY hh:mm A")
+              .toLowerCase()
+              .includes(searchItem))
+      );
+
+      setSearchResults(results);
+    } else if (radioValue === "Solo+Shared") {
+      const results = props.incompletedSharedTasksData.filter((task_name) =>
         task_name.task.task_name.toLowerCase().includes(searchItem) ||
         moment(task_name.task.task_date_time)
           .format("MMMM DD YYYY hh:mm A")
           .toLowerCase()
           .includes(searchItem) ||
-        task_name.sharing_with.user_display_name
-          .toLowerCase()
-          .includes(searchItem)
-    );
-    setSearchResults(results);
+        task_name.sharing_with.user_display_name === null
+          ? "z"
+          : task_name.sharing_with.user_display_name
+              .toLowerCase()
+              .includes(searchItem)
+      );
+      setSearchResults(results);
+    }
   }, [searchItem]);
-  const handleSoloCheck = () => {
-    const results = props.incompletedSharedTasksData.filter(
-      (user) => user.sharing_with.user_display_name === null
-    );
-    setSearchResults(results);
-  };
+  useEffect(() => {
+    if (radioValue === "Shared") {
+      const results = props.incompletedSharedTasksData.filter(
+        (task_name) => task_name.sharing_with.user_id !== null
+      );
+      setSearchResults(results);
+    } else if (radioValue === "Solo") {
+      const results = props.incompletedSharedTasksData.filter(
+        (task_name) => task_name.sharing_with.user_id === null
+      );
+
+      setSearchResults(results);
+    } else if (radioValue === "Solo+Shared") {
+      setSearchResults(props.incompletedSharedTasksData);
+    }
+  }, [radioValue, props.incompletedSharedTasksData.length]);
 
   // const handleClose = () => setShowOffCanvas(false);
   // const handleOffCanvasShow = (e) => {
@@ -142,6 +150,7 @@ function SharedTasks(props) {
     setToastMessage("Completed!");
     axios.put(`${url}${props.userID}/completed-tasks`, data).then((resp) => {
       setShowToast(true);
+      setAnimationType("sort");
     });
     const remainingTasks = props.incompletedSharedTasksData.filter(function (
       value,
@@ -175,6 +184,7 @@ function SharedTasks(props) {
       })
       .then((resp) => {
         setShowToast(true);
+        setAnimationType("sort");
       });
   };
   const handleDeleteOffCanvas = (e) => {
@@ -255,16 +265,22 @@ function SharedTasks(props) {
     setShowFriendShareModal(true);
     setSharedTaskData(e);
   };
-  // const sortByFriendName = () => {
-  //   setAnimationType("sort");
+  const sortByFriendName = () => {
+    setAnimationType("sort");
 
-  //   const sortedSearch = [...searchResults].sort((a, b) =>
-  //     a.sharing_with.user_display_name
-  //       .toLowerCase()
-  //       .localeCompare(b.sharing_with.user_display_name.toLowerCase())
-  //   );
-  //   return setSearchResults(sortedSearch);
-  // };
+    const sortedSearch = [...searchResults].sort((a, b) =>
+      a.sharing_with.user_display_name === null
+        ? "z"
+        : a.sharing_with.user_display_name
+            .toLowerCase()
+            .localeCompare(
+              b.sharing_with.user_display_name === null
+                ? "z"
+                : b.sharing_with.user_display_name.toLowerCase()
+            )
+    );
+    return setSearchResults(sortedSearch);
+  };
   const cardBorder = {
     A: "danger",
     B: "warning",
@@ -275,7 +291,7 @@ function SharedTasks(props) {
   const cardAnimation = {
     complete: "accordionHorizontal",
     delete: "fade",
-    sort: "accordionVertical",
+    sort: "elevator",
   };
 
   if (props.show === true && searchResults !== null)
@@ -286,26 +302,7 @@ function SharedTasks(props) {
           onClick={scrollTop}
           style={{ height: 40, display: showScroll ? "flex" : "none" }}
         />
-        {/* <div className="create-task">
-          <div className="d-grid gap-2">
-            <Button
-              // className="create-button"\
 
-              variant="success"
-              size="lg"
-              onClick={(e) => setcreateModalShow(true)}
-            >
-              {createModalShow ? "Sharing..." : "Share"}
-            </Button>
-          </div>
-        </div> */}
-        {/* <VscAdd
-          style={{ color: "green", height: 40 }}
-          className="create-icon" // className="create-button"\
-          variant="success"
-          size="lg"
-          onClick={(e) => setcreateModalShow(true)}
-        /> */}
         <SharedCreateModal
           allFriendsData={props.allFriendsData}
           show={createModalShow}
@@ -360,28 +357,47 @@ function SharedTasks(props) {
             </ButtonGroup>
           </Offcanvas.Body>
         </Offcanvas>
+        <div className="check-box-container">
+          <ButtonGroup size="lg" className="check-box-button-size">
+            <ToggleButton
+              key={0}
+              id={`radio-${0}`}
+              type="radio"
+              variant="secondary"
+              name="radio"
+              value={"Solo"}
+              checked={radioValue === "Solo"}
+              onChange={(e) => setRadioValue(e.currentTarget.value)}
+            >
+              <FaUserAlt />
+            </ToggleButton>
+            <ToggleButton
+              key={1}
+              id={`radio-${1}`}
+              type="radio"
+              variant="secondary"
+              name="radio"
+              value={"Solo+Shared"}
+              checked={radioValue === "Solo+Shared"}
+              onChange={(e) => setRadioValue(e.currentTarget.value)}
+            >
+              <FaUserAlt />+<FaUserFriends />
+            </ToggleButton>
 
-        {/* <div className="sticky-top">  */}
-        {/* <Button
-          // className="create-button"
-          className="create-task"
-          variant="success"
-          size="med"
-          onClick={(e) => setcreateModalShow(true)}
-        >
-          Create
-        </Button> */}
-        {/* </div>  */}
-        {/* <Tabs variant='pills' 
-        activeKey={tabKey}
-  onSelect={(k)=>handleTabSelect(k)}
-  id="noanim-tab-example"
-  className="tasks-tab">
-        <Tab eventKey="Solo" title="Solo" ></Tab>
-        
-        <Tab eventKey="Shared" title="Shared"  ></Tab>
-        </Tabs> */}
-
+            <ToggleButton
+              key={2}
+              id={`radio-${2}`}
+              type="radio"
+              variant="secondary"
+              name="radio"
+              value={"Shared"}
+              checked={radioValue === "Shared"}
+              onChange={(e) => setRadioValue(e.currentTarget.value)}
+            >
+              <FaUserFriends />
+            </ToggleButton>
+          </ButtonGroup>
+        </div>
         <ButtonToolbar
           className="top-tasks-buttons"
           aria-label="Toolbar with button groups"
@@ -439,63 +455,15 @@ function SharedTasks(props) {
               <Dropdown.Item onClick={() => sortByTaskName()}>
                 Name
               </Dropdown.Item>
-              {/* <Dropdown.Item onClick={() => sortByFriendName()}>
+              <Dropdown.Item
+                disabled={radioValue === "Solo"}
+                onClick={() => sortByFriendName()}
+              >
                 Friend name
-              </Dropdown.Item> */}
+              </Dropdown.Item>
             </DropdownButton>
           </ButtonGroup>
         </ButtonToolbar>
-        {/* <div  className="check-box-filter">
-        <ButtonGroup>
-        
-          <ToggleButton
-            key="1"
-            id={`radio-1`}
-            type="radio"
-            variant={'outline-success'}
-            name="radio"
-            // value={radio.value}
-            // checked={radioValue === radio.value}
-            // onChange={(e) => setRadioValue(e.currentTarget.value)}
-          >
-            
-          </ToggleButton>
-          
-          <ToggleButton
-            key="1"
-            id={`radio-1`}
-            type="radio"
-            variant={'outline-success'}
-            name="radio"
-            // value={radio.value}
-            // checked={radioValue === radio.value}
-            // onChange={(e) => setRadioValue(e.currentTarget.value)}
-          >
-            
-          </ToggleButton>
-          
-          <ToggleButton
-            key="1"
-            id={`radio-1`}
-            type="radio"
-            variant={'outline-success'}
-            name="radio"
-            // value={radio.value}
-            // checked={radioValue === radio.value}
-            // onChange={(e) => setRadioValue(e.currentTarget.value)}
-          >
-            
-          </ToggleButton>
-          
-      </ButtonGroup>
-      </div> */}
-        {/* <Alert  animation={true} variant="light"  className="toast-container" onClose={() => setShowToast(false)}  show={showToast} delay={3000}  autohide>
-  
- 
-  Saved.
-
-
-</Alert>  */}
 
         <Toast
           bg={toastColor}

@@ -1,27 +1,11 @@
 import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import {
-  Button,
-  Row,
-  Container,
-  Col,
-  Modal,
-  Carousel,
-  Alert,
-  Tabs,
-  Tab,
-  Nav,
-  Offcanvas,
-  Navbar,
-  Badge,
-  Spinner,
-} from "react-bootstrap";
-import { FaUserFriends } from "react-icons/fa";
-import { FaUserAlt } from "react-icons/fa";
+import { Modal, Carousel, Offcanvas } from "react-bootstrap";
+
 import React, { useEffect, useState } from "react";
 import Register from "./components/Home/RegisterModal";
-// import Routes from "./services/Routes";
+
 import Navigation from "./components/NavBar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./components/Tasks/SoloTasks/Tasks.css";
@@ -68,14 +52,14 @@ function App() {
   useEffect(() => handleFriendsData(), [userID]);
   useEffect(() => handleSentFriendRequestsData(), [userID]);
   useEffect(() => handleTasksData(), [userID]);
-
+  useEffect(() => handleReceivedFriendRequestsData(), [userID]);
   const MINUTE_MS = 30000;
   useEffect(() => {
     const interval = setInterval(() => {
       handleTasksData();
       handleFriendsData();
       handleSentFriendRequestsData();
-      handleReceivedFriendRequestsData(userID);
+      handleReceivedFriendRequestsData();
     }, MINUTE_MS);
 
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
@@ -90,7 +74,6 @@ function App() {
       .get(`${url}${userID}/user-received-friend-requests`)
       .then((response) => {
         setAllReceivedFriendRequestsData(response.data.user_friend_requests);
-        // isLoaded(true);
       });
   };
   const handleSentFriendRequestsData = () => {
@@ -104,14 +87,11 @@ function App() {
     axios.get(`${url}${userID}/tasks`).then((response) => {
       setAllCompletedData(response.data.complete);
       setAllIncompletedData(response.data.incomplete);
-
-      // isLoaded(true);
     });
   };
   const handleFriendsData = () => {
     axios.get(`${url}${userID}/user-friends`).then((response) => {
       setAllFriendsData(response.data.user_friends);
-      // isLoaded(true);
     });
   };
 
@@ -132,7 +112,7 @@ function App() {
       />
 
       <SharedTasks
-        // handleSoloSelected={() => setTasksCarouselIndex(0)}
+        
         updateTasks={(props) => setAllIncompletedData(props)}
         incompletedSharedTasksData={allIncompletedData}
         completedSharedTasksData={allCompletedData}
@@ -143,9 +123,6 @@ function App() {
         handledcompletedTasks={() => sethandleTasks(false)}
       />
 
-      {/* </Carousel.Item>
-        
-      </Carousel> */}
       <Offcanvas
         show={showCompletedTasks}
         onHide={() => setShowCompletedTasks(false)}
@@ -168,8 +145,6 @@ function App() {
             show={showCompletedTasks}
             hideCompletedTasks={(props) => setShowCompletedTasks(false)}
           />
-          {/* </Carousel.Item>
-          </Carousel> */}
         </Offcanvas.Body>
       </Offcanvas>
       <Friends
@@ -224,8 +199,6 @@ function App() {
           </Carousel.Item>
         </Carousel>
       </Modal>
-
-      {/* <Routes /> */}
     </div>
   );
 }

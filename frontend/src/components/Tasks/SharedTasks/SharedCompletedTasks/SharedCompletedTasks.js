@@ -1,23 +1,18 @@
 import {
-  Modal,
   Button,
   Form,
   ButtonGroup,
   Dropdown,
-  Table,
   Card,
-  Offcanvas,
   OverlayTrigger,
   Popover,
   DropdownButton,
   FormControl,
-  Container,
+  ToggleButton,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import FlipMove from "react-flip-move";
-import { Link } from "react-router-dom";
-// import "./Tasks.css";
 import { RiDeleteBin2Line } from "react-icons/ri";
 import { FaUserAlt, FaUserFriends } from "react-icons/fa";
 import { IoIosNuclear } from "react-icons/io";
@@ -27,34 +22,73 @@ import moment from "moment";
 import url from "../../../../services/URL";
 
 function SharedCompletedTasks(props) {
-  const [reuseData, setreuseData] = useState("");
-  const [animationType, setAnimationType] = useState("");
-
+  const [animationType, setAnimationType] = useState("sort");
+  const [radioValue, setRadioValue] = useState("Solo+Shared");
   const [showDeleteAllPopOver, setShowDeleteAllPopOver] = useState(false);
   const [showDeletePopOver, setShowDeletePopOver] = useState(false);
   const [deleteTaskID, setDeleteTaskID] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [searchResults, setSearchResults] = useState([]);
-  const handleClose = () => props.hideCompletedTasks();
-  useEffect(
-    () => setSearchResults(props.completedSharedTasksData),
-    [props.completedSharedTasksData.length]
-  );
+
   useEffect(() => {
-    setAnimationType("sort");
-    const results = props.completedSharedTasksData.filter(
-      (task_name) =>
+    if (radioValue === "Shared") {
+      const results = props.completedSharedTasksData.filter(
+        (task_name) =>
+          task_name.sharing_with.user_id !== null &&
+          (task_name.task.task_name.toLowerCase().includes(searchItem) ||
+            moment(task_name.task.task_date_time)
+              .format("MMMM DD YYYY hh:mm A")
+              .toLowerCase()
+              .includes(searchItem) ||
+            task_name.sharing_with.user_display_name
+              .toLowerCase()
+              .includes(searchItem))
+      );
+      setSearchResults(results);
+    } else if (radioValue === "Solo") {
+      const results = props.completedSharedTasksData.filter(
+        (task_name) =>
+          task_name.sharing_with.user_id === null &&
+          (task_name.task.task_name.toLowerCase().includes(searchItem) ||
+            moment(task_name.task.task_date_time)
+              .format("MMMM DD YYYY hh:mm A")
+              .toLowerCase()
+              .includes(searchItem))
+      );
+
+      setSearchResults(results);
+    } else if (radioValue === "Solo+Shared") {
+      const results = props.completedSharedTasksData.filter((task_name) =>
         task_name.task.task_name.toLowerCase().includes(searchItem) ||
         moment(task_name.task.task_date_time)
           .format("MMMM DD YYYY hh:mm A")
           .toLowerCase()
           .includes(searchItem) ||
-        task_name.sharing_with.user_display_name
-          .toLowerCase()
-          .includes(searchItem)
-    );
-    setSearchResults(results);
+        task_name.sharing_with.user_display_name === null
+          ? "solo"
+          : task_name.sharing_with.user_display_name
+              .toLowerCase()
+              .includes(searchItem)
+      );
+      setSearchResults(results);
+    }
   }, [searchItem]);
+  useEffect(() => {
+    if (radioValue === "Shared") {
+      const results = props.completedSharedTasksData.filter(
+        (task_name) => task_name.sharing_with.user_id !== null
+      );
+      setSearchResults(results);
+    } else if (radioValue === "Solo") {
+      const results = props.completedSharedTasksData.filter(
+        (task_name) => task_name.sharing_with.user_id === null
+      );
+
+      setSearchResults(results);
+    } else if (radioValue === "Solo+Shared") {
+      setSearchResults(props.completedSharedTasksData);
+    }
+  }, [radioValue, props.completedSharedTasksData.length]);
   const handleUndo = (e) => {
     setAnimationType("undo");
 
@@ -70,12 +104,14 @@ function SharedCompletedTasks(props) {
     ) {
       return value.task.task_id !== e;
     });
-    // setSearchResults(remainingTasks);
+
     props.updateTasks(remainingTasks);
     const data = { undo_completed_task_id: e };
     axios
       .put(`${url}${props.userID}/completed-tasks`, data)
-      .then((response) => {});
+      .then((response) => {
+        setAnimationType("sort");
+      });
   };
   const handleDeletePopOver = (e) => {
     setShowDeletePopOver(true);
@@ -90,32 +126,25 @@ function SharedCompletedTasks(props) {
     ) {
       return value.task.task_id !== e;
     });
-    // setSearchResults(remainingTasks);
+
     props.updateTasks(remainingTasks);
     const data = { task_id: e };
     axios
       .delete(`${url}${props.userID}/completed-tasks`, { data: data })
-      .then((response) => {});
+      .then((response) => {
+        setAnimationType("sort");
+      });
   };
   const handleDeleteAll = () => {
-    //   setAnimationType("deleteAll");
-    //   setShowDeleteAllPopOver(false);
-    //   props.updateTasks([]);
-    //   const data = props.completedSharedTasksData;
-    //   axios
-    //     .delete(
-    //       `${url}${props.userID}/completed-tasks`,
-    //       { data: data }
-    //     )
-    //     .then((response) => {});
-    // };
     setAnimationType("deleteAll");
     setShowDeleteAllPopOver(false);
     props.updateTasks([]);
-    const data = { task_id: "all" };
+    const data = props.completedSharedTasksData;
     axios
       .delete(`${url}${props.userID}/completed-tasks`, { data: data })
-      .then((response) => {});
+      .then((response) => {
+        setAnimationType("sort");
+      });
   };
   const sortByHighestPriority = () => {
     const sortedSearch = [...searchResults].sort((a, b) =>
@@ -153,6 +182,22 @@ function SharedCompletedTasks(props) {
     );
     return setSearchResults(sortedSearch);
   };
+  const sortByFriendName = () => {
+    setAnimationType("sort");
+
+    const sortedSearch = [...searchResults].sort((a, b) =>
+      a.sharing_with.user_display_name === null
+        ? "z"
+        : a.sharing_with.user_display_name
+            .toLowerCase()
+            .localeCompare(
+              b.sharing_with.user_display_name === null
+                ? "z"
+                : b.sharing_with.user_display_name.toLowerCase()
+            )
+    );
+    return setSearchResults(sortedSearch);
+  };
 
   const cardBorder = {
     A: "danger",
@@ -162,6 +207,7 @@ function SharedCompletedTasks(props) {
     F: "success",
   };
   const cardAnimation = {
+    sort: "elevator",
     undo: "accordionVertical",
     delete: "fade",
     deleteAll: "fade",
@@ -169,7 +215,7 @@ function SharedCompletedTasks(props) {
   const deleteAllPopover = (
     <Popover className="tasks-container" id="popover-basic">
       <Popover.Header as="h3">Are you sure?</Popover.Header>
-      <Popover.Body>This will be permanent!</Popover.Body>
+      <Popover.Body>All completed tasks will be deleted!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
         <div>
           <Button onClick={(e) => handleDeleteAll()} variant="danger">
@@ -216,7 +262,6 @@ function SharedCompletedTasks(props) {
           overlay={deleteAllPopover}
         >
           <Button
-            // className="completed-clear"
             variant="danger"
             size="med"
             className="completed-clear"
@@ -225,6 +270,47 @@ function SharedCompletedTasks(props) {
             <IoIosNuclear className="task-card-icon-size" />
           </Button>
         </OverlayTrigger>
+      </div>
+      <div className="completed-task-top-buttons">
+        <ButtonGroup size="lg" className="check-box-button-size">
+          <ToggleButton
+            key={3}
+            id={`radio-${3}`}
+            type="radio"
+            variant="secondary"
+            name="radio"
+            value={"Solo"}
+            checked={radioValue === "Solo"}
+            onChange={(e) => setRadioValue(e.currentTarget.value)}
+          >
+            <FaUserAlt />
+          </ToggleButton>
+          <ToggleButton
+            key={4}
+            id={`radio-${4}`}
+            type="radio"
+            variant="secondary"
+            name="radio"
+            value={"Solo+Shared"}
+            checked={radioValue === "Solo+Shared"}
+            onChange={(e) => setRadioValue(e.currentTarget.value)}
+          >
+            <FaUserAlt />+<FaUserFriends />
+          </ToggleButton>
+
+          <ToggleButton
+            key={5}
+            id={`radio-${5}`}
+            type="radio"
+            variant="secondary"
+            name="radio"
+            value={"Shared"}
+            checked={radioValue === "Shared"}
+            onChange={(e) => setRadioValue(e.currentTarget.value)}
+          >
+            <FaUserFriends />
+          </ToggleButton>
+        </ButtonGroup>
       </div>
       <div className="completed-task-top-buttons">
         <ButtonGroup className="completed-task-top-buttons">
@@ -264,15 +350,13 @@ function SharedCompletedTasks(props) {
             </Dropdown.Item>
 
             <Dropdown.Item onClick={() => sortByTaskName()}>Name</Dropdown.Item>
+            <Dropdown.Item
+              disabled={radioValue === "Solo"}
+              onClick={() => sortByFriendName()}
+            >
+              Friend name
+            </Dropdown.Item>
           </DropdownButton>
-          {/* <Button
-                    
-                    onClick={() => handledeleteAll()}
-                    variant="danger"
-                    size="lg"
-                  >
-                    Delete All
-                  </Button> */}
         </ButtonGroup>
       </div>
       <FlipMove
@@ -304,15 +388,6 @@ function SharedCompletedTasks(props) {
                 <Card.Text>{task.task_description}</Card.Text>
                 <Card.Img variant="bottom" src={task.task_drawing} />
                 <ButtonGroup aria-label="Basic example">
-                  {/* <Button
-                        variant="primary"
-                        size="lg"
-                        // value={[props.user_id, task.task_priority,task.task_name, task.task_id, task.task_description, task.task_date_time]}
-                        value={task.task_id}
-                        onClick={(e) => handleReuse(e.target.value)}
-                      >
-                        Reuse
-                      </Button> */}
                   <div className="card-buttons">
                     <Button
                       variant="warning"
@@ -331,29 +406,12 @@ function SharedCompletedTasks(props) {
                     >
                       <Button
                         value={task.task_id}
-                        // onClick={(e) => handleDelete(e.target.value)}
                         onClick={(e) => handleDeletePopOver(task.task_id)}
                         variant="danger"
                         size="med"
                       >
                         <RiDeleteBin2Line className="task-card-icon-size" />
                       </Button>
-                      {/* </div>
-                    <div className="card-buttons">
-                    <OverlayTrigger
-                      trigger="focus"
-                      placement="left"
-                      overlay={deletePopOver}
-                    >
-                      <Button
-                        value={task.task_id}
-                        // onClick={(e) => handleDelete(e.target.value)}
-                        onClick={(e) => handleDeletePopOver(e.target.value)}
-                        variant="danger"
-                        size="med"
-                      >
-                        Delete
-                      </Button>  */}
                     </OverlayTrigger>
                   </div>
                 </ButtonGroup>

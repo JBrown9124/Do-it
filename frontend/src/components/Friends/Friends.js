@@ -1,54 +1,31 @@
 import {
-  Modal,
   Button,
   Form,
   ButtonGroup,
-  Dropdown,
-  Table,
-  Card,
   Offcanvas,
   OverlayTrigger,
   Popover,
-  DropdownButton,
   FormControl,
-  Container,
   ListGroup,
   Tabs,
   Tab,
   Row,
   Col,
-  Badge,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FiUserPlus, FiUserMinus } from "react-icons/fi";
-import { Link } from "react-router-dom";
 import AddFriendModal from "./AddFriendModal";
-
 import url from "../../services/URL";
-// import "./Tasks.css";
 
 function Friends(props) {
-  const [show, setShow] = useState(false);
-  const [reusemodalShow, setreusemodalShow] = useState(false);
   const [showAddFriendModal, setShowAddFriendModal] = useState(false);
-
-  const [reuseData, setreuseData] = useState("");
   const [animationType, setAnimationType] = useState("");
-
-  const [showDeleteAllPopOver, setShowDeleteAllPopOver] = useState(false);
-
-  const [deleteTaskID, setDeleteTaskID] = useState(false);
   const [searchItem, setSearchItem] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [deleteFriendID, setDeleteFriendID] = useState("");
   const [showDeletePopOver, setShowDeletePopOver] = useState(false);
   const handleClose = () => props.hideFriends(false);
-  const handleShow = () => setShow(true);
-
-  const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
-    useState([]);
-
   useEffect(
     () => setSearchResults(props.allFriendsData),
     [props.allFriendsData.length]
@@ -82,10 +59,9 @@ function Friends(props) {
 
     props.updateAllFriendsData(remainingFriends);
     const data = { to_user_id: friendID };
-    axios.post(`${url}${props.userID}/remove-friend`, data).then((response) => {
-      // props.allFriendsData.push(user); request pending data
-      // isLoaded(true);
-    });
+    axios
+      .post(`${url}${props.userID}/remove-friend`, data)
+      .then((response) => {});
   };
   const handleReject = (fromUserID) => {
     const findUserByID = props.allReceivedFriendRequestsData.find(
@@ -152,23 +128,6 @@ function Friends(props) {
     </Popover>
   );
 
-  // if (props.show === true && props.completedTasksData !== null) {
-  // const handleRemove = (friendID) => {
-  //   console.log(friendID)
-  //   // const filterFriendsHelper = (user) => {
-  //   //   return friendID !== user.user_id;
-  //   // };
-  //   // filterFriendsHelper(props.allFriendsData);
-  //   const remainingFriends = props.allFriendsData.filter(function(value, index, arr){
-  //     console.log(value.user_id)
-  //     return value.user_id !== friendID
-  //   });
-
-  //   console.log(remainingFriends);
-
-  //   props.updateAllFriendsData(remainingFriends);
-  // };
-
   return (
     <>
       <Offcanvas show={props.show} onHide={handleClose} placement="top">
@@ -225,15 +184,6 @@ function Friends(props) {
                   onChange={(e) => setSearchItem(e.target.value)}
                 />
               </Form>
-
-              {/* <Button
-                      
-                      onClick={() => handledeleteAll()}
-                      variant="danger"
-                      size="lg"
-                    >
-                      Delete All
-                    </Button> */}
 
               {searchResults.map((friend) => (
                 <div key={friend.user_id}>
@@ -295,7 +245,6 @@ function Friends(props) {
                     >
                       <strong>{receivedRequest.user_display_name} </strong>{" "}
                       <Button
-                        // className="completed-clear"
                         className="accept-decline-seperator"
                         variant="success"
                         size="med"
@@ -334,8 +283,6 @@ function Friends(props) {
               ))}
             </Tab>
           </Tabs>
-
-          {/* </FlipMove> */}
         </Offcanvas.Body>
       </Offcanvas>
     </>

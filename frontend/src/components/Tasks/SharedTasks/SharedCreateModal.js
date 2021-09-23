@@ -1,10 +1,7 @@
-import { Modal, Button, Form, Container } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { Link } from "react-router-dom";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime/css/react-datetime.css";
-import Datetime from "react-datetime";
 import moment from "moment";
 import { v4 as uuidv4 } from "uuid";
 import randomWords from "random-words";
@@ -12,22 +9,17 @@ import { SketchField, Tools } from "react-sketch2";
 import { CgGoogleTasks } from "react-icons/cg";
 import { GiPaintBrush } from "react-icons/gi";
 import { FcCollaboration } from "react-icons/fc";
-import { GrAdd } from "react-icons/gr";
 
 function SharedCreateModal(props) {
   const [name, setName] = useState("");
   const [priority, setPriority] = useState("");
   const [description, setDescription] = useState("");
-  const [attendees, setAttendees] = useState("");
-  const [dateTime, setdateTime] = useState(new Date());
   const [friend, setFriend] = useState(NaN);
   const [drawnImage, setDrawnImage] = useState();
-
+  const [dateTime, setdateTime] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
-  const [data, setData] = useState(null);
 
   function simulateNetworkRequest() {
     return new Promise((resolve) => setTimeout(resolve, 100));
@@ -41,25 +33,7 @@ function SharedCreateModal(props) {
     }
   }, [loading]);
 
-  // const isUserFriend = (userName) => {
-  //   setLoading(true);
-  //   const foundUserFriend = props.allFriendsData.find(
-  //     ({ user_display_name }) => user_display_name === userName
-  //   );
-
-  //   if (foundUserFriend === undefined || foundUserFriend.length === 0) {
-  //     setIsError(true);
-
-  //     return setErrorMessage("User is not on your friends list");
-  //   } else {
-  //     handleSubmit(foundUserFriend);
-
-  //   }
-  // };
-
   const handleSubmit = () => {
-    // const dateTimeStr = moment(dateTime).format('YYYY-MM-DD HH:mm:ss')
-
     const findFriendByID = props.allFriendsData.find(
       (user) => user.user_id === friend
     );
@@ -78,7 +52,7 @@ function SharedCreateModal(props) {
           description === ""
             ? randomWords({ exactly: 5, join: " " })
             : description,
-        // attendees: attendees,
+
         task_date_time: dateTimeStr,
         task_completed: false,
         task_drawing: convertedImage,
@@ -97,31 +71,9 @@ function SharedCreateModal(props) {
     setName("");
     setPriority("");
     setDescription("");
-    setAttendees("");
     setFriend(NaN);
     setdateTime(new Date());
   };
-
-  //   axios
-  //     .post(`http://127.0.0.1:8000/to_do_list/${props.user_id}/task`, data)
-  //     .then((res) => {
-  //       setData(res.data);
-
-  //       setName("");
-  //       setPriority("");
-  //       setDescription("");
-  //       setAttendees("");
-  //       setdateTime("");
-
-  //       setLoading(false);
-  //       props.onHide();
-  //       return props.user();
-  //     })
-  //     .catch((err) => {
-  //       setLoading(false);
-  //       setIsError(true);
-  //     });
-  // };
 
   return (
     <div>
@@ -130,6 +82,8 @@ function SharedCreateModal(props) {
         size="med"
         aria-labelledby="contained-modal-title-vcenter"
         centered
+        keyboard={false}
+        backdrop="static"
       >
         <Modal.Header>
           <Modal.Title id="contained-modal-title-vcenter">
@@ -208,19 +162,7 @@ function SharedCreateModal(props) {
                 onChange={(e) => setDescription(e.target.value)}
               />
             </div>
-            {/* <div classNames="form-group">
-              <label htmlFor="Attendees" className="mt-2">
-                Attendees
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="Attendees"
-                placeholder="Enter amount of attendees"
-                value={attendees}
-                onChange={(e) => setAttendees(e.target.value)}
-              />
-            </div> */}
+
             <label htmlFor="Description" className="mt-2">
               Draw <GiPaintBrush />
             </label>
@@ -241,14 +183,7 @@ function SharedCreateModal(props) {
               <label htmlFor="dateTime" className="mt-2">
                 Date/time you are planning on completing this task?
               </label>
-              {/* <input
-                type="text"
-                className="form-control"
-                id="dateTime"
-                placeholder="Enter date and time"
-                value={dateTime}
-                onChange={(e) => setdateTime(e.target.value)}
-              /> */}
+
               <DateTimePicker onChange={setdateTime} value={dateTime} />
             </div>
             <div>
@@ -266,13 +201,6 @@ function SharedCreateModal(props) {
             >
               {loading ? "Creating..." : "Create"}
             </button>
-            {/* {data && (
-              <div className="mt-3">
-                <strong>Output:</strong>
-                <br />
-                <pre>{JSON.stringify(data, null, 2)}</pre>
-              </div>
-            )} */}
           </div>
         </Modal.Body>
         <Modal.Footer>

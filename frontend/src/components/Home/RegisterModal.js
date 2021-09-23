@@ -1,25 +1,19 @@
-import { Modal, Button, Form } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import React, { useState } from "react";
 import axios from "axios";
 
-import { Link } from "react-router-dom";
 import url from "../../services/URL";
 function Register(props) {
   const [name, setName] = useState("");
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [password2, setPassword2] = useState("");
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [ispassError, setispasssError] = useState(false);
-  const [isemailvalidError, setisemailvalidError] = useState(false);
   const [errorMessage, seterrorMessage] = useState("");
-  const [data, setData] = useState(null);
   const [passwordShown, setPasswordShown] = useState(false);
   const togglePassword = () => {
-    // When the handler is invoked
-    // inverse the boolean state of passwordShown
     setPasswordShown(!passwordShown);
   };
   const handleSubmit = () => {
@@ -34,7 +28,6 @@ function Register(props) {
       axios
         .post(`${url}register/`, data)
         .then((res) => {
-          // setData(res.data);
           setName("");
           setEmail("");
           setPassword("");
@@ -58,16 +51,6 @@ function Register(props) {
   };
 
   return (
-    // <Modal
-    //   {...props}
-    //   size="med"
-    //   aria-labelledby="contained-modal-title-vcenter"
-    //   centered
-    // >
-    //   <Modal.Header>
-    //     <Modal.Title id="contained-modal-title-vcenter">Register</Modal.Title>
-    //   </Modal.Header>
-    //   <Modal.Body>
     <>
       <div className="container p-3">
         <div style={{ maxWidth: 350 }}>
@@ -165,7 +148,6 @@ function Register(props) {
         </Button>
       </div>
     </>
-    // </Modal>
   );
 }
 export default Register;
