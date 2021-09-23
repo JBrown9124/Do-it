@@ -18,8 +18,7 @@ from itertools import chain
 from django.views.generic import TemplateView
 from django.views.decorators.cache import never_cache
 from django.core.exceptions import ValidationError
-import hashlib
-import jsonpickle
+
 import uuid
 
 # Create your views here.
