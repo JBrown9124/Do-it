@@ -60,7 +60,17 @@ const Navigation = (props) => {
                     : `${props.receivedCount} friend request received!`}
                 </Badge>
               </Nav.Link>
+
+              <Nav.Link onClick={() => props.showFriends(true)}>
+                Alerts
+                <Badge className="completed-badge" bg="secondary">
+                  {props.receivedCount === 0
+                    ? null
+                    : `${props.receivedCount} friend request received!`}
+                </Badge>
+              </Nav.Link>
             </Nav>
+
             <Nav>
               {/* <OverlayTrigger
                 trigger="focus"

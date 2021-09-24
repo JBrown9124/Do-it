@@ -121,7 +121,7 @@ function SharedTasks(props) {
     } else if (radioValue === "Solo+Shared") {
       setSearchResults(props.incompletedSharedTasksData);
     }
-  }, [radioValue, props.incompletedSharedTasksData.length]);
+  }, [radioValue, props.incompletedSharedTasksData.length, props.incompletedSharedTasksData ]);
 
   // const handleClose = () => setShowOffCanvas(false);
   // const handleOffCanvasShow = (e) => {

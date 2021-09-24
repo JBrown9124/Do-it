@@ -9,7 +9,8 @@ import Register from "./components/Home/RegisterModal";
 import Navigation from "./components/NavBar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./components/Tasks/SoloTasks/Tasks.css";
-
+import { css } from "@emotion/react";
+import ClockLoader from "react-spinners/ClockLoader";
 import axios from "axios";
 import "./components/Friends/Friends.css";
 import Login from "./components/Home/LoginModal";
@@ -33,7 +34,7 @@ function App() {
   const [userID, setUserID] = useState();
   const [showFriends, setShowFriends] = useState(false);
   const [showCompletedTasks, setShowCompletedTasks] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const [allFriendsData, setAllFriendsData] = useState([]);
   const [allCompletedData, setAllCompletedData] = useState([]);
   const [allIncompletedData, setAllIncompletedData] = useState([]);
@@ -87,6 +88,7 @@ function App() {
     axios.get(`${url}${userID}/tasks`).then((response) => {
       setAllCompletedData(response.data.complete);
       setAllIncompletedData(response.data.incomplete);
+      setLoading(false);
     });
   };
   const handleFriendsData = () => {
@@ -94,9 +96,14 @@ function App() {
       setAllFriendsData(response.data.user_friends);
     });
   };
-
+  const spinnerOverride = css`
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+  margin-top: 130px;
+`;
   if (modalShow === false && tasksShow === false) {
-    settasksShow(true);
+    setLoading(true); settasksShow(true);
   }
 
   return (
@@ -122,7 +129,7 @@ function App() {
         completedhandleTasks={handleTasks}
         handledcompletedTasks={() => sethandleTasks(false)}
       />
-
+<ClockLoader  loading={loading} css={spinnerOverride} size={125} />
       <Offcanvas
         show={showCompletedTasks}
         onHide={() => setShowCompletedTasks(false)}

@@ -18,7 +18,6 @@ import { FaUserAlt, FaUserFriends } from "react-icons/fa";
 import { IoIosNuclear } from "react-icons/io";
 import { FaUndo } from "react-icons/fa";
 import moment from "moment";
-
 import url from "../../../../services/URL";
 
 function SharedCompletedTasks(props) {
@@ -88,7 +87,7 @@ function SharedCompletedTasks(props) {
     } else if (radioValue === "Solo+Shared") {
       setSearchResults(props.completedSharedTasksData);
     }
-  }, [radioValue, props.completedSharedTasksData.length]);
+  }, [radioValue, props.completedSharedTasksData.length, props.completedSharedTasksData]);
   const handleUndo = (e) => {
     setAnimationType("undo");
 
