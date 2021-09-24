@@ -2,7 +2,7 @@ from django.db import models
 from django.utils import timezone
 from django.core.validators import validate_email
 from django.core.exceptions import ValidationError
-from viewflow.fields import CompositeKey
+
 import datetime
 
 # Create your models here.
@@ -30,6 +30,7 @@ class Tasks(models.Model):
     task_name = models.CharField(max_length=1000)
     task_priority = models.CharField(max_length=1, default=None)
     task_description = models.TextField()
+    task_drawing = models.TextField(default=None)
 
     task_date_time = models.DateTimeField()
     task_completed = models.BooleanField(default=False)
@@ -53,6 +54,14 @@ class SharedTasks(models.Model):
     
     def __str__(self):
         return f"{self.task} = {self.sender} + {self.recipient} "
+class Alerts(models.Model):
+   
+    alert_id = models.AutoField(primary_key=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    message = models.TextField(blank=True)
+    alert_type = models.CharField(max_length=40)
+    
+    created_date = models.DateTimeField(auto_now_add=True)
 
 # class Friends(models.Model):
 #     friends = models.AutoField(primary_key=True)

@@ -1,9 +1,11 @@
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Form } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import { FiEdit } from "react-icons/fi";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime/css/react-datetime.css";
 import moment from "moment";
+import { GiPaintBrush } from "react-icons/gi";
+import { SketchField, Tools } from "react-sketch2";
 function EditTaskModal(props) {
   
   const [name, setName] = useState("");
@@ -11,23 +13,31 @@ function EditTaskModal(props) {
   const [description, setDescription] = useState("");
   const [taskID, settaskID] = useState(null);
   const [dateTime, setdateTime] = useState("");
-  const [drawing, setDrawing] = useState("");
+  const [userID, setUserID] = useState("");
+  const [drawnImage, setDrawnImage] = useState();
+  const [color, setColor] = useState("#563d7c");
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+ 
 
-  const handleseteditData = () => {
+  const handleSetEditData = () => {
     settaskID(props.editData.task_id);
     setName(props.editData.task_name);
     setPriority(props.editData.task_priority);
-    setDrawing(props.editData.task_drawing);
+    setDrawnImage(props.editData.task_drawing);
     setDescription(props.editData.task_description);
     setdateTime(props.editData.task_date_time);
+    setUserID(props.editData.user_id);
+    
+    
   };
-  useEffect(() => handleseteditData(), [props.show]);
+  useEffect(() => handleSetEditData(),[props.show]);
+
 
   const handleSubmit = () => {
-    
+ 
     const dateTimeStr = moment(dateTime).format("DD. MMMM YYYY HH:mm");
+    
     setLoading(true);
     setIsError(false);
     const data = {
@@ -37,14 +47,15 @@ function EditTaskModal(props) {
       // attendees: attendees,
       task_date_time: dateTimeStr,
       task_id: taskID,
-      task_drawing: drawing,
+      task_drawing: drawnImage,
+      user_id: userID
     };
     props.retrieveEditData(data);
     setLoading(false);
     setName("");
     setPriority("");
     setDescription("");
-    
+    setUserID("");
     setdateTime("");
     settaskID(null);
     props.onHide();
@@ -114,7 +125,32 @@ function EditTaskModal(props) {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-
+              {/* <label htmlFor="Description" className="mt-2">
+              Draw <GiPaintBrush /> 
+            </label>
+            <SketchField
+              width="350px"
+              height="200px"
+              tool={Tools.Pencil}
+              lineColor={color}
+              lineWidth={2}
+             
+              onChange={(e) => {
+                setDrawnImage(e.target.value);
+              }}
+              ref={(view) => {
+                setDrawnImage(view);
+              }}
+            />
+           
+             <Form.Label htmlFor="exampleColorInput"></Form.Label>
+  <Form.Control
+    type="color"
+    id="exampleColorInput"
+    defaultValue="#563d7c"
+    title="Choose your color"
+    onChange = {(e)=>setColor(e.target.value)}
+  /> */}
               <div className="form-group">
                 <label htmlFor="dateTime" className="mt-2">
                   What day and time are you planning on completing this task?

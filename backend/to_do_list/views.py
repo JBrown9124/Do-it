@@ -14,11 +14,11 @@ from django.core.exceptions import ValidationError
 from .ResponseModels.SharerTask import SharerTask
 from .ResponseModels.Sharer import Sharer
 from friendship.models import Block, Follow, Friend, FriendshipRequest
-from itertools import chain
+import hashlib
 from django.views.generic import TemplateView
 from django.views.decorators.cache import never_cache
 from django.core.exceptions import ValidationError
-
+from itertools import chain
 import uuid
 
 # Create your views here.
@@ -184,9 +184,10 @@ def tasks(request, user):
 
     if request.method == 'PUT':
         json_data = json.loads(request.body)
+        task_belongs_to = User.objects.get(pk=json_data['user_id'])
         d = datetime.datetime.strptime(
             json_data["task_date_time"], '%d. %B %Y %H:%M')
-        t = Tasks(pk=json_data['task_id'], task_name=json_data['task_name'], task_priority=json_data['task_priority'],
+        t = Tasks(pk=json_data['task_id'], user=task_belongs_to, task_name=json_data['task_name'], task_priority=json_data['task_priority'],
                   task_drawing=json_data['task_drawing'], task_description=json_data['task_description'], task_date_time=d)
         t.save()
         return HttpResponse("nice")
