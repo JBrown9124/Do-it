@@ -19,7 +19,7 @@ import "./components/NavBar.css";
 import "./components/Tasks/SoloTasks/CompletedTasks/CompletedTasks.css";
 import "./components/Tasks/SharedTasks/SharedTasks.css";
 import SharedTasks from "./components/Tasks/SharedTasks/SharedTasks.js";
-
+import AlertsModal from "./components/Friends/AlertsModal.js"
 import Friends from "./components/Friends/Friends.js";
 import SharedCompletedTasks from "./components/Tasks/SharedTasks/SharedCompletedTasks/SharedCompletedTasks";
 import url from "./services/URL";
@@ -34,10 +34,12 @@ function App() {
   const [userID, setUserID] = useState();
   const [showFriends, setShowFriends] = useState(false);
   const [showCompletedTasks, setShowCompletedTasks] = useState(null);
+  const [showAlerts, setShowAlerts]=useState(false);
   const [loading, setLoading] = useState(false);
   const [allFriendsData, setAllFriendsData] = useState([]);
   const [allCompletedData, setAllCompletedData] = useState([]);
   const [allIncompletedData, setAllIncompletedData] = useState([]);
+  const [allAlertsData, setAllAlertsData] = useState([]);
 
   const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
     useState([]);
@@ -54,6 +56,7 @@ function App() {
   useEffect(() => handleSentFriendRequestsData(), [userID]);
   useEffect(() => handleTasksData(), [userID]);
   useEffect(() => handleReceivedFriendRequestsData(), [userID]);
+  useEffect(() => handleAlertsData(), [userID]);
   const MINUTE_MS = 30000;
   useEffect(() => {
     const interval = setInterval(() => {
@@ -61,6 +64,7 @@ function App() {
       handleFriendsData();
       handleSentFriendRequestsData();
       handleReceivedFriendRequestsData();
+      handleAlertsData();
     }, MINUTE_MS);
 
     return () => clearInterval(interval); // This represents the unmount function, in which you need to clear your interval to prevent memory leaks.
@@ -75,6 +79,13 @@ function App() {
       .get(`${url}${userID}/user-received-friend-requests`)
       .then((response) => {
         setAllReceivedFriendRequestsData(response.data.user_friend_requests);
+      });
+  };
+  const handleAlertsData = () => {
+    axios
+      .get(`${url}${userID}/alerts`)
+      .then((response) => {
+        setAllAlertsData(response.data.user_alerts);
       });
   };
   const handleSentFriendRequestsData = () => {
@@ -114,10 +125,21 @@ function App() {
         completeCount={tasksShow ? Object.keys(allCompletedData).length : null}
         showLoginHideTasks={() => handleShowLoginHideTasks()}
         showComplete={(props) => setShowCompletedTasks(props)}
+        showAlerts = {(props) => setShowAlerts(true)}
         userID={userID}
         receivedCount={Object.keys(allReceivedFriendRequestsData).length}
+        alertCount = {Object.keys(allAlertsData).length}
       />
-
+      <AlertsModal
+      allAlertsData={allAlertsData}
+      show={showAlerts}
+      onHide={()=>setShowAlerts(false)}
+      userID={userID}
+      updateAlerts={(props)=>setAllAlertsData(props)}
+      
+      
+      
+      />
       <SharedTasks
         
         updateTasks={(props) => setAllIncompletedData(props)}

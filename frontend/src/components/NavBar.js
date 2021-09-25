@@ -15,6 +15,7 @@ import {
 } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
+import {BsBell} from "react-icons/bs"
 
 const Navigation = (props) => {
   const [showLogOutPopOver, setShowLogOutPopOver] = useState(false);
@@ -48,30 +49,40 @@ const Navigation = (props) => {
                 onClick={() => props.showComplete(true)}
               >
                 Completed
-                <Badge className="completed-badge" bg="secondary">
+                <Badge className="completed-badge" bg="primary">
                   {props.completeCount}
                 </Badge>
               </Nav.Link>
               <Nav.Link onClick={() => props.showFriends(true)}>
                 Friends
-                <Badge className="completed-badge" bg="secondary">
+                <Badge className="completed-badge" bg="info">
                   {props.receivedCount === 0
                     ? null
                     : `${props.receivedCount} friend request received!`}
                 </Badge>
               </Nav.Link>
 
-              <Nav.Link onClick={() => props.showFriends(true)}>
-                Alerts
-                <Badge className="completed-badge" bg="secondary">
-                  {props.receivedCount === 0
-                    ? null
-                    : `${props.receivedCount} friend request received!`}
-                </Badge>
-              </Nav.Link>
+             
             </Nav>
 
             <Nav>
+            <Nav.Link onClick={() => props.showAlerts(true)}variant="danger">
+            <div className="position-relative">
+            <BsBell/>
+           <Badge pill={true} className="badge position-absolute top-0 left-100 translate-middle bg-warning" bg="danger">
+                  {props.alertCount === 0
+                    ? null
+                    : props.alertCount}
+          </Badge>
+          </div>
+               
+          
+                    
+                    
+                
+                
+                
+              </Nav.Link>
               {/* <OverlayTrigger
                 trigger="focus"
                 placement="bottom"
@@ -87,14 +98,14 @@ const Navigation = (props) => {
                 </Nav.Link>
                 
               </OverlayTrigger> */}
-              <div>
+              
                 <Navbar.Text>
                   {props.userDisplayName === undefined
-                    ? "Welcome!"
-                    : `${props.userDisplayName}`}
+                    ? `Welcome!${" "}`
+                    : `${" "}${props.userDisplayName}`}<CgProfile />
                 </Navbar.Text>{" "}
-                <CgProfile />
-              </div>
+                
+              
             </Nav>
           </Navbar.Collapse>
         </Container>
