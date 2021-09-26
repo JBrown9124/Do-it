@@ -121,7 +121,7 @@ function SharedTasks(props) {
     } else if (radioValue === "Solo+Shared") {
       setSearchResults(props.incompletedSharedTasksData);
     }
-  }, [radioValue, props.incompletedSharedTasksData.length, props.incompletedSharedTasksData ]);
+  }, [radioValue, props.incompletedSharedTasksData.length ]);
 
   // const handleClose = () => setShowOffCanvas(false);
   // const handleOffCanvasShow = (e) => {
@@ -140,12 +140,10 @@ function SharedTasks(props) {
     console.log(e);
     setAnimationType("complete");
 
-    const findTaskByID = props.incompletedSharedTasksData.find(
-      ({ task }) => task.task_id === e
-    );
+    
 
     const data = { completed_task_id: e };
-    props.completedSharedTasksData.unshift(findTaskByID);
+    props.completedSharedTasksData.unshift(e);
     setToastColor("primary");
     setToastMessage("Completed!");
     axios.put(`${url}${props.userID}/completed-tasks`, data).then((resp) => {
@@ -157,7 +155,7 @@ function SharedTasks(props) {
       index,
       arr
     ) {
-      return value.task.task_id !== e;
+      return value.task.task_id !== e.task.task_id;
     });
     // setSearchResults(remainingTasks);
     props.updateTasks(remainingTasks);
@@ -170,14 +168,14 @@ function SharedTasks(props) {
       index,
       arr
     ) {
-      return value.task.task_id !== e;
+      return value.task.task_id !== e.task.task_id;
     });
     // setSearchResults(remainingTasks);
     props.updateTasks(remainingTasks);
     setShowOffCanvas(false);
     setToastMessage("Deleted.");
     setToastColor("danger");
-    const data = { task_id: e };
+    const data = e;
     axios
       .delete(`${url}${props.userID}/tasks`, {
         data: data,
@@ -190,10 +188,8 @@ function SharedTasks(props) {
   const handleDeleteOffCanvas = (e) => {
     setDeleteTaskID(e);
 
-    const findTaskByID = props.incompletedSharedTasksData.find(
-      ({ task }) => task.task_id === e
-    );
-    setDeleteTaskName(findTaskByID.task.task_name);
+    
+    setDeleteTaskName(e.task.task_name);
     setShowOffCanvas(true);
   };
   const handleRetrieveEditData = (data) => {
@@ -205,9 +201,10 @@ function SharedTasks(props) {
     taskByID.task.task_priority = data.task_priority;
     taskByID.task.task_description = data.task_description;
     taskByID.task.task_name = data.task_name;
+    
     setToastMessage("Saved.");
     setToastColor("warning");
-    axios.put(`${url}${props.userID}/tasks`, data).then((res) => {
+    axios.put(`${url}${props.userID}/tasks`, taskByID).then((res) => {
       setShowToast(true);
     });
   };
@@ -529,7 +526,7 @@ function SharedTasks(props) {
                         variant="primary"
                         size="med"
                         value={task.task_id}
-                        onClick={(e) => handleComplete(task.task_id)}
+                        onClick={(e) => handleComplete({sharing_with, task})}
                       >
                         <ImCheckmark className="task-card-icon-size" />
                       </Button>
@@ -565,7 +562,7 @@ function SharedTasks(props) {
                       <Button
                         value={task.task_id}
                         variant="danger"
-                        onClick={(e) => handleDeleteOffCanvas(task.task_id)}
+                        onClick={(e) => handleDeleteOffCanvas({sharing_with, task})}
                         size="med"
                       >
                         <RiDeleteBin2Line className="task-card-icon-size" />

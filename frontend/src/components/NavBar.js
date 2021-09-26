@@ -15,7 +15,7 @@ import {
 } from "react-bootstrap";
 import { withRouter } from "react-router-dom";
 import { CgProfile } from "react-icons/cg";
-import {BsBell} from "react-icons/bs"
+import { BsBell } from "react-icons/bs";
 
 const Navigation = (props) => {
   const [showLogOutPopOver, setShowLogOutPopOver] = useState(false);
@@ -61,27 +61,21 @@ const Navigation = (props) => {
                     : `${props.receivedCount} friend request received!`}
                 </Badge>
               </Nav.Link>
-
-             
             </Nav>
 
             <Nav>
-            <Nav.Link onClick={() => props.showAlerts(true)}variant="danger">
-            <div className="position-relative">
-            <BsBell/>
-           <Badge pill={true} className="badge position-absolute top-0 left-100 translate-middle bg-warning" bg="danger">
-                  {props.alertCount === 0
-                    ? null
-                    : props.alertCount}
-          </Badge>
-          </div>
-               
-          
-                    
-                    
-                
-                
-                
+              <Nav.Link onClick={() => props.showAlerts(true)} variant="danger" className="position-relative">
+                <div className="position-relative">
+                  <BsBell />
+                  
+                  <Badge
+                    pill={true}
+                    className="badge position-absolute top-0 left-100 translate-middle bg-warning"
+                    bg="danger"
+                  >{props.alertCount === 0 ? null:props.alertCount}
+                  </Badge>
+                  
+                </div>
               </Nav.Link>
               {/* <OverlayTrigger
                 trigger="focus"
@@ -98,14 +92,12 @@ const Navigation = (props) => {
                 </Nav.Link>
                 
               </OverlayTrigger> */}
-              
-                <Navbar.Text>
-                  {props.userDisplayName === undefined
-                    ? `Welcome!${" "}`
-                    : `${" "}${props.userDisplayName}`}<CgProfile />
-                </Navbar.Text>{" "}
-                
-              
+              <Navbar.Text>
+                {props.userDisplayName === undefined
+                  ? `Welcome!${" "}`
+                  : `${" "}${props.userDisplayName}`}
+                <CgProfile />
+              </Navbar.Text>{" "}
             </Nav>
           </Navbar.Collapse>
         </Container>

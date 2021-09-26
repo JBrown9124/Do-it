@@ -87,21 +87,19 @@ function SharedCompletedTasks(props) {
     } else if (radioValue === "Solo+Shared") {
       setSearchResults(props.completedSharedTasksData);
     }
-  }, [radioValue, props.completedSharedTasksData.length, props.completedSharedTasksData]);
+  }, [radioValue, props.completedSharedTasksData.length]);
   const handleUndo = (e) => {
     setAnimationType("undo");
 
-    const findTaskByID = props.completedSharedTasksData.find(
-      ({ task }) => task.task_id === e
-    );
+    
 
-    props.incompletedSharedTasksData.unshift(findTaskByID);
+    props.incompletedSharedTasksData.unshift(e);
     const remainingTasks = props.completedSharedTasksData.filter(function (
       value,
       index,
       arr
     ) {
-      return value.task.task_id !== e;
+      return value.task.task_id !== e.task.task_id;
     });
 
     props.updateTasks(remainingTasks);
@@ -123,11 +121,11 @@ function SharedCompletedTasks(props) {
       index,
       arr
     ) {
-      return value.task.task_id !== e;
+      return value.task.task_id !== e.task.task_id;
     });
 
     props.updateTasks(remainingTasks);
-    const data = { task_id: e };
+    const data = e;
     axios
       .delete(`${url}${props.userID}/completed-tasks`, { data: data })
       .then((response) => {
@@ -389,10 +387,10 @@ function SharedCompletedTasks(props) {
                 <ButtonGroup aria-label="Basic example">
                   <div className="card-buttons">
                     <Button
-                      variant="warning"
+                      variant="dark"
                       size="med"
                       value={task.task_id}
-                      onClick={(e) => handleUndo(task.task_id)}
+                      onClick={(e) => handleUndo({sharing_with, task})}
                     >
                       <FaUndo className="task-card-icon-size" />
                     </Button>
@@ -405,7 +403,7 @@ function SharedCompletedTasks(props) {
                     >
                       <Button
                         value={task.task_id}
-                        onClick={(e) => handleDeletePopOver(task.task_id)}
+                        onClick={(e) => handleDeletePopOver({sharing_with, task})}
                         variant="danger"
                         size="med"
                       >
