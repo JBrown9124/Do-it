@@ -67,15 +67,14 @@ function SharedTasks(props) {
     if (radioValue === "Shared") {
       const results = props.incompletedSharedTasksData.filter(
         (task_name) =>
-          task_name.sharing_with.user_id !== null &&
-          (task_name.task.task_name.toLowerCase().includes(searchItem) ||
-            moment(task_name.task.task_date_time)
-              .format("MMMM DD YYYY hh:mm A")
-              .toLowerCase()
-              .includes(searchItem) ||
-            task_name.sharing_with.user_display_name
-              .toLowerCase()
-              .includes(searchItem))
+          task_name.task.task_name.toLowerCase().includes(searchItem) ||
+          moment(task_name.task.task_date_time)
+            .format("MMMM DD YYYY hh:mm A")
+            .toLowerCase()
+            .includes(searchItem) ||
+          task_name.sharing_with.user_display_name
+            .toLowerCase()
+            .includes(searchItem)
       );
       setSearchResults(results);
     } else if (radioValue === "Solo") {
@@ -121,7 +120,7 @@ function SharedTasks(props) {
     } else if (radioValue === "Solo+Shared") {
       setSearchResults(props.incompletedSharedTasksData);
     }
-  }, [radioValue, props.incompletedSharedTasksData.length ]);
+  }, [radioValue, props.incompletedSharedTasksData.length]);
 
   // const handleClose = () => setShowOffCanvas(false);
   // const handleOffCanvasShow = (e) => {
@@ -139,8 +138,6 @@ function SharedTasks(props) {
   const handleComplete = (e) => {
     console.log(e);
     setAnimationType("complete");
-
-    
 
     const data = { completed_task_id: e };
     props.completedSharedTasksData.unshift(e);
@@ -188,7 +185,6 @@ function SharedTasks(props) {
   const handleDeleteOffCanvas = (e) => {
     setDeleteTaskID(e);
 
-    
     setDeleteTaskName(e.task.task_name);
     setShowOffCanvas(true);
   };
@@ -201,7 +197,7 @@ function SharedTasks(props) {
     taskByID.task.task_priority = data.task_priority;
     taskByID.task.task_description = data.task_description;
     taskByID.task.task_name = data.task_name;
-    
+
     setToastMessage("Saved.");
     setToastColor("warning");
     axios.put(`${url}${props.userID}/tasks`, taskByID).then((res) => {
@@ -526,7 +522,7 @@ function SharedTasks(props) {
                         variant="primary"
                         size="med"
                         value={task.task_id}
-                        onClick={(e) => handleComplete({sharing_with, task})}
+                        onClick={(e) => handleComplete({ sharing_with, task })}
                       >
                         <ImCheckmark className="task-card-icon-size" />
                       </Button>
@@ -562,7 +558,9 @@ function SharedTasks(props) {
                       <Button
                         value={task.task_id}
                         variant="danger"
-                        onClick={(e) => handleDeleteOffCanvas({sharing_with, task})}
+                        onClick={(e) =>
+                          handleDeleteOffCanvas({ sharing_with, task })
+                        }
                         size="med"
                       >
                         <RiDeleteBin2Line className="task-card-icon-size" />

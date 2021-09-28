@@ -26,16 +26,21 @@ import uuid
 
 def user_id(request, user):
     return HttpResponse(user)
+
+
 @csrf_exempt
 def alerts(request, user):
     u = User.objects.get(pk=user)
     if request.method == 'GET':
-        data = list(Alerts.objects.filter(user=u).order_by('-created_date').values())
-        return JsonResponse({"user_alerts" : data})
+        data = list(Alerts.objects.filter(
+            user=u).order_by('-created_date').values())
+        return JsonResponse({"user_alerts": data})
     if request.method == 'DELETE':
         d = Alerts.objects.filter(user=u)
         d.delete()
         return HttpResponse("success")
+
+
 @csrf_exempt
 def completed_tasks(request, user):
     u = User.objects.get(pk=user)
@@ -53,49 +58,57 @@ def completed_tasks(request, user):
         if json_key == 'undo_completed_task_id':
             json_data = json_data['undo_completed_task_id']
             task = json_data['task']
-            sharing_with= json_data['sharing_with']
+            sharing_with = json_data['sharing_with']
             t = Tasks.objects.get(pk=task['task_id'])
             t.task_completed = False
             t.save()
             if sharing_with['user_id']:
-                sharing_with_user = User.objects.get(pk=sharing_with['user_id'])
-                a = Alerts(user=sharing_with_user, message = f"{u.user_display_name} undid the completion of \"{task['task_name']}\"", alert_type="Undid")
+                sharing_with_user = User.objects.get(
+                    pk=sharing_with['user_id'])
+                a = Alerts(user=sharing_with_user,
+                           message=f"{u.user_display_name} undid the completion of \"{task['task_name']}\"", alert_type="Undid")
                 a.save()
             return HttpResponse("undo complete successful")
         elif json_key == 'completed_task_id':
-            json_data=json_data['completed_task_id']
+            json_data = json_data['completed_task_id']
             task = json_data['task']
-            sharing_with= json_data['sharing_with']
+            sharing_with = json_data['sharing_with']
             t = Tasks.objects.get(pk=task['task_id'])
             t.task_completed = True
             t.save()
             if sharing_with['user_id']:
-                sharing_with_user = User.objects.get(pk=sharing_with['user_id'])
-                a = Alerts(user=sharing_with_user, message = f"{u.user_display_name} completed \"{task['task_name']}\"", alert_type="Completed")
+                sharing_with_user = User.objects.get(
+                    pk=sharing_with['user_id'])
+                a = Alerts(user=sharing_with_user,
+                           message=f"{u.user_display_name} completed \"{task['task_name']}\"", alert_type="Completed")
                 a.save()
             return HttpResponse("marked complete successful")
     elif request.method == 'DELETE':
         json_data = json.loads(request.body)
-        
-        if type(json_data)==list:
+
+        if type(json_data) == list:
             for task in json_data:
                 t = Tasks.objects.get(pk=task['task']['task_id'])
                 if task['sharing_with']['user_id']:
-                    sharing_with_user = User.objects.get(pk=task['sharing_with']['user_id'])
-                    a = Alerts(user=sharing_with_user, message = f"{u.user_display_name} deleted \"{task['task']['task_name']}\"", alert_type="Deleted")
+                    sharing_with_user = User.objects.get(
+                        pk=task['sharing_with']['user_id'])
+                    a = Alerts(
+                        user=sharing_with_user, message=f"{u.user_display_name} deleted \"{task['task']['task_name']}\"", alert_type="Deleted")
                     a.save()
                 t.delete()
 
             return HttpResponse("completed tasks deleted")
         else:
-            
+
             task = json_data['task']
             sharing_with = json_data['sharing_with']
             t = Tasks.objects.get(pk=task['task_id'])
             t.delete()
             if sharing_with['user_id']:
-                sharing_with_user = User.objects.get(pk=sharing_with['user_id'])
-                a = Alerts(user=sharing_with_user, message = f"{u.user_display_name} deleted \"{task['task_name']}\"", alert_type="Deleted")
+                sharing_with_user = User.objects.get(
+                    pk=sharing_with['user_id'])
+                a = Alerts(user=sharing_with_user,
+                           message=f"{u.user_display_name} deleted \"{task['task_name']}\"", alert_type="Deleted")
                 a.save()
             return HttpResponse("completed task deleted")
 
@@ -184,14 +197,15 @@ def tasks(request, user):
 
     if request.method == 'DELETE':
         json_data = json.loads(request.body)
-        
+
         task = json_data['task']
-        sharing_with= json_data['sharing_with']
+        sharing_with = json_data['sharing_with']
         t = Tasks.objects.get(pk=task['task_id'])
         t.delete()
         if sharing_with['user_id']:
             sharing_with_user = User.objects.get(pk=sharing_with['user_id'])
-            a = Alerts(user=sharing_with_user, message = f"{u.user_display_name} deleted \"{task['task_name']}\"", alert_type="Deleted")
+            a = Alerts(user=sharing_with_user,
+                       message=f"{u.user_display_name} deleted \"{task['task_name']}\"", alert_type="Deleted")
             a.save()
         return HttpResponse("nice")
 
@@ -200,7 +214,7 @@ def tasks(request, user):
         json_data = json.loads(request.body)
         sharing_with = json_data["sharing_with"]
         task = json_data['task']
-        if sharing_with:
+        if sharing_with['user_id']:
             recipient = User.objects.get(pk=sharing_with['user_id'])
             d = datetime.datetime.strptime(
                 task["task_date_time"], '%d. %B %Y %H:%M')
@@ -210,10 +224,11 @@ def tasks(request, user):
             shared_task_created = SharedTasks(
                 sender=u, recipient=recipient, task=task_created)
             shared_task_created.save()
-            a = Alerts(user=recipient, message = f"{u.user_display_name} shared \"{task['task_name']}\"", alert_type="Shared")
+            a = Alerts(
+                user=recipient, message=f"{u.user_display_name} shared \"{task['task_name']}\"", alert_type="Shared")
             a.save()
             return HttpResponse("shared task created")
-            
+
         else:
             try:
                 d = datetime.datetime.strptime(
@@ -229,9 +244,9 @@ def tasks(request, user):
     if request.method == 'PUT':
         json_data = json.loads(request.body)
         task = json_data['task']
-        sharing_with= json_data['sharing_with']
+        sharing_with = json_data['sharing_with']
         task_before_change = Tasks.objects.get(pk=task['task_id'])
-        
+
         task_belongs_to = User.objects.get(pk=task['user_id'])
         d = datetime.datetime.strptime(
             task["task_date_time"], '%d. %B %Y %H:%M')
@@ -240,7 +255,8 @@ def tasks(request, user):
         t.save()
         if sharing_with['user_id']:
             sharing_with_user = User.objects.get(pk=sharing_with['user_id'])
-            a = Alerts(user=sharing_with_user, message = f"{u.user_display_name} changed \"{task_before_change.task_name}\"", alert_type="Editted")
+            a = Alerts(user=sharing_with_user,
+                       message=f"{u.user_display_name} changed \"{task_before_change.task_name}\"", alert_type="Editted")
             a.save()
         return HttpResponse("nice")
 
