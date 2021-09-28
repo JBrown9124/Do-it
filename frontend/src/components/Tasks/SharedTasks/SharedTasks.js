@@ -67,40 +67,41 @@ function SharedTasks(props) {
     if (radioValue === "Shared") {
       const results = props.incompletedSharedTasksData.filter(
         (task_name) =>
-          task_name.task.task_name.toLowerCase().includes(searchItem) ||
-          moment(task_name.task.task_date_time)
-            .format("MMMM DD YYYY hh:mm A")
-            .toLowerCase()
-            .includes(searchItem) ||
-          task_name.sharing_with.user_display_name
-            .toLowerCase()
-            .includes(searchItem)
+          task_name.sharing_with.user_id !== null &&
+          (task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+            moment(task_name.task.task_date_time)
+              .format("MMMM DD YYYY hh:mm A")
+
+              .includes(searchItem) ||
+            task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem.toLowerCase()))
       );
       setSearchResults(results);
     } else if (radioValue === "Solo") {
       const results = props.incompletedSharedTasksData.filter(
         (task_name) =>
           task_name.sharing_with.user_id === null &&
-          (task_name.task.task_name.toLowerCase().includes(searchItem) ||
+          (task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
-              .toLowerCase()
+
               .includes(searchItem))
       );
 
       setSearchResults(results);
     } else if (radioValue === "Solo+Shared") {
       const results = props.incompletedSharedTasksData.filter((task_name) =>
-        task_name.task.task_name.toLowerCase().includes(searchItem) ||
-        moment(task_name.task.task_date_time)
-          .format("MMMM DD YYYY hh:mm A")
-          .toLowerCase()
-          .includes(searchItem) ||
-        task_name.sharing_with.user_display_name === null
-          ? "z"
-          : task_name.sharing_with.user_display_name
-              .toLowerCase()
+        task_name.sharing_with.user_id === null
+          ? task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+            moment(task_name.task.task_date_time)
+              .format("MMMM DD YYYY hh:mm A")
+
               .includes(searchItem)
+          : task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+            moment(task_name.task.task_date_time)
+              .format("MMMM DD YYYY hh:mm A")
+
+              .includes(searchItem) ||
+            task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem.toLowerCase())
       );
       setSearchResults(results);
     }

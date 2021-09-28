@@ -34,40 +34,40 @@ function SharedCompletedTasks(props) {
       const results = props.completedSharedTasksData.filter(
         (task_name) =>
           task_name.sharing_with.user_id !== null &&
-          (task_name.task.task_name.toLowerCase().includes(searchItem) ||
+          (task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
-              .toLowerCase()
+
               .includes(searchItem) ||
-            task_name.sharing_with.user_display_name
-              .toLowerCase()
-              .includes(searchItem))
+            task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem.toLowerCase()))
       );
       setSearchResults(results);
     } else if (radioValue === "Solo") {
       const results = props.completedSharedTasksData.filter(
         (task_name) =>
           task_name.sharing_with.user_id === null &&
-          (task_name.task.task_name.toLowerCase().includes(searchItem) ||
+          (task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
-              .toLowerCase()
+
               .includes(searchItem))
       );
 
       setSearchResults(results);
     } else if (radioValue === "Solo+Shared") {
       const results = props.completedSharedTasksData.filter((task_name) =>
-        task_name.task.task_name.toLowerCase().includes(searchItem) ||
-        moment(task_name.task.task_date_time)
-          .format("MMMM DD YYYY hh:mm A")
-          .toLowerCase()
-          .includes(searchItem) ||
-        task_name.sharing_with.user_display_name === null
-          ? "solo"
-          : task_name.sharing_with.user_display_name
-              .toLowerCase()
+        task_name.sharing_with.user_id === null
+          ? task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+            moment(task_name.task.task_date_time)
+              .format("MMMM DD YYYY hh:mm A")
+
               .includes(searchItem)
+          : task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+            moment(task_name.task.task_date_time)
+              .format("MMMM DD YYYY hh:mm A")
+
+              .includes(searchItem) ||
+            task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem.toLowerCase())
       );
       setSearchResults(results);
     }
@@ -90,8 +90,6 @@ function SharedCompletedTasks(props) {
   }, [radioValue, props.completedSharedTasksData.length]);
   const handleUndo = (e) => {
     setAnimationType("undo");
-
-    
 
     props.incompletedSharedTasksData.unshift(e);
     const remainingTasks = props.completedSharedTasksData.filter(function (
@@ -390,7 +388,7 @@ function SharedCompletedTasks(props) {
                       variant="dark"
                       size="med"
                       value={task.task_id}
-                      onClick={(e) => handleUndo({sharing_with, task})}
+                      onClick={(e) => handleUndo({ sharing_with, task })}
                     >
                       <FaUndo className="task-card-icon-size" />
                     </Button>
@@ -403,7 +401,9 @@ function SharedCompletedTasks(props) {
                     >
                       <Button
                         value={task.task_id}
-                        onClick={(e) => handleDeletePopOver({sharing_with, task})}
+                        onClick={(e) =>
+                          handleDeletePopOver({ sharing_with, task })
+                        }
                         variant="danger"
                         size="med"
                       >
