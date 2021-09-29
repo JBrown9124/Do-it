@@ -190,7 +190,7 @@ function SharedTasks(props) {
     setShowOffCanvas(true);
   };
   const handleRetrieveEditData = (data) => {
-    const taskByID = props.incompletedSharedTasksData.find(
+    const taskByID = searchResults.find(
       ({ task }) => task.task_id === data.task_id
     );
     taskByID.task.task_drawing = data.task_drawing;
@@ -202,7 +202,7 @@ function SharedTasks(props) {
     setToastMessage("Saved.");
     setToastColor("warning");
     axios.put(`${url}${props.userID}/tasks`, taskByID).then((res) => {
-      setShowToast(true);
+      setShowToast(true); 
     });
   };
 
@@ -498,7 +498,7 @@ function SharedTasks(props) {
                 <Card.Body>
                   <Card.Text>{task.task_description}</Card.Text>
                   <Card.Img variant="bottom" src={task.task_drawing} />
-                  <ButtonGroup>
+                  <ButtonGroup className="card-buttons-margin-top">
                     <div>
                       <Button
                         variant="info"

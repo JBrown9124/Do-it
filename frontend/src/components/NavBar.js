@@ -25,13 +25,16 @@ const Navigation = (props) => {
       <Popover.Header as="h3">Are you sure you want to leave?</Popover.Header>
       <Popover.Body> Hate to see you go!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
-        <Button onClick={() => props.showLoginHideTasks()} variant="warning">
+        <div>
+        <Button onClick={() => props.handleLogOut()} variant="warning">
           Sign me out
         </Button>
-
+        </div>
+        <div className="card-buttons">
         <Button variant="info" onClick={() => setShowLogOutPopOver(false)}>
           I'll stay!
         </Button>
+        </div>
       </ButtonGroup>
     </Popover>
   );
@@ -77,7 +80,7 @@ const Navigation = (props) => {
                   
                 </div>
               </Nav.Link>
-              {/* <OverlayTrigger
+              <OverlayTrigger
                 trigger="focus"
                 placement="bottom"
                 overlay={LogOutPopOver}
@@ -86,14 +89,14 @@ const Navigation = (props) => {
                   bg="light"
                   onClick={() => setShowLogOutPopOver(true)}
                   className="Navbtn"
-                  eventKey={2}
+                  
                 >
                   Sign out
                 </Nav.Link>
                 
-              </OverlayTrigger> */}
+              </OverlayTrigger>
               <Navbar.Text>
-                {props.userDisplayName === undefined
+                {props.userDisplayName === undefined || props.userDisplayName === "null"
                   ? `Welcome!${" "}`
                   : `${" "}${props.userDisplayName}`}
                 <CgProfile />
@@ -106,4 +109,5 @@ const Navigation = (props) => {
   );
 };
 
-export default withRouter(Navigation);
+// export default withRouter(Navigation);
+export default Navigation
