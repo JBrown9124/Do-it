@@ -1,5 +1,12 @@
-import { Modal, Button } from "react-bootstrap";
-import React, { useState, useEffect } from "react";
+import {
+  Modal,
+  Button,
+  Form,
+  ButtonGroup,
+  OverlayTrigger,
+  Popover,
+} from "react-bootstrap";
+import React, { useState, useEffect, forceUpdate } from "react";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime/css/react-datetime.css";
 import moment from "moment";
@@ -9,18 +16,125 @@ import { SketchField, Tools } from "react-sketch2";
 import { CgGoogleTasks } from "react-icons/cg";
 import { GiPaintBrush } from "react-icons/gi";
 import { FcCollaboration } from "react-icons/fc";
-
+import { AiOutlineClear } from "react-icons/ai";
+import { fabric } from "fabric";
+import FileBase64 from "react-file-base64";
+import { FaUndo, FaRedo } from "react-icons/fa";
+import { MdPhotoSizeSelectLarge } from "react-icons/md";
+import { BsPencilSquare } from "react-icons/bs";
 function SharedCreateModal(props) {
   const [name, setName] = useState("");
   const [priority, setPriority] = useState("");
   const [description, setDescription] = useState("");
   const [friend, setFriend] = useState(NaN);
   const [drawnImage, setDrawnImage] = useState();
+  const [color, setColor] = useState("#563d7c");
+
   const [dateTime, setdateTime] = useState(new Date());
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-
+  const [importedImage, setImportedImage] = useState();
+  const [isImported, setIsImported] = useState(false);
+  const [lineSketchWidth, setLineSketchWidth] = useState(2);
+  const [showClearPopover, setShowClearPopover] = useState(false);
+  const [sketchTool, setSketchTool] = useState(Tools.Select);
+  const clearPopover = (
+    <Popover className="tasks-container" id="popover-basic">
+      <Popover.Header as="h3">Are you sure you want to clear your drawing?</Popover.Header>
+      <Popover.Body> </Popover.Body>
+      <ButtonGroup aria-label="Basic example">
+        <div>
+          <Button onClick={() => clear(drawnImage)} variant="danger">
+            Yes
+          </Button>
+        </div>
+        <div className="card-buttons">
+          <Button variant="success" onClick={() => setShowClearPopover(false)}>
+            No
+          </Button>
+        </div>
+      </ButtonGroup>
+    </Popover>
+  );
+  const canUndo = () => {
+    if (drawnImage !== undefined) {
+      return drawnImage._history.canUndo();
+    }
+  };
+  const canRedo = () => {
+    if (drawnImage !== undefined) {
+      return drawnImage._history.canRedo();
+    }
+  };
+  const undo = () => {
+    if (canUndo()) {
+      let history = drawnImage._history;
+      let [obj, prevState, currState] = history.getCurrent();
+      history.undo();
+      if (obj.__removed) {
+        this.setState({ action: false }, () => {
+          drawnImage._fc.add(obj);
+          obj.__version -= 1;
+          obj.__removed = false;
+        });
+      } else if (obj.__version <= 1) {
+        drawnImage._fc.remove(obj);
+      } else {
+        obj.__version -= 1;
+        obj.setOptions(JSON.parse(prevState));
+        obj.setCoords();
+        drawnImage._fc.renderAll();
+      }
+      if (props.onChange) {
+        props.onChange();
+      }
+    }
+  };
+  const redo = () => {
+    let history = drawnImage._history;
+    if (history.canRedo()) {
+      let canvas = drawnImage._fc;
+      //noinspection Eslint
+      let [obj, prevState, currState] = history.redo();
+      if (obj.__version === 0) {
+        drawnImage.setState({ action: false }, () => {
+          canvas.add(obj);
+          obj.__version = 1;
+        });
+      } else {
+        obj.__version += 1;
+        obj.setOptions(JSON.parse(currState));
+      }
+      obj.setCoords();
+      canvas.renderAll();
+      if (props.onChange) {
+        props.onChange();
+      }
+    }
+  };
+  const setBackgroundFromDataUrl = (dataUrl, options = {}) => {
+    let canvas = drawnImage._fc;
+    fabric.Image.fromURL(dataUrl, (oImg) => {
+      let opts = {
+        left: Math.random() * (canvas.getWidth() - oImg.width * 0.5),
+        top: Math.random() * (canvas.getHeight() - oImg.height * 0.5),
+        scale: 0.4,
+      };
+      Object.assign(opts, options);
+      oImg.scale(opts.scale);
+      oImg.set({
+        left: opts.left,
+        top: opts.top,
+      });
+      canvas.add(oImg);
+      setSketchTool(Tools.Select);
+    });
+  };
+  if (importedImage !== undefined && isImported) {
+    setBackgroundFromDataUrl(importedImage);
+    setIsImported(false);
+  }
   function simulateNetworkRequest() {
     return new Promise((resolve) => setTimeout(resolve, 100));
   }
@@ -74,7 +188,24 @@ function SharedCreateModal(props) {
     setFriend(NaN);
     setdateTime(new Date());
   };
-
+  const clear = (propertiesToInclude) => {
+    propertiesToInclude._fc.clear();
+    propertiesToInclude._history.clear();
+  };
+  const handleImport = (base64) => {
+    setImportedImage(base64);
+    setIsImported(true);
+  };
+  const handleLineWidth = (e) => {
+    
+    setLineSketchWidth(e);
+    setSketchTool(Tools.Select);
+    if (sketchTool===Tools.Select){
+    return setSketchTool(Tools.Pencil)}
+    
+    
+  };
+  
   return (
     <div>
       <Modal
@@ -169,9 +300,10 @@ function SharedCreateModal(props) {
             <SketchField
               width="350px"
               height="200px"
-              tool={Tools.Pencil}
-              lineColor="black"
-              lineWidth={2}
+              className="sketch-border"
+              tool={sketchTool}
+              lineColor={color}
+              lineWidth={lineSketchWidth}
               onChange={(e) => {
                 setDrawnImage(e.target.value);
               }}
@@ -179,7 +311,94 @@ function SharedCreateModal(props) {
                 setDrawnImage(view);
               }}
             />
-            <div className="form-group">
+ <div>
+                <Form.Label htmlFor="Description" className="mt-2">
+                  Tools
+                </Form.Label>
+              </div>
+              
+<ButtonGroup className="create-modal-image-buttons">
+<div >
+                  <Button
+                    size="sm"
+                    variant="light"
+                    onClick={() => setSketchTool(Tools.Select)}
+                  >
+                    {" "}
+                    <MdPhotoSizeSelectLarge />
+                  </Button>
+                </div>
+                <div className="card-buttons">
+                  <Button
+                    size="sm"
+                    variant="light"
+                    onClick={() => setSketchTool(Tools.Pencil)}
+                  >
+                    {" "}
+                    <BsPencilSquare />
+                  </Button>
+                </div>
+               
+                <Form.Label htmlFor="exampleColorInput"></Form.Label>
+              <Form.Control
+              className="card-buttons"
+                type="color"
+                id="exampleColorInput"
+                defaultValue="#563d7c"
+                title="Choose your color"
+                onChange={(e) => setColor(e.target.value)}
+              />
+              </ButtonGroup>
+              <div>
+                <Form.Label className="create-modal-image-buttons">
+                  Line width
+                </Form.Label>
+                <Form.Range
+                  min={1}
+                  max={10}
+                  value={lineSketchWidth}
+                  onChange={(e) => handleLineWidth(parseInt(e.target.value))}
+                />
+              </div>
+
+            <ButtonGroup className="create-modal-image-buttons">
+             
+              <div>
+                <Button onClick={() => undo()} variant="dark">
+                  <FaUndo />
+                </Button>
+              </div>
+              <div className="card-buttons">
+                <Button onClick={() => redo()} variant="warning">
+                  <FaRedo />
+                </Button>
+              </div>
+              
+                <div className="card-buttons">
+                <OverlayTrigger
+                trigger="focus"
+                placement="bottom"
+                overlay={clearPopover}
+              >
+                  <Button onClick={() => setShowClearPopover(true)} variant="danger">
+                    <AiOutlineClear />
+                  </Button>
+                  </OverlayTrigger>
+                </div>
+              
+            </ButtonGroup>
+            <div className="create-modal-image-buttons">
+            <Form.Label className="create-modal-image-buttons">Import an image</Form.Label>
+              <Form.Group controlId="formFile"  >
+                <FileBase64
+                  type="file"
+                  multiple={false}
+                  onDone={({ base64 }) => handleImport(base64)}
+                />
+              </Form.Group>
+            </div>
+
+            <div className="create-modal-image-buttons">
               <label htmlFor="dateTime" className="mt-2">
                 Date/time you are planning on completing this task?
               </label>
