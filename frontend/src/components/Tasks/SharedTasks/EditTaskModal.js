@@ -34,7 +34,7 @@ function EditTaskModal(props) {
   const [isImported, setIsImported] = useState(false);
   const [lineSketchWidth, setLineSketchWidth] = useState(2);
   const [showClearPopover, setShowClearPopover] = useState(false);
-  
+
   const [backgroundFromOriginalImported, setbackgroundFromOriginalImported] =
     useState(false);
   const [sketchTool, setSketchTool] = useState(Tools.Select);
@@ -43,16 +43,16 @@ function EditTaskModal(props) {
     setImportedImage(base64);
     setIsImported(true);
   };
-  
+
   const handleSetEditData = () => {
     settaskID(props.editData.task_id);
     setName(props.editData.task_name);
     setPriority(props.editData.task_priority);
-    
+
     setDescription(props.editData.task_description);
-    
-    setdateTime(new Date());
-    
+
+    setdateTime(props.editData.task_date_time);
+
     setUserID(props.editData.user_id);
   };
   useEffect(() => handleSetEditData(), [props.show]);
@@ -138,14 +138,14 @@ function EditTaskModal(props) {
       let opts = {
         left: Math.random() * (canvas.getWidth() - oImg.width * 0.5),
         top: Math.random() * (canvas.getHeight() - oImg.height * 0.5),
-        scale: 0.5,
+        scale: 0.2,
       };
-      Object.assign(opts, options);
+      // Object.assign(opts, options);
       oImg.scale(opts.scale);
-      oImg.set({
-        left: opts.left,
-        top: opts.top,
-      });
+      // oImg.set({
+      //   left: opts.left,
+      //   top: opts.top,
+      // });
       canvas.add(oImg);
       setSketchTool(Tools.Select);
     });
@@ -155,16 +155,16 @@ function EditTaskModal(props) {
     let canvas = drawnImage._fc;
     fabric.Image.fromURL(dataUrl, (oImg) => {
       let opts = {
-        left: Math.random() * (canvas.getWidth() - oImg.width * 0.5),
-        top: Math.random() * (canvas.getHeight() - oImg.height * 0.5),
+        left: canvas.getWidth() - oImg.width * 0.5,
+        top: canvas.getHeight() - oImg.height * 0.5,
         scale: 1.0,
       };
-      Object.assign(opts, options);
-      oImg.scale(opts.scale);
-      oImg.set({
-        left: opts.left,
-        top: opts.top,
-      });
+      // Object.assign(opts, options);
+      // oImg.scale(opts.scale);
+      // oImg.set({
+      //   left: opts.left,
+      //   top: opts.top,
+      // });
       canvas.add(oImg);
     });
   };
@@ -174,12 +174,11 @@ function EditTaskModal(props) {
     setPriority("");
     setDescription("");
     setUserID("");
-    setdateTime(new Date())
+    setdateTime(new Date());
     settaskID(null);
     setDrawnImage(null);
     setbackgroundFromOriginalImported(false);
-    
-    
+
     return props.onHide();
   };
 
@@ -204,7 +203,7 @@ function EditTaskModal(props) {
     setPriority("");
     setDescription("");
     setUserID("");
-    setdateTime("")
+    setdateTime("");
     settaskID(null);
     setDrawnImage(null);
     setbackgroundFromOriginalImported(false);
@@ -218,8 +217,6 @@ function EditTaskModal(props) {
   const handleLineWidth = (e) => {
     setSketchTool(Tools.Select);
     setLineSketchWidth(e);
-    
-    
   };
   if (
     drawnImage !== undefined &&
@@ -245,7 +242,7 @@ function EditTaskModal(props) {
           aria-labelledby="contained-modal-title-vcenter"
           centered
           keyboard={false}
-        backdrop="static"
+          backdrop="static"
         >
           <Modal.Header>
             <Modal.Title id="contained-modal-title-vcenter">
@@ -323,54 +320,53 @@ function EditTaskModal(props) {
                 <Form.Label htmlFor="Description" className="mt-2">
                   Tools
                 </Form.Label>
+              </div>
+
+              <ButtonGroup className="create-modal-image-buttons">
+                <div>
+                  <Button
+                    size="sm"
+                    variant="light"
+                    onClick={() => setSketchTool(Tools.Select)}
+                  >
+                    {" "}
+                    <MdPhotoSizeSelectLarge />
+                  </Button>
                 </div>
-              
+                <div className="card-buttons">
+                  <Button
+                    size="sm"
+                    variant="light"
+                    onClick={() => setSketchTool(Tools.Pencil)}
+                  >
+                    {" "}
+                    <BsPencilSquare />
+                  </Button>
+                </div>
+
+                <Form.Label htmlFor="exampleColorInput"></Form.Label>
+                <Form.Control
+                  className="card-buttons"
+                  type="color"
+                  id="exampleColorInput"
+                  defaultValue="#563d7c"
+                  title="Choose your color"
+                  onChange={(e) => setColor(e.target.value)}
+                />
+              </ButtonGroup>
+              <div>
+                <Form.Label className="create-modal-image-buttons">
+                  Line width
+                </Form.Label>
+                <Form.Range
+                  min={1}
+                  max={10}
+                  value={lineSketchWidth}
+                  onChange={(e) => handleLineWidth(parseInt(e.target.value))}
+                />
+              </div>
               <ButtonGroup className="create-modal-image-buttons">
-              <div >
-                                <Button
-                                  size="sm"
-                                  variant="light"
-                                  onClick={() => setSketchTool(Tools.Select)}
-                                >
-                                  {" "}
-                                  <MdPhotoSizeSelectLarge />
-                                </Button>
-                              </div>
-                              <div className="card-buttons">
-                                <Button
-                                  size="sm"
-                                  variant="light"
-                                  onClick={() => setSketchTool(Tools.Pencil)}
-                                >
-                                  {" "}
-                                  <BsPencilSquare />
-                                </Button>
-                              </div>
-                             
-                              <Form.Label htmlFor="exampleColorInput"></Form.Label>
-                            <Form.Control
-                            className="card-buttons"
-                              type="color"
-                              id="exampleColorInput"
-                              defaultValue="#563d7c"
-                              title="Choose your color"
-                              onChange={(e) => setColor(e.target.value)}
-                            />
-                            </ButtonGroup>
-                            <div>
-                              <Form.Label className="create-modal-image-buttons">
-                                Line width
-                              </Form.Label>
-                              <Form.Range
-                                min={1}
-                                max={10}
-                                value={lineSketchWidth}
-                                onChange={(e) => handleLineWidth(parseInt(e.target.value))}
-                              />
-                            </div>
-              <ButtonGroup className="create-modal-image-buttons">
-               
-                <div >
+                <div>
                   <Button onClick={() => undo()} variant="dark">
                     <FaUndo />
                   </Button>
@@ -413,7 +409,10 @@ function EditTaskModal(props) {
                   What day and time are you planning on completing this task?
                 </label>
 
-                <DateTimePicker onChange={(e)=>setdateTime(e)} value={new Date(dateTime)} />
+                <DateTimePicker
+                  onChange={(e) => setdateTime(e)}
+                  value={dateTime}
+                />
               </div>
 
               {isError && (

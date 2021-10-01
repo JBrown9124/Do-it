@@ -1,11 +1,8 @@
-import logo from "./logo.svg";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Modal, Carousel, Offcanvas } from "react-bootstrap";
-
 import React, { useEffect, useState } from "react";
 import Register from "./components/Home/RegisterModal";
-
 import Navigation from "./components/NavBar.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./components/Tasks/SoloTasks/Tasks.css";
@@ -19,29 +16,24 @@ import "./components/NavBar.css";
 import "./components/Tasks/SoloTasks/CompletedTasks/CompletedTasks.css";
 import "./components/Tasks/SharedTasks/SharedTasks.css";
 import SharedTasks from "./components/Tasks/SharedTasks/SharedTasks.js";
-import AlertsModal from "./components/Friends/AlertsModal.js"
+import AlertsModal from "./components/Friends/AlertsModal.js";
 import Friends from "./components/Friends/Friends.js";
 import SharedCompletedTasks from "./components/Tasks/SharedTasks/SharedCompletedTasks/SharedCompletedTasks";
 import url from "./services/URL";
 import { GiFinishLine } from "react-icons/gi";
-import { useCookies } from 'react-cookie';
+import { useCookies } from "react-cookie";
 function App() {
-  // const [loginmodalShow, setloginmodalShow] = useState(true);
-  // const [showRegisterModal, setShowRegisterModal] = useState(false);
   const [tasksShow, settasksShow] = useState(false);
   const [handleTasks, sethandleTasks] = useState(false);
-
   const [userInfoCookies, setUserInfoCookies] = useCookies();
-  // const [userID, setUserID] = useCookies(['userID']);
   const [showFriends, setShowFriends] = useState(false);
   const [showCompletedTasks, setShowCompletedTasks] = useState(null);
-  const [showAlerts, setShowAlerts]=useState(false);
+  const [showAlerts, setShowAlerts] = useState(false);
   const [loading, setLoading] = useState(false);
   const [allFriendsData, setAllFriendsData] = useState([]);
   const [allCompletedData, setAllCompletedData] = useState([]);
   const [allIncompletedData, setAllIncompletedData] = useState([]);
   const [allAlertsData, setAllAlertsData] = useState([]);
-  
   const [allReceivedFriendRequestsData, setAllReceivedFriendRequestsData] =
     useState([]);
   const [allSentFriendRequestsData, setAllSentFriendRequestsData] = useState(
@@ -81,17 +73,16 @@ function App() {
     setAllAlertsData([]);
     setAllSentFriendRequestsData([]);
     setAllCompletedData([]);
-      setAllIncompletedData([]);
-      setAllFriendsData([]);
+    setAllIncompletedData([]);
+    setAllFriendsData([]);
   };
- 
 
   function onIDChange(newUserID) {
-    setUserInfoCookies('userID', newUserID, { path: '/' });
+    setUserInfoCookies("userID", newUserID, { path: "/" });
   }
- function onUserDisplayNameChange(newUserDisplayName) {
-  setUserInfoCookies('userDisplayName', newUserDisplayName, { path: '/' });
- }
+  function onUserDisplayNameChange(newUserDisplayName) {
+    setUserInfoCookies("userDisplayName", newUserDisplayName, { path: "/" });
+  }
   const handleReceivedFriendRequestsData = () => {
     axios
       .get(`${url}${userInfoCookies.userID}/user-received-friend-requests`)
@@ -100,17 +91,17 @@ function App() {
       });
   };
   const handleAlertsData = () => {
-    axios
-      .get(`${url}${userInfoCookies.userID}/alerts`)
-      .then((response) => {
-        setAllAlertsData(response.data.user_alerts);
-      });
+    axios.get(`${url}${userInfoCookies.userID}/alerts`).then((response) => {
+      setAllAlertsData(response.data.user_alerts);
+    });
   };
   const handleSentFriendRequestsData = () => {
-    axios.get(`${url}${userInfoCookies.userID}/user-sent-friend-requests`).then((response) => {
-      setAllSentFriendRequestsData(response.data.user_sent_friend_requests);
-      // isLoaded(true);
-    });
+    axios
+      .get(`${url}${userInfoCookies.userID}/user-sent-friend-requests`)
+      .then((response) => {
+        setAllSentFriendRequestsData(response.data.user_sent_friend_requests);
+        // isLoaded(true);
+      });
   };
 
   const handleTasksData = () => {
@@ -121,21 +112,28 @@ function App() {
     });
   };
   const handleFriendsData = () => {
-    axios.get(`${url}${userInfoCookies.userID}/user-friends`).then((response) => {
-      setAllFriendsData(response.data.user_friends);
-    });
+    axios
+      .get(`${url}${userInfoCookies.userID}/user-friends`)
+      .then((response) => {
+        setAllFriendsData(response.data.user_friends);
+      });
   };
   const spinnerOverride = css`
-  display: block;
-  margin: 0 auto;
-  border-color: red;
-  margin-top: 130px;
-`;
-  if (userInfoCookies.userID !=="null" && modalShow ===true && userInfoCookies.userID!==undefined){
+    display: block;
+    margin: 0 auto;
+    border-color: red;
+    margin-top: 130px;
+  `;
+  if (
+    userInfoCookies.userID !== "null" &&
+    modalShow === true &&
+    userInfoCookies.userID !== undefined
+  ) {
     setModalShow(false);
   }
   if (modalShow === false && tasksShow === false) {
-    setLoading(true); settasksShow(true);
+    setLoading(true);
+    settasksShow(true);
   }
 
   return (
@@ -146,23 +144,19 @@ function App() {
         completeCount={tasksShow ? Object.keys(allCompletedData).length : null}
         handleLogOut={() => handleLogOut()}
         showComplete={(props) => setShowCompletedTasks(props)}
-        showAlerts = {(props) => setShowAlerts(true)}
+        showAlerts={(props) => setShowAlerts(true)}
         userID={userInfoCookies.userID}
         receivedCount={Object.keys(allReceivedFriendRequestsData).length}
-        alertCount = {Object.keys(allAlertsData).length}
+        alertCount={Object.keys(allAlertsData).length}
       />
       <AlertsModal
-      allAlertsData={allAlertsData}
-      show={showAlerts}
-      onHide={()=>setShowAlerts(false)}
-      userID={userInfoCookies.userID}
-      updateAlerts={(props)=>setAllAlertsData(props)}
-      
-      
-      
+        allAlertsData={allAlertsData}
+        show={showAlerts}
+        onHide={() => setShowAlerts(false)}
+        userID={userInfoCookies.userID}
+        updateAlerts={(props) => setAllAlertsData(props)}
       />
       <SharedTasks
-        
         updateTasks={(props) => setAllIncompletedData(props)}
         incompletedSharedTasksData={allIncompletedData}
         completedSharedTasksData={allCompletedData}
@@ -172,7 +166,7 @@ function App() {
         completedhandleTasks={handleTasks}
         handledcompletedTasks={() => sethandleTasks(false)}
       />
-<ClockLoader  loading={loading} css={spinnerOverride} size={125} />
+      <ClockLoader loading={loading} css={spinnerOverride} size={125} />
       <Offcanvas
         show={showCompletedTasks}
         onHide={() => setShowCompletedTasks(false)}

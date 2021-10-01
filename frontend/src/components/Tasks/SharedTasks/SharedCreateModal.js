@@ -6,7 +6,7 @@ import {
   OverlayTrigger,
   Popover,
 } from "react-bootstrap";
-import React, { useState, useEffect, forceUpdate } from "react";
+import React, { useState, useEffect } from "react";
 import DateTimePicker from "react-datetime-picker";
 import "react-datetime/css/react-datetime.css";
 import moment from "moment";
@@ -29,8 +29,7 @@ function SharedCreateModal(props) {
   const [friend, setFriend] = useState(NaN);
   const [drawnImage, setDrawnImage] = useState();
   const [color, setColor] = useState("#563d7c");
-
-  const [dateTime, setdateTime] = useState(new Date());
+  const [dateTime, setdateTime] = useState(new Date(tomorrowDate()));
   const [loading, setLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -41,7 +40,9 @@ function SharedCreateModal(props) {
   const [sketchTool, setSketchTool] = useState(Tools.Select);
   const clearPopover = (
     <Popover className="tasks-container" id="popover-basic">
-      <Popover.Header as="h3">Are you sure you want to clear your drawing?</Popover.Header>
+      <Popover.Header as="h3">
+        Are you sure you want to clear your drawing?
+      </Popover.Header>
       <Popover.Body> </Popover.Body>
       <ButtonGroup aria-label="Basic example">
         <div>
@@ -57,6 +58,11 @@ function SharedCreateModal(props) {
       </ButtonGroup>
     </Popover>
   );
+  function tomorrowDate() {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    return tomorrow.setDate(tomorrow.getDate() + 1);
+  }
   const canUndo = () => {
     if (drawnImage !== undefined) {
       return drawnImage._history.canUndo();
@@ -119,14 +125,14 @@ function SharedCreateModal(props) {
       let opts = {
         left: Math.random() * (canvas.getWidth() - oImg.width * 0.5),
         top: Math.random() * (canvas.getHeight() - oImg.height * 0.5),
-        scale: 0.4,
+        scale: 0.2,
       };
-      Object.assign(opts, options);
+      // Object.assign(opts, options);
       oImg.scale(opts.scale);
-      oImg.set({
-        left: opts.left,
-        top: opts.top,
-      });
+      // oImg.set({
+      //   left: opts.left,
+      //   top: opts.top,
+      // });
       canvas.add(oImg);
       setSketchTool(Tools.Select);
     });
@@ -186,7 +192,6 @@ function SharedCreateModal(props) {
     setPriority("");
     setDescription("");
     setFriend(NaN);
-    setdateTime(new Date());
   };
   const clear = (propertiesToInclude) => {
     propertiesToInclude._fc.clear();
@@ -197,15 +202,13 @@ function SharedCreateModal(props) {
     setIsImported(true);
   };
   const handleLineWidth = (e) => {
-    
     setLineSketchWidth(e);
     setSketchTool(Tools.Select);
-    if (sketchTool===Tools.Select){
-    return setSketchTool(Tools.Pencil)}
-    
-    
+    if (sketchTool === Tools.Select) {
+      return setSketchTool(Tools.Pencil);
+    }
   };
-  
+
   return (
     <div>
       <Modal
@@ -311,58 +314,57 @@ function SharedCreateModal(props) {
                 setDrawnImage(view);
               }}
             />
- <div>
-                <Form.Label htmlFor="Description" className="mt-2">
-                  Tools
-                </Form.Label>
+            <div>
+              <Form.Label htmlFor="Description" className="mt-2">
+                Tools
+              </Form.Label>
+            </div>
+
+            <ButtonGroup className="create-modal-image-buttons">
+              <div>
+                <Button
+                  size="sm"
+                  variant="light"
+                  onClick={() => setSketchTool(Tools.Select)}
+                >
+                  {" "}
+                  <MdPhotoSizeSelectLarge />
+                </Button>
               </div>
-              
-<ButtonGroup className="create-modal-image-buttons">
-<div >
-                  <Button
-                    size="sm"
-                    variant="light"
-                    onClick={() => setSketchTool(Tools.Select)}
-                  >
-                    {" "}
-                    <MdPhotoSizeSelectLarge />
-                  </Button>
-                </div>
-                <div className="card-buttons">
-                  <Button
-                    size="sm"
-                    variant="light"
-                    onClick={() => setSketchTool(Tools.Pencil)}
-                  >
-                    {" "}
-                    <BsPencilSquare />
-                  </Button>
-                </div>
-               
-                <Form.Label htmlFor="exampleColorInput"></Form.Label>
+              <div className="card-buttons">
+                <Button
+                  size="sm"
+                  variant="light"
+                  onClick={() => setSketchTool(Tools.Pencil)}
+                >
+                  {" "}
+                  <BsPencilSquare />
+                </Button>
+              </div>
+
+              <Form.Label htmlFor="exampleColorInput"></Form.Label>
               <Form.Control
-              className="card-buttons"
+                className="card-buttons"
                 type="color"
                 id="exampleColorInput"
                 defaultValue="#563d7c"
                 title="Choose your color"
                 onChange={(e) => setColor(e.target.value)}
               />
-              </ButtonGroup>
-              <div>
-                <Form.Label className="create-modal-image-buttons">
-                  Line width
-                </Form.Label>
-                <Form.Range
-                  min={1}
-                  max={10}
-                  value={lineSketchWidth}
-                  onChange={(e) => handleLineWidth(parseInt(e.target.value))}
-                />
-              </div>
+            </ButtonGroup>
+            <div>
+              <Form.Label className="create-modal-image-buttons">
+                Line width
+              </Form.Label>
+              <Form.Range
+                min={1}
+                max={10}
+                value={lineSketchWidth}
+                onChange={(e) => handleLineWidth(parseInt(e.target.value))}
+              />
+            </div>
 
             <ButtonGroup className="create-modal-image-buttons">
-             
               <div>
                 <Button onClick={() => undo()} variant="dark">
                   <FaUndo />
@@ -373,23 +375,27 @@ function SharedCreateModal(props) {
                   <FaRedo />
                 </Button>
               </div>
-              
-                <div className="card-buttons">
+
+              <div className="card-buttons">
                 <OverlayTrigger
-                trigger="focus"
-                placement="bottom"
-                overlay={clearPopover}
-              >
-                  <Button onClick={() => setShowClearPopover(true)} variant="danger">
+                  trigger="focus"
+                  placement="bottom"
+                  overlay={clearPopover}
+                >
+                  <Button
+                    onClick={() => setShowClearPopover(true)}
+                    variant="danger"
+                  >
                     <AiOutlineClear />
                   </Button>
-                  </OverlayTrigger>
-                </div>
-              
+                </OverlayTrigger>
+              </div>
             </ButtonGroup>
             <div className="create-modal-image-buttons">
-            <Form.Label className="create-modal-image-buttons">Import an image</Form.Label>
-              <Form.Group controlId="formFile"  >
+              <Form.Label className="create-modal-image-buttons">
+                Import an image
+              </Form.Label>
+              <Form.Group controlId="formFile">
                 <FileBase64
                   type="file"
                   multiple={false}

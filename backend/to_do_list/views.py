@@ -254,9 +254,43 @@ def tasks(request, user):
                   task_drawing=task['task_drawing'], task_description=task['task_description'], task_date_time=d)
         t.save()
         if sharing_with['user_id']:
+            alert_message = [
+                f"\n{u.user_display_name} changed \"{task_before_change.task_name}\":\n", ]
+            task_name_changed = False
+            task_date_time_changed = False
+            task_description_changed = False
+            task_drawing_changed = False
+            task_priority_changed = False
+            if task_before_change.task_name != t.task_name:
+                task_name_changed = True
+            if task_before_change.task_date_time != t.task_date_time:
+                task_date_time_changed = True
+            if task_before_change.task_description != t.task_description:
+                task_description_changed = True
+            if task_before_change.task_drawing != t.task_drawing:
+                task_drawing_changed = True
+            if task_before_change.task_priority != t.task_priority:
+                task_priority_changed = True
             sharing_with_user = User.objects.get(pk=sharing_with['user_id'])
+            if task_name_changed:
+                alert_message.append(
+                    f"\nName changed from \"{task_before_change.task_name}\" to \"{t.task_name}\".\n")
+            if task_date_time_changed:
+                alert_message.append(
+                    f"\nDate/time changed from \"{datetime.datetime.strftime(task_before_change.task_date_time, '%B %d %Y %I:%M %p')}\" to \"{datetime.datetime.strftime(t.task_date_time, '%B %d %Y %I:%M %p')}\".\n")
+            if task_description_changed:
+                alert_message.append(
+                    f"\nDescription changed from \"{task_before_change.task_description}\" to \"{t.task_description}\".\n")
+            if task_drawing_changed:
+                alert_message.append(f"\nDrawing changed.\n")
+            if task_priority_changed:
+                task_priority_values = {
+                    "A": "High", "B": "Above Normal", "C": "Normal", "D": "Below Normal", "F": "Low"}
+                alert_message.append(
+                    f"\nPriority changed from \"{task_priority_values[task_before_change.task_priority]}\" to \"{task_priority_values[t.task_priority]}\".\n")
+            alert_message = ''.join(alert_message)
             a = Alerts(user=sharing_with_user,
-                       message=f"{u.user_display_name} changed \"{task_before_change.task_name}\"", alert_type="Editted")
+                       message=alert_message, alert_type="Editted")
             a.save()
         return HttpResponse("nice")
 

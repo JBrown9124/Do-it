@@ -17,7 +17,7 @@ import axios from "axios";
 import { FiUserPlus, FiUserMinus } from "react-icons/fi";
 import AddFriendModal from "./AddFriendModal";
 import url from "../../services/URL";
-
+import {GiThreeFriends} from "react-icons/gi"
 function Friends(props) {
   const [showAddFriendModal, setShowAddFriendModal] = useState(false);
   const [animationType, setAnimationType] = useState("");
@@ -77,7 +77,7 @@ function Friends(props) {
   };
 
   const handleAccept = (fromUserID) => {
-    // setSearchResults(remainingTasks);
+    
 
     const findUserByID = props.allReceivedFriendRequestsData.find(
       ({ user_id }) => user_id === fromUserID
@@ -136,7 +136,7 @@ function Friends(props) {
           closeButton
           onClick={() => handleClose()}
         >
-          <Offcanvas.Title className="completed-title">Friends</Offcanvas.Title>
+          <Offcanvas.Title className="completed-title">Friends <GiThreeFriends/></Offcanvas.Title>
         </Offcanvas.Header>
 
         <Offcanvas.Body>
@@ -150,7 +150,7 @@ function Friends(props) {
             <Tab eventKey="Friends" title="Friends">
               <div className="add-friend-title">
                 <Button
-                  // className="completed-clear"
+                  
                   variant="success"
                   size="lg"
                   onClick={() => setShowAddFriendModal(true)}
@@ -287,9 +287,7 @@ function Friends(props) {
       </Offcanvas>
     </>
   );
-  // } else {
-  //   return null;
-  // }
+  
 }
 
 export default Friends;

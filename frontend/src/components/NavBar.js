@@ -3,9 +3,6 @@ import React, { useState } from "react";
 import {
   Navbar,
   Nav,
-  NavDropdown,
-  Form,
-  FormControl,
   OverlayTrigger,
   ButtonGroup,
   Button,
@@ -13,7 +10,7 @@ import {
   Badge,
   Container,
 } from "react-bootstrap";
-import { withRouter } from "react-router-dom";
+
 import { CgProfile } from "react-icons/cg";
 import { BsBell } from "react-icons/bs";
 
@@ -26,14 +23,14 @@ const Navigation = (props) => {
       <Popover.Body> Hate to see you go!</Popover.Body>
       <ButtonGroup aria-label="Basic example">
         <div>
-        <Button onClick={() => props.handleLogOut()} variant="warning">
-          Sign me out
-        </Button>
+          <Button onClick={() => props.handleLogOut()} variant="warning">
+            Sign me out
+          </Button>
         </div>
         <div className="card-buttons">
-        <Button variant="info" onClick={() => setShowLogOutPopOver(false)}>
-          I'll stay!
-        </Button>
+          <Button variant="info" onClick={() => setShowLogOutPopOver(false)}>
+            I'll stay!
+          </Button>
         </div>
       </ButtonGroup>
     </Popover>
@@ -67,17 +64,21 @@ const Navigation = (props) => {
             </Nav>
 
             <Nav>
-              <Nav.Link onClick={() => props.showAlerts(true)} variant="danger" className="position-relative">
+              <Nav.Link
+                onClick={() => props.showAlerts(true)}
+                variant="danger"
+                className="position-relative"
+              >
                 <div className="position-relative">
                   <BsBell />
-                  
+
                   <Badge
                     pill={true}
                     className="badge position-absolute top-0 left-100 translate-middle bg-warning"
                     bg="danger"
-                  >{props.alertCount === 0 ? null:props.alertCount}
+                  >
+                    {props.alertCount === 0 ? null : props.alertCount}
                   </Badge>
-                  
                 </div>
               </Nav.Link>
               <OverlayTrigger
@@ -89,14 +90,13 @@ const Navigation = (props) => {
                   bg="light"
                   onClick={() => setShowLogOutPopOver(true)}
                   className="Navbtn"
-                  
                 >
                   Sign out
                 </Nav.Link>
-                
               </OverlayTrigger>
               <Navbar.Text>
-                {props.userDisplayName === undefined || props.userDisplayName === "null"
+                {props.userDisplayName === undefined ||
+                props.userDisplayName === "null"
                   ? `Welcome!${" "}`
                   : `${" "}${props.userDisplayName}`}
                 <CgProfile />
@@ -109,5 +109,4 @@ const Navigation = (props) => {
   );
 };
 
-// export default withRouter(Navigation);
-export default Navigation
+export default Navigation;

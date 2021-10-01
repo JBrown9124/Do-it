@@ -13,6 +13,8 @@ import {
   Tooltip,
   Toast,
   ToggleButton,
+  Row,
+  Col,
 } from "react-bootstrap";
 import { FaUserAlt, FaUserFriends } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
@@ -58,29 +60,31 @@ function SharedTasks(props) {
   const scrollTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  // useEffect(
-  //   () => setSearchResults(props.incompletedSharedTasksData),
-  //   [props.incompletedSharedTasksData.length]
-  // );
 
   useEffect(() => {
     if (radioValue === "Shared") {
       const results = props.incompletedSharedTasksData.filter(
         (task_name) =>
           task_name.sharing_with.user_id !== null &&
-          (task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+          (task_name.task.task_name
+            .toLowerCase()
+            .includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
 
               .includes(searchItem) ||
-            task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem.toLowerCase()))
+            task_name.sharing_with.user_display_name
+              .toLowerCase()
+              .includes(searchItem.toLowerCase()))
       );
       setSearchResults(results);
     } else if (radioValue === "Solo") {
       const results = props.incompletedSharedTasksData.filter(
         (task_name) =>
           task_name.sharing_with.user_id === null &&
-          (task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+          (task_name.task.task_name
+            .toLowerCase()
+            .includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
 
@@ -91,17 +95,23 @@ function SharedTasks(props) {
     } else if (radioValue === "Solo+Shared") {
       const results = props.incompletedSharedTasksData.filter((task_name) =>
         task_name.sharing_with.user_id === null
-          ? task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+          ? task_name.task.task_name
+              .toLowerCase()
+              .includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
 
               .includes(searchItem)
-          : task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+          : task_name.task.task_name
+              .toLowerCase()
+              .includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
 
               .includes(searchItem) ||
-            task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem.toLowerCase())
+            task_name.sharing_with.user_display_name
+              .toLowerCase()
+              .includes(searchItem.toLowerCase())
       );
       setSearchResults(results);
     }
@@ -202,7 +212,7 @@ function SharedTasks(props) {
     setToastMessage("Saved.");
     setToastColor("warning");
     axios.put(`${url}${props.userID}/tasks`, taskByID).then((res) => {
-      setShowToast(true); 
+      setShowToast(true);
     });
   };
 
@@ -470,112 +480,124 @@ function SharedTasks(props) {
         >
           <Toast.Body>Saved.</Toast.Body>
         </Toast>
-        <FlipMove
-          leaveAnimation={cardAnimation[animationType]}
-          staggerDelayBy={150}
-        >
-          {searchResults.map(({ task, sharing_with }) => (
-            <div className="tasks-container" key={task.task_id}>
-              <Card
-                className="task-card"
-                border={cardBorder[task.task_priority]}
-                style={{ width: "22rem" }}
-              >
-                <Card.Header>
-                  {sharing_with.user_display_name === null ? (
-                    <div className="card-social-icon">
-                      <FaUserAlt />
-                    </div>
-                  ) : (
-                    <div className="card-social-icon">
-                      {sharing_with.user_display_name}{" "}
-                      <FaUserFriends className="card-social-icon" />
-                    </div>
-                  )}
-                  {task.task_name}
-                </Card.Header>
 
-                <Card.Body>
-                  <Card.Text>{task.task_description}</Card.Text>
-                  <Card.Img variant="bottom" src={task.task_drawing} />
-                  <ButtonGroup className="card-buttons-margin-top">
-                    <div>
-                      <Button
-                        variant="info"
-                        size="med"
-                        onClick={() =>
-                          handleShare({
-                            user_id: props.userID,
-                            task_priority: task.task_priority,
-                            task_name: task.task_name,
+        <Row md={4} xs={1}>
+          <FlipMove
+            leaveAnimation={cardAnimation[animationType]}
+            staggerDelayBy={150}
+            typeName={null}
+          >
+            {searchResults.map(({ task, sharing_with }) => (
+              <div key={task.task_id}>
+                <Col>
+                  <Card
+                    key={task.task_id}
+                    className="task-card"
+                    border={cardBorder[task.task_priority]}
+                    style={{ width: "22rem" }}
+                  >
+                    <Card.Header>
+                      {sharing_with.user_display_name === null ? (
+                        <div className="card-social-icon">
+                          <FaUserAlt />
+                        </div>
+                      ) : (
+                        <div className="card-social-icon">
+                          {sharing_with.user_display_name}{" "}
+                          <FaUserFriends className="card-social-icon" />
+                        </div>
+                      )}
+                      {task.task_name}
+                    </Card.Header>
 
-                            task_description: task.task_description,
-                            task_date_time: task.task_date_time,
-                            task_drawing: task.task_drawing,
-                          })
-                        }
-                      >
-                        <ImShare2 className="task-card-icon-size" />
-                      </Button>
-                    </div>
-                    <div className="card-buttons">
-                      <Button
-                        variant="primary"
-                        size="med"
-                        value={task.task_id}
-                        onClick={(e) => handleComplete({ sharing_with, task })}
-                      >
-                        <ImCheckmark className="task-card-icon-size" />
-                      </Button>
-                    </div>
-                    <div className="card-buttons">
-                      <Button
-                        variant="warning"
-                        onClick={(e) =>
-                          handleSendEditData({
-                            user_id: props.userID,
-                            task_priority: task.task_priority,
-                            task_name: task.task_name,
-                            task_id: task.task_id,
-                            task_description: task.task_description,
-                            task_date_time: task.task_date_time,
-                            task_drawing: task.task_drawing,
-                          })
-                        }
-                        size="med"
-                        value={[
-                          props.userID,
-                          task.task_priority,
-                          task.task_name,
-                          task.task_id,
-                          task.task_description,
-                          task.task_date_time,
-                        ]}
-                      >
-                        <FiEdit className="task-card-icon-size" />
-                      </Button>
-                    </div>
-                    <div className="card-buttons">
-                      <Button
-                        value={task.task_id}
-                        variant="danger"
-                        onClick={(e) =>
-                          handleDeleteOffCanvas({ sharing_with, task })
-                        }
-                        size="med"
-                      >
-                        <RiDeleteBin2Line className="task-card-icon-size" />
-                      </Button>
-                    </div>
-                  </ButtonGroup>
-                </Card.Body>
-                <Card.Footer>
-                  {moment(task.task_date_time).format("MMMM DD YYYY hh:mm A")}
-                </Card.Footer>
-              </Card>
-            </div>
-          ))}
-        </FlipMove>
+                    <Card.Body>
+                      <Card.Text>{task.task_description}</Card.Text>
+                      <Card.Img variant="bottom" src={task.task_drawing} />
+                      <ButtonGroup className="card-buttons-margin-top">
+                        <div>
+                          <Button
+                            variant="info"
+                            size="med"
+                            onClick={() =>
+                              handleShare({
+                                user_id: props.userID,
+                                task_priority: task.task_priority,
+                                task_name: task.task_name,
+
+                                task_description: task.task_description,
+                                task_date_time: task.task_date_time,
+                                task_drawing: task.task_drawing,
+                              })
+                            }
+                          >
+                            <ImShare2 className="task-card-icon-size" />
+                          </Button>
+                        </div>
+                        <div className="card-buttons">
+                          <Button
+                            variant="primary"
+                            size="med"
+                            value={task.task_id}
+                            onClick={(e) =>
+                              handleComplete({ sharing_with, task })
+                            }
+                          >
+                            <ImCheckmark className="task-card-icon-size" />
+                          </Button>
+                        </div>
+                        <div className="card-buttons">
+                          <Button
+                            variant="warning"
+                            onClick={(e) =>
+                              handleSendEditData({
+                                user_id: props.userID,
+                                task_priority: task.task_priority,
+                                task_name: task.task_name,
+                                task_id: task.task_id,
+                                task_description: task.task_description,
+                                task_date_time: new Date(task.task_date_time),
+                                task_drawing: task.task_drawing,
+                              })
+                            }
+                            size="med"
+                            value={[
+                              props.userID,
+                              task.task_priority,
+                              task.task_name,
+                              task.task_id,
+                              task.task_description,
+                              task.task_date_time,
+                            ]}
+                          >
+                            <FiEdit className="task-card-icon-size" />
+                          </Button>
+                        </div>
+                        <div className="card-buttons">
+                          <Button
+                            value={task.task_id}
+                            variant="danger"
+                            onClick={(e) =>
+                              handleDeleteOffCanvas({ sharing_with, task })
+                            }
+                            size="med"
+                          >
+                            <RiDeleteBin2Line className="task-card-icon-size" />
+                          </Button>
+                        </div>
+                      </ButtonGroup>
+                    </Card.Body>
+                    <Card.Footer>
+                      {moment(task.task_date_time).format(
+                        "MMMM DD YYYY hh:mm A"
+                      )}
+                    </Card.Footer>
+                  </Card>
+                </Col>
+              </div>
+            ))}
+          </FlipMove>
+        </Row>
+
         <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
           <Button
             // className="create-button"

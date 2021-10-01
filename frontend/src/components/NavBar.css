@@ -5,3 +5,18 @@ log-out{
 .nav-bar-container{
     margin-left:10px;
 }
+.alert-badge{
+    
+    position:absolute;
+    top:-35%;
+    left:60%;
+    translate:middle;
+}
+.alert-bell{
+    margin-right: 30px;
+}
+.alert-badge-number{
+    width: 6px;
+    
+    height: 10px;
+}

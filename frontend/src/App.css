@@ -15,7 +15,10 @@
 }
 
 .spinner-log-in {
-  margin: auto;
+  display: block;
+  margin: 0 auto;
+  border-color: red;
+
   text-align: center;
   justify-content: center;
 }

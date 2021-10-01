@@ -34,19 +34,25 @@ function SharedCompletedTasks(props) {
       const results = props.completedSharedTasksData.filter(
         (task_name) =>
           task_name.sharing_with.user_id !== null &&
-          (task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+          (task_name.task.task_name
+            .toLowerCase()
+            .includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
 
               .includes(searchItem) ||
-            task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem.toLowerCase()))
+            task_name.sharing_with.user_display_name
+              .toLowerCase()
+              .includes(searchItem.toLowerCase()))
       );
       setSearchResults(results);
     } else if (radioValue === "Solo") {
       const results = props.completedSharedTasksData.filter(
         (task_name) =>
           task_name.sharing_with.user_id === null &&
-          (task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+          (task_name.task.task_name
+            .toLowerCase()
+            .includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
 
@@ -57,17 +63,23 @@ function SharedCompletedTasks(props) {
     } else if (radioValue === "Solo+Shared") {
       const results = props.completedSharedTasksData.filter((task_name) =>
         task_name.sharing_with.user_id === null
-          ? task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+          ? task_name.task.task_name
+              .toLowerCase()
+              .includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
 
               .includes(searchItem)
-          : task_name.task.task_name.toLowerCase().includes(searchItem.toLowerCase()) ||
+          : task_name.task.task_name
+              .toLowerCase()
+              .includes(searchItem.toLowerCase()) ||
             moment(task_name.task.task_date_time)
               .format("MMMM DD YYYY hh:mm A")
 
               .includes(searchItem) ||
-            task_name.sharing_with.user_display_name.toLowerCase().includes(searchItem.toLowerCase())
+            task_name.sharing_with.user_display_name
+              .toLowerCase()
+              .includes(searchItem.toLowerCase())
       );
       setSearchResults(results);
     }
@@ -359,7 +371,7 @@ function SharedCompletedTasks(props) {
         staggerDelayBy={150}
       >
         {searchResults.map(({ task, sharing_with }) => (
-          <div className="tasks-container" key={task.task_id}>
+          <div key={task.task_id}>
             <Card
               className="task-card"
               key={task.task_id}
@@ -382,7 +394,10 @@ function SharedCompletedTasks(props) {
               <Card.Body>
                 <Card.Text>{task.task_description}</Card.Text>
                 <Card.Img variant="bottom" src={task.task_drawing} />
-                <ButtonGroup aria-label="Basic example"className="card-buttons-margin-top">
+                <ButtonGroup
+                  aria-label="Basic example"
+                  className="card-buttons-margin-top"
+                >
                   <div className="card-buttons">
                     <Button
                       variant="dark"
