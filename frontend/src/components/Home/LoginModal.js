@@ -1,4 +1,4 @@
-import { Button, Form } from "react-bootstrap";
+import { Button, Form, Placeholder } from "react-bootstrap";
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -9,6 +9,7 @@ function Login(props) {
   const [password, setPassword] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [guestLoading, setGuestLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
   const [data, setData] = useState(null);
@@ -46,7 +47,31 @@ function Login(props) {
         setIsError(true);
       });
   };
+  const handleGuest = () => {
+    setGuestLoading(true);
+    setIsError(false);
+    const data = {
+      email: email,
+      password: password,
+    };
 
+    axios
+      .get(`${url}log-in/`, data)
+      .then((res) => {
+        setData(res.data);
+
+        setEmail("");
+        setPassword("");
+
+        setGuestLoading(false);
+        props.hideModal();
+        props.userDisplayName(res.data.user_display_name);
+        props.userID(res.data.user_id);
+      })
+      .catch((err) => {
+        setGuestLoading(false);
+      });
+  };
   return (
     <>
       <div className="container p-3">
@@ -103,7 +128,7 @@ function Login(props) {
           onClick={handleSubmit}
           disabled={loading}
         >
-          {loading ? "Loading..." : "There is no try"}
+          {loading ? "Loading..." : "Let's go!"}
         </button>
 
         <Button
@@ -112,6 +137,28 @@ function Login(props) {
           variant="link"
         >
           Create account
+        </Button>
+      </div>
+      <div className="sign-in-placeholder">
+        <Placeholder size="sm" as="p" animation="glow">
+          <Placeholder
+            bg="secondary"
+            className="placeholder-right"
+            size="xs"
+            xs={5}
+          />{" "}
+          Or{" "}
+          <Placeholder
+            bg="secondary"
+            className="placeholder-right"
+            size="xs"
+            xs={5}
+          />
+        </Placeholder>
+      </div>
+      <div className="sign-in-as-guest">
+        <Button onClick={() => handleGuest()} disabled={guestLoading}>
+          {guestLoading ? "Loading..." : "Sign in as a guest!"}
         </Button>
       </div>
     </>

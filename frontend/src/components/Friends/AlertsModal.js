@@ -6,6 +6,7 @@ import {
   OverlayTrigger,
   ButtonGroup,
   Popover,
+  Container,
 } from "react-bootstrap";
 import React, { useState } from "react";
 import moment from "moment";
@@ -52,10 +53,13 @@ function AlertsModal(props) {
     <>
       <Modal {...props} size="large" centered>
         <Modal.Header closeButton onClick={() => props.onHide()}>
-          <Modal.Title>
-            Alerts <AiFillAlert className="task-card-icon-size" />
-          </Modal.Title>
+          <Container>
+            <Modal.Title>
+              Alerts <AiFillAlert className="task-card-icon-size" />
+            </Modal.Title>
+          </Container>
         </Modal.Header>
+
         <OverlayTrigger
           trigger="focus"
           placement="bottom"
@@ -73,51 +77,53 @@ function AlertsModal(props) {
         <Modal.Body>
           {props.allAlertsData.map((alert) => (
             <div key={alert.alert_id}>
-              <ListGroup className="friend-list-container" horizontal="xxl">
-                <Col>
-                  <ListGroup.Item
-                    variant={
-                      alert.alert_type === "Completed"
-                        ? "primary"
-                        : alert.alert_type === "Editted"
-                        ? "warning"
-                        : alert.alert_type === "Shared"
-                        ? "info"
-                        : alert.alert_type === "Deleted"
-                        ? "danger"
-                        : alert.alert_type === "Undid"
-                        ? "dark"
-                        : ""
-                    }
-                    className="friend-list-seperator"
-                  >
-                    <Col>
-                      {alert.alert_type === "Completed" ? (
-                        <ImCheckmark className="alert-icon-size" />
-                      ) : alert.alert_type === "Editted" ? (
-                        <FiEdit className="alert-icon-size" />
-                      ) : alert.alert_type === "Shared" ? (
-                        <ImShare2 className="alert-icon-size" />
-                      ) : alert.alert_type === "Deleted" ? (
-                        <RiDeleteBin2Line className="alert-icon-size" />
-                      ) : alert.alert_type === "Undid" ? (
-                        <FaUndo className="alert-icon-size" />
-                      ) : (
-                        ""
-                      )}
-                    </Col>
-                    <Col>
-                      <strong>{alert.message} </strong>
-                    </Col>
-                    <Col>
-                      {moment
-                        .utc(alert.created_date)
-                        .local()
-                        .format("MMMM DD YYYY hh:mm A")}
-                    </Col>
-                  </ListGroup.Item>
-                </Col>
-              </ListGroup>
+              <Container>
+                <ListGroup className="friend-list-container" horizontal="xxl">
+                  <Col>
+                    <ListGroup.Item
+                      variant={
+                        alert.alert_type === "Completed"
+                          ? "primary"
+                          : alert.alert_type === "Editted"
+                          ? "warning"
+                          : alert.alert_type === "Shared"
+                          ? "info"
+                          : alert.alert_type === "Deleted"
+                          ? "danger"
+                          : alert.alert_type === "Undid"
+                          ? "dark"
+                          : ""
+                      }
+                      className="friend-list-seperator"
+                    >
+                      <Col>
+                        {alert.alert_type === "Completed" ? (
+                          <ImCheckmark className="alert-icon-size" />
+                        ) : alert.alert_type === "Editted" ? (
+                          <FiEdit className="alert-icon-size" />
+                        ) : alert.alert_type === "Shared" ? (
+                          <ImShare2 className="alert-icon-size" />
+                        ) : alert.alert_type === "Deleted" ? (
+                          <RiDeleteBin2Line className="alert-icon-size" />
+                        ) : alert.alert_type === "Undid" ? (
+                          <FaUndo className="alert-icon-size" />
+                        ) : (
+                          ""
+                        )}
+                      </Col>
+                      <Col>
+                        <strong>{alert.message} </strong>
+                      </Col>
+                      <Col>
+                        {moment
+                          .utc(alert.created_date)
+                          .local()
+                          .format("MMMM DD YYYY hh:mm A")}
+                      </Col>
+                    </ListGroup.Item>
+                  </Col>
+                </ListGroup>
+              </Container>
             </div>
           ))}
         </Modal.Body>

@@ -15,7 +15,10 @@ import {
   ToggleButton,
   Row,
   Col,
+  Container,
+  Spinner,
 } from "react-bootstrap";
+
 import { FaUserAlt, FaUserFriends } from "react-icons/fa";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -292,6 +295,7 @@ function SharedTasks(props) {
     D: "info",
     F: "success",
   };
+
   const cardAnimation = {
     complete: "accordionHorizontal",
     delete: "fade",
@@ -300,7 +304,7 @@ function SharedTasks(props) {
 
   if (props.show === true && searchResults !== null)
     return (
-      <div>
+      <>
         <FaArrowCircleUp
           className="scrollTop"
           onClick={scrollTop}
@@ -361,47 +365,70 @@ function SharedTasks(props) {
             </ButtonGroup>
           </Offcanvas.Body>
         </Offcanvas>
-        <div className="check-box-container">
-          <ButtonGroup size="lg" className="check-box-button-size">
-            <ToggleButton
-              key={0}
-              id={`radio-${0}`}
-              type="radio"
-              variant="secondary"
-              name="radio"
-              value={"Solo"}
-              checked={radioValue === "Solo"}
-              onChange={(e) => setRadioValue(e.currentTarget.value)}
-            >
-              <FaUserAlt />
-            </ToggleButton>
-            <ToggleButton
-              key={1}
-              id={`radio-${1}`}
-              type="radio"
-              variant="secondary"
-              name="radio"
-              value={"Solo+Shared"}
-              checked={radioValue === "Solo+Shared"}
-              onChange={(e) => setRadioValue(e.currentTarget.value)}
-            >
-              <FaUserAlt />+<FaUserFriends />
-            </ToggleButton>
+        <Container className="check-box-create-button-container">
+          <Row
+            xs={"auto"}
+            sm={"auto"}
+            md={"auto"}
+            lg={"auto"}
+            xl={"auto"}
+            xxl={"auto"}
+          >
+            <Col xs={5} sm={4} md={4} lg={4} xl={4} xxl={5}>
+              <Button
+                variant="success"
+                size="lg"
+                onClick={(e) => setcreateModalShow(true)}
+                disabled={createModalShow}
+              >
+                {createModalShow ? "Creating..." : "Create"} <CgGoogleTasks />
+              </Button>
+            </Col>
+            <Col xs={5} sm={"auto"} md={4} lg={4} xl={4} xxl={"auto"}>
+              <div className="check-box-container">
+                <ButtonGroup size="lg" className="check-box-button-size">
+                  <ToggleButton
+                    key={0}
+                    id={`radio-${0}`}
+                    type="radio"
+                    variant="secondary"
+                    name="radio"
+                    value={"Solo"}
+                    checked={radioValue === "Solo"}
+                    onChange={(e) => setRadioValue(e.currentTarget.value)}
+                  >
+                    <FaUserAlt />
+                  </ToggleButton>
+                  <ToggleButton
+                    key={1}
+                    id={`radio-${1}`}
+                    type="radio"
+                    variant="secondary"
+                    name="radio"
+                    value={"Solo+Shared"}
+                    checked={radioValue === "Solo+Shared"}
+                    onChange={(e) => setRadioValue(e.currentTarget.value)}
+                  >
+                    <FaUserAlt />+<FaUserFriends />
+                  </ToggleButton>
 
-            <ToggleButton
-              key={2}
-              id={`radio-${2}`}
-              type="radio"
-              variant="secondary"
-              name="radio"
-              value={"Shared"}
-              checked={radioValue === "Shared"}
-              onChange={(e) => setRadioValue(e.currentTarget.value)}
-            >
-              <FaUserFriends />
-            </ToggleButton>
-          </ButtonGroup>
-        </div>
+                  <ToggleButton
+                    key={2}
+                    id={`radio-${2}`}
+                    type="radio"
+                    variant="secondary"
+                    name="radio"
+                    value={"Shared"}
+                    checked={radioValue === "Shared"}
+                    onChange={(e) => setRadioValue(e.currentTarget.value)}
+                  >
+                    <FaUserFriends />
+                  </ToggleButton>
+                </ButtonGroup>
+              </div>
+            </Col>
+          </Row>
+        </Container>
         <ButtonToolbar
           className="top-tasks-buttons"
           aria-label="Toolbar with button groups"
@@ -480,136 +507,133 @@ function SharedTasks(props) {
         >
           <Toast.Body>Saved.</Toast.Body>
         </Toast>
-
-        <Row md={4} xs={1}>
-          <FlipMove
-            leaveAnimation={cardAnimation[animationType]}
-            staggerDelayBy={150}
-            typeName={null}
+        <Container fluid>
+          <Row
+            className="tasks-container"
+            xs={"auto"}
+            sm={"auto"}
+            md={"auto"}
+            lg={"auto"}
+            xl={"auto"}
+            xxl={"auto"}
           >
-            {searchResults.map(({ task, sharing_with }) => (
-              <div key={task.task_id}>
-                <Col>
-                  <Card
-                    key={task.task_id}
-                    className="task-card"
-                    border={cardBorder[task.task_priority]}
-                    style={{ width: "22rem" }}
-                  >
-                    <Card.Header>
-                      {sharing_with.user_display_name === null ? (
-                        <div className="card-social-icon">
-                          <FaUserAlt />
-                        </div>
-                      ) : (
-                        <div className="card-social-icon">
-                          {sharing_with.user_display_name}{" "}
-                          <FaUserFriends className="card-social-icon" />
-                        </div>
-                      )}
-                      {task.task_name}
-                    </Card.Header>
+            <FlipMove
+              leaveAnimation={cardAnimation[animationType]}
+              staggerDelayBy={150}
+              typeName={null}
+            >
+              {searchResults.map(({ task, sharing_with }) => (
+                <div key={task.task_id}>
+                  <Col>
+                    <Card
+                      className="task-card"
+                      border={cardBorder[task.task_priority]}
+                      style={{ width: "22rem" }}
+                    >
+                      <Card.Header>
+                        {sharing_with.user_display_name === null ? (
+                          <div className="card-social-icon">
+                            <FaUserAlt />
+                          </div>
+                        ) : (
+                          <div className="card-social-icon">
+                            {sharing_with.user_display_name}{" "}
+                            <FaUserFriends className="card-social-icon" />
+                          </div>
+                        )}
+                        {task.task_name}
+                      </Card.Header>
 
-                    <Card.Body>
-                      <Card.Text>{task.task_description}</Card.Text>
-                      <Card.Img variant="bottom" src={task.task_drawing} />
-                      <ButtonGroup className="card-buttons-margin-top">
-                        <div>
-                          <Button
-                            variant="info"
-                            size="med"
-                            onClick={() =>
-                              handleShare({
-                                user_id: props.userID,
-                                task_priority: task.task_priority,
-                                task_name: task.task_name,
+                      <Card.Body>
+                        <Card.Text>{task.task_description}</Card.Text>
+                        <Card.Img variant="bottom" src={task.task_drawing} />
+                        <ButtonGroup className="card-buttons-margin-top">
+                          <div>
+                            <Button
+                              variant="info"
+                              size="med"
+                              onClick={() =>
+                                handleShare({
+                                  user_id: props.userID,
+                                  task_priority: task.task_priority,
+                                  task_name: task.task_name,
 
-                                task_description: task.task_description,
-                                task_date_time: task.task_date_time,
-                                task_drawing: task.task_drawing,
-                              })
-                            }
-                          >
-                            <ImShare2 className="task-card-icon-size" />
-                          </Button>
-                        </div>
-                        <div className="card-buttons">
-                          <Button
-                            variant="primary"
-                            size="med"
-                            value={task.task_id}
-                            onClick={(e) =>
-                              handleComplete({ sharing_with, task })
-                            }
-                          >
-                            <ImCheckmark className="task-card-icon-size" />
-                          </Button>
-                        </div>
-                        <div className="card-buttons">
-                          <Button
-                            variant="warning"
-                            onClick={(e) =>
-                              handleSendEditData({
-                                user_id: props.userID,
-                                task_priority: task.task_priority,
-                                task_name: task.task_name,
-                                task_id: task.task_id,
-                                task_description: task.task_description,
-                                task_date_time: new Date(task.task_date_time),
-                                task_drawing: task.task_drawing,
-                              })
-                            }
-                            size="med"
-                            value={[
-                              props.userID,
-                              task.task_priority,
-                              task.task_name,
-                              task.task_id,
-                              task.task_description,
-                              task.task_date_time,
-                            ]}
-                          >
-                            <FiEdit className="task-card-icon-size" />
-                          </Button>
-                        </div>
-                        <div className="card-buttons">
-                          <Button
-                            value={task.task_id}
-                            variant="danger"
-                            onClick={(e) =>
-                              handleDeleteOffCanvas({ sharing_with, task })
-                            }
-                            size="med"
-                          >
-                            <RiDeleteBin2Line className="task-card-icon-size" />
-                          </Button>
-                        </div>
-                      </ButtonGroup>
-                    </Card.Body>
-                    <Card.Footer>
-                      {moment(task.task_date_time).format(
-                        "MMMM DD YYYY hh:mm A"
-                      )}
-                    </Card.Footer>
-                  </Card>
-                </Col>
-              </div>
-            ))}
-          </FlipMove>
-        </Row>
-
-        <Navbar fixed="bottom" collapseOnSelect className="Navcontainer">
-          <Button
-            // className="create-button"
-            className="create-task-nav"
-            variant="success"
-            size="lg"
-            onClick={(e) => setcreateModalShow(true)}
-          >
-            {createModalShow ? "Creating..." : "Create"} <CgGoogleTasks />
-          </Button>
-        </Navbar>
-      </div>
+                                  task_description: task.task_description,
+                                  task_date_time: task.task_date_time,
+                                  task_drawing: task.task_drawing,
+                                })
+                              }
+                            >
+                              <ImShare2 className="task-card-icon-size" />
+                            </Button>
+                          </div>
+                          <div className="card-buttons">
+                            <Button
+                              variant="primary"
+                              size="med"
+                              value={task.task_id}
+                              onClick={(e) =>
+                                handleComplete({ sharing_with, task })
+                              }
+                            >
+                              <ImCheckmark className="task-card-icon-size" />
+                            </Button>
+                          </div>
+                          <div className="card-buttons">
+                            <Button
+                              variant="warning"
+                              onClick={(e) =>
+                                handleSendEditData({
+                                  user_id: props.userID,
+                                  task_priority: task.task_priority,
+                                  task_name: task.task_name,
+                                  task_id: task.task_id,
+                                  task_description: task.task_description,
+                                  task_date_time: new Date(task.task_date_time),
+                                  task_drawing: task.task_drawing,
+                                })
+                              }
+                              size="med"
+                              value={[
+                                props.userID,
+                                task.task_priority,
+                                task.task_name,
+                                task.task_id,
+                                task.task_description,
+                                task.task_date_time,
+                              ]}
+                            >
+                              <FiEdit className="task-card-icon-size" />
+                            </Button>
+                          </div>
+                          <div className="card-buttons">
+                            <Button
+                              value={task.task_id}
+                              variant="danger"
+                              onClick={(e) =>
+                                handleDeleteOffCanvas({ sharing_with, task })
+                              }
+                              size="med"
+                            >
+                              <RiDeleteBin2Line className="task-card-icon-size" />
+                            </Button>
+                          </div>
+                        </ButtonGroup>
+                      </Card.Body>
+                      <Card.Footer>
+                        {moment(task.task_date_time).format(
+                          "MMMM DD YYYY hh:mm A"
+                        )}
+                      </Card.Footer>
+                    </Card>
+                  </Col>
+                </div>
+              ))}
+            </FlipMove>
+          </Row>
+        </Container>
+       
+      </>
     );
   else return null;
 }

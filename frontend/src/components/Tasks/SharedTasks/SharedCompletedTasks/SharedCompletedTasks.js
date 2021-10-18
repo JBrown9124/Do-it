@@ -394,11 +394,12 @@ function SharedCompletedTasks(props) {
               <Card.Body>
                 <Card.Text>{task.task_description}</Card.Text>
                 <Card.Img variant="bottom" src={task.task_drawing} />
+
                 <ButtonGroup
                   aria-label="Basic example"
                   className="card-buttons-margin-top"
                 >
-                  <div className="card-buttons">
+                  <div>
                     <Button
                       variant="dark"
                       size="med"

@@ -37,8 +37,8 @@ const Navigation = (props) => {
   );
   return (
     <>
-      <Navbar expand="lg" fixed="top" bg="light" collapseOnSelect>
-        <Container>
+      <Navbar expand="sm" fixed="top" bg="light" collapseOnSelect>
+        <Container fluid>
           <Navbar.Brand>Do or Do Not</Navbar.Brand>
           <Navbar.Toggle aria-controls="responsive-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">

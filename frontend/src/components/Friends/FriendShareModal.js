@@ -6,6 +6,7 @@ import {
   ListGroup,
   Row,
   Col,
+  Container,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import { FaUserFriends } from "react-icons/fa";
@@ -72,9 +73,11 @@ function FriendShareModal(props) {
     <>
       <Modal {...props} size="large" centered>
         <Modal.Header closeButton onClick={() => props.onHide()}>
-          <Modal.Title>
-            Share <FaUserFriends />
-          </Modal.Title>
+          <Container>
+            <Modal.Title>
+              Share <FaUserFriends />
+            </Modal.Title>
+          </Container>
         </Modal.Header>
 
         <Modal.Body>
@@ -95,36 +98,38 @@ function FriendShareModal(props) {
 
           {searchResults.map((friend) => (
             <div key={friend.user_id}>
-              <ListGroup className="friend-list-container" horizontal="xxl">
-                <Col>
-                  <Row>
-                    <ListGroup.Item
-                      variant="info"
-                      className="friend-list-seperator"
-                    >
-                      <Row>
-                        <Col>
-                          <strong>{friend.user_display_name}</strong>
-                        </Col>
-                        <Col>
-                          <Button
-                            onClick={() =>
-                              handleSubmit({
-                                user_display_name: friend.user_display_name,
-                                user_email: friend.user_email,
-                                user_id: friend.user_id,
-                              })
-                            }
-                            variant="info"
-                          >
-                            <ImShare2 />
-                          </Button>
-                        </Col>
-                      </Row>
-                    </ListGroup.Item>
-                  </Row>
-                </Col>
-              </ListGroup>
+              <Container>
+                <ListGroup className="friend-list-container" horizontal="xxl">
+                  <Col>
+                    <Row>
+                      <ListGroup.Item
+                        variant="info"
+                        className="friend-list-seperator"
+                      >
+                        <Row>
+                          <Col>
+                            <strong>{friend.user_display_name}</strong>
+                          </Col>
+                          <Col>
+                            <Button
+                              onClick={() =>
+                                handleSubmit({
+                                  user_display_name: friend.user_display_name,
+                                  user_email: friend.user_email,
+                                  user_id: friend.user_id,
+                                })
+                              }
+                              variant="info"
+                            >
+                              <ImShare2 />
+                            </Button>
+                          </Col>
+                        </Row>
+                      </ListGroup.Item>
+                    </Row>
+                  </Col>
+                </ListGroup>
+              </Container>
             </div>
           ))}
         </Modal.Body>

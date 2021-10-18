@@ -11,13 +11,14 @@ import {
   Tab,
   Row,
   Col,
+  Container,
 } from "react-bootstrap";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { FiUserPlus, FiUserMinus } from "react-icons/fi";
 import AddFriendModal from "./AddFriendModal";
 import url from "../../services/URL";
-import {GiThreeFriends} from "react-icons/gi"
+import { GiThreeFriends } from "react-icons/gi";
 function Friends(props) {
   const [showAddFriendModal, setShowAddFriendModal] = useState(false);
   const [animationType, setAnimationType] = useState("");
@@ -77,8 +78,6 @@ function Friends(props) {
   };
 
   const handleAccept = (fromUserID) => {
-    
-
     const findUserByID = props.allReceivedFriendRequestsData.find(
       ({ user_id }) => user_id === fromUserID
     );
@@ -136,7 +135,9 @@ function Friends(props) {
           closeButton
           onClick={() => handleClose()}
         >
-          <Offcanvas.Title className="completed-title">Friends <GiThreeFriends/></Offcanvas.Title>
+          <Offcanvas.Title className="completed-title">
+            Friends <GiThreeFriends />
+          </Offcanvas.Title>
         </Offcanvas.Header>
 
         <Offcanvas.Body>
@@ -150,7 +151,6 @@ function Friends(props) {
             <Tab eventKey="Friends" title="Friends">
               <div className="add-friend-title">
                 <Button
-                  
                   variant="success"
                   size="lg"
                   onClick={() => setShowAddFriendModal(true)}
@@ -188,48 +188,50 @@ function Friends(props) {
               {searchResults.map((friend) => (
                 <div key={friend.user_id}>
                   <ListGroup className="friend-list-container" horizontal="xxl">
-                    <Col>
-                      <Row>
-                        <ListGroup.Item
-                          variant="info"
-                          className="friend-list-seperator"
-                        >
-                          <Row>
-                            <Col>
-                              <small>
-                                Sharing{" "}
-                                {handleFriendSharedTasksCount(
-                                  parseInt(friend.user_id)
-                                )}{" "}
-                                tasks with
-                              </small>{" "}
-                              <strong>{friend.user_display_name}</strong>
-                            </Col>
-                            <Col>
-                              <OverlayTrigger
-                                trigger="focus"
-                                placement="bottom"
-                                overlay={deletePopOver}
-                              >
-                                <Button
-                                  className="remove-friend-button"
-                                  variant="danger"
-                                  size="sm"
-                                  value={friend.user_id}
-                                  onClick={(e) =>
-                                    handleDeletePopOver(
-                                      parseInt(e.target.value)
-                                    )
-                                  }
+                    <Container>
+                      <Col>
+                        <Row>
+                          <ListGroup.Item
+                            variant="info"
+                            className="friend-list-seperator"
+                          >
+                            <Row>
+                              <Col>
+                                <small>
+                                  Sharing{" "}
+                                  {handleFriendSharedTasksCount(
+                                    parseInt(friend.user_id)
+                                  )}{" "}
+                                  tasks with
+                                </small>{" "}
+                                <strong>{friend.user_display_name}</strong>
+                              </Col>
+                              <Col>
+                                <OverlayTrigger
+                                  trigger="focus"
+                                  placement="bottom"
+                                  overlay={deletePopOver}
                                 >
-                                  Remove <FiUserMinus />
-                                </Button>
-                              </OverlayTrigger>
-                            </Col>
-                          </Row>
-                        </ListGroup.Item>
-                      </Row>
-                    </Col>
+                                  <Button
+                                    className="remove-friend-button"
+                                    variant="danger"
+                                    size="sm"
+                                    value={friend.user_id}
+                                    onClick={(e) =>
+                                      handleDeletePopOver(
+                                        parseInt(e.target.value)
+                                      )
+                                    }
+                                  >
+                                    Remove <FiUserMinus />
+                                  </Button>
+                                </OverlayTrigger>
+                              </Col>
+                            </Row>
+                          </ListGroup.Item>
+                        </Row>
+                      </Col>
+                    </Container>
                   </ListGroup>
                 </div>
               ))}
@@ -287,7 +289,6 @@ function Friends(props) {
       </Offcanvas>
     </>
   );
-  
 }
 
 export default Friends;

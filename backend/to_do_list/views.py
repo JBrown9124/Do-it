@@ -20,6 +20,7 @@ from django.views.decorators.cache import never_cache
 from django.core.exceptions import ValidationError
 from itertools import chain
 import uuid
+import random
 
 # Create your views here.
 
@@ -323,6 +324,32 @@ def log_in(request):
             return JsonResponse({"user_id": user.user_id, "user_display_name": user.user_display_name})
         except:
             return HttpResponseServerError
+    elif request.method == "GET":
+        # Guest log-in
+        guest_salt = uuid.uuid4()
+        guest_hashed_password = uuid.uuid4()
+        guest_id_number = random.randrange(1000, 9999)
+        u = User(user_hash=guest_hashed_password, user_salt=guest_salt,
+                 user_display_name=f"Guest{guest_id_number}", user_email=f"Guest{guest_id_number}@gmail.com", user_registered=True)
+        u.save()
+        host = User.objects.get(pk=2)
+        Friend.objects.add_friend(host, u)
+        friend_request = FriendshipRequest.objects.get(
+            from_user=host, to_user=u)
+        friend_request.accept()
+        new_id = uuid.uuid4()
+        welcome_task = Tasks.objects.get(
+            pk="8e077573-817a-47fa-9be2-7e1020d4307a")
+        welcome_task_with_new_id = Tasks(task_id=new_id, user=host, task_name=welcome_task.task_name, task_description=welcome_task.task_description,
+                                         task_drawing=welcome_task.task_drawing, task_date_time=welcome_task.task_date_time, task_priority=welcome_task.task_priority)
+        welcome_task_with_new_id.save()
+        shared_task_created = SharedTasks(
+            sender=host, recipient=u, task=welcome_task_with_new_id)
+        shared_task_created.save()
+        a = Alerts(
+            user=u, message=f"{host.user_display_name} shared \"{welcome_task_with_new_id.task_name}\"", alert_type="Shared")
+        a.save()
+        return JsonResponse({"user_id": u.user_id, "user_display_name": u.user_display_name})
 
 
 @csrf_exempt
@@ -359,12 +386,16 @@ def register(request):
             new_id = uuid.uuid4()
             welcome_task = Tasks.objects.get(
                 pk="8e077573-817a-47fa-9be2-7e1020d4307a")
-            welcome_task_with_new_id = t = Tasks(task_id=new_id, user=host, task_name=welcome_task.task_name, task_description=welcome_task.task_description,
-                                                 task_drawing=welcome_task.task_drawing, task_date_time=welcome_task.task_date_time, task_priority=welcome_task.task_priority)
+            welcome_task_with_new_id = Tasks(task_id=new_id, user=host, task_name=welcome_task.task_name, task_description=welcome_task.task_description,
+                                             task_drawing=welcome_task.task_drawing, task_date_time=welcome_task.task_date_time, task_priority=welcome_task.task_priority)
             welcome_task_with_new_id.save()
+
             shared_task_created = SharedTasks(
                 sender=host, recipient=u, task=welcome_task_with_new_id)
             shared_task_created.save()
+            a = Alerts(
+                user=u, message=f"{host.user_display_name} shared \"{welcome_task_with_new_id.task_name}\"", alert_type="Shared")
+            a.save()
 
             return JsonResponse({"user_id": u.user_id, "user_display_name": u.user_display_name})
 

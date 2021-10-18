@@ -137,7 +137,7 @@ function App() {
   }
 
   return (
-    <div>
+    <>
       <Navigation
         userDisplayName={userInfoCookies.userDisplayName}
         showFriends={() => setShowFriends(true)}
@@ -243,7 +243,7 @@ function App() {
           </Carousel.Item>
         </Carousel>
       </Modal>
-    </div>
+    </>
   );
 }
 
