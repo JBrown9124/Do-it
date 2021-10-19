@@ -22,9 +22,9 @@ from itertools import chain
 import uuid
 import random
 
-# Create your views here.
 
 
+# Returns user id for other endpoints to read.
 def user_id(request, user):
 
     return HttpResponse(user)
