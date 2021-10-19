@@ -4,7 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
-backend/venv/
+/.backend/venv
 C:\Users\Jonathan\Documents\My_Workspaces\To-Do List\backend\mysite\settings.py
 
 
