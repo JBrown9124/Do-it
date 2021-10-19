@@ -4,10 +4,10 @@
 /node_modules
 /.pnp
 .pnp.js
-/venv
+backend/venv/
 C:\Users\Jonathan\Documents\My_Workspaces\To-Do List\backend\mysite\settings.py
 
-backend.venv/
+
 # testing
 /coverage
 

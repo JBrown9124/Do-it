@@ -31,8 +31,10 @@ def user_id(request, user):
 
 @csrf_exempt
 def alerts(request, user):
+    #Get user who is making the request from users table
     u = User.objects.get(pk=user)
     if request.method == 'GET':
+        #If request is a GET operation get requesters alerts and order them by create date
         data = list(Alerts.objects.filter(
             user=u).order_by('-created_date').values())
         return JsonResponse({"user_alerts": data})
