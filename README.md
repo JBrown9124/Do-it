@@ -7,17 +7,17 @@ Created a social task-managing full-stack web application that allows you to cre
 1. Type $ pip install -r requirements.txt in your terminal then press then "enter" key. This will install the required packages for this application to run.
 
 2. The "mysite" outer-parent directory contains a python file called "manage.py" that starts the application. Access this 
-outer-parent directory with your terminal. Then type the command $ python manage.py runserver and press the "enter" key. 
-(In your terminal type $ cd mysite then press the "enter" key. Then type the command $ python manage.py runserver then press the "enter" key)
+outer-parent directory with your terminal. Then type the command `python manage.py runserver` and press the "enter" key. 
+(In your terminal type `cd mysite` then press the "enter" key. Then type the command $ python manage.py runserver then press the "enter" key)
 
    
                                         
 
 ### port: http://127.0.0.1:8000/
 
-### run command: In your terminal type $ cd mysite then press the "enter" key. Then type the command $ python manage.py runserver then press the "enter" key
+### run command: In your terminal type `cd mysite` then press the "enter" key. Then type the command `python manage.py` runserver then press the "enter" key
 
-### install command: $ pip install -r requirements.txt
+### install command: `pip install -r requirements.txt`
 
 ### language: Python(Django)
 
@@ -58,32 +58,6 @@ Instead, it will copy all the configuration files and the transitive dependencie
 
 You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
 
-## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
