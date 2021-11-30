@@ -4,7 +4,7 @@ Created a social task-managing full-stack web application that allows you to cre
 ## Available Scripts for Server
 
 
-1. Type $ pip install -r requirements.txt in your terminal then press then "enter" key. This will install the required packages for this application to run.
+1. Type `pip install -r requirements.txt` in your terminal then press then "enter" key. This will install the required packages for this application to run.
 
 2. The "mysite" outer-parent directory contains a python file called "manage.py" that starts the application. Access this 
 outer-parent directory with your terminal. Then type the command `python manage.py runserver` and press the "enter" key. 
