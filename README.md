@@ -13,13 +13,15 @@ outer-parent directory with your terminal. Then type the command `python manage.
    
                                         
 
-### port: http://127.0.0.1:8000/
+### Port: http://127.0.0.1:8000/
 
-### run command: In your terminal type `cd mysite` then press the "enter" key. Then type the command `python manage.py` runserver then press the "enter" key
+### Run command: In your terminal type `cd mysite` then press the "enter" key. Then type the command `python manage.py` runserver then press the "enter" key
 
-### install command: `pip install -r requirements.txt`
+### Install command: `pip install -r requirements.txt`
 
-### language: Python(Django)
+### Language: Python(Django)
+
+### Database: PostgreSQL
 
 ## Available Scripts For Client
 
