@@ -24,6 +24,9 @@ outer-parent directory with your terminal. Then type the command `python manage.
 ## Available Scripts For Client
 
 In the project directory, you can run:
+### `npm install`
+
+Install all modules listed as dependencies in package.json.
 
 ### `npm start`
 
