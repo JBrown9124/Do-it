@@ -17,7 +17,7 @@ outer-parent directory with your terminal. Then type the command `python manage.
 
 ### Run command: In your terminal type `cd mysite` then press the "enter" key. Then type the command `python manage.py` runserver then press the "enter" key
 
-### Install command: `pip install -r requirements.txt`
+### Install dependencies command: `pip install -r requirements.txt`
 
 ### Language: Python(Django)
 
