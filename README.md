@@ -1,5 +1,5 @@
 # Do-or-Do-Not
-Created a social task-managing full-stack web application that allows you to create, share, edit (drawing and image importing features included), and complete tasks with users on your friends list. Includes user authentication, a friends list (received and sent friend requests) and friend alerts (ex. notifying a user when a friend has completed a shared task). Uses Django as the back-end web framework and React.js as the front-end library. All data is queried from and stored in a PostgreSQL database using a ReST API developed with Django.
+Created a social task-managing full-stack web application. Allows you to create, share, edit (drawing and image importing features included), and complete tasks with users on your friends list. Includes user authentication, a friends list (received and sent friend requests), and friend alerts (ex. notifying a user when a friend has completed a shared task). The client was created with React.js, the REST API with Python (Django), and data is stored in and queried from a PostgreSQL (SQL) database. Deployed using Heroku.
 
 ## Available Scripts for Server
 
